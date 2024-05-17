@@ -1,13 +1,18 @@
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import logo from '@/assets/logo.png';
+
 const { Header, Content, Footer } = Layout;
+
 const items = new Array(3).fill(null).map((_, index) => ({
   key: String(index + 1),
   label: `nav ${index + 1}`,
 }));
-const LayoutMain = () => {
+
+const LayoutMain = ({ contentComponent }) => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
   return (
     <Layout>
       <Header
@@ -20,7 +25,7 @@ const LayoutMain = () => {
           alignItems: 'center',
         }}
       >
-        <div className='demo-logo' />
+        <img width={55} height={55} src={logo} className='demo-logo' style={{borderRadius:'100px'}}></img>
         <Menu
           theme='dark'
           mode='horizontal'
@@ -54,7 +59,7 @@ const LayoutMain = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          Content
+          {contentComponent ? contentComponent : 'No data'}
         </div>
       </Content>
       <Footer
