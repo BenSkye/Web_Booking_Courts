@@ -1,7 +1,7 @@
-import LayoutMain from '@/components/layouts';
+import Home from '@/pages/home';
 
 function App() {
-  return <LayoutMain />;
+  return <Home />;
 }
 
 export default App;
