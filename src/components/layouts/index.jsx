@@ -15,32 +15,36 @@ const items = [
   //Items for the dropdown Profile
   {
     label: (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-        }}
-      >
-        <CgProfile size='20px' />
-        <>Thông tin cá nhân</>
-      </div>
+      <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
+          }}
+        >
+          <CgProfile size='20px' />
+          <>Đăng nhập</>
+        </div>
+      </Link>
     ),
-    key: '0',
+    key: '0', // Khóa duy nhất cho mục này
   },
 
   {
     label: (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-        }}
-      >
-        <GiTennisCourt size='20px' />
-        <>Sân đã đặt</>
-      </div>
+      <Link to="/signup" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
+          }}
+        >
+          <CgProfile size='20px' />
+          <>Đăng ký</>
+        </div>
+      </Link>
     ),
     key: '1',
   },
@@ -53,8 +57,8 @@ const items = [
           justifyContent: 'start',
         }}
       >
-        <GrLogout size='20px' />
-        <>Đăng xuất</>
+        {/* <GrLogout size='20px' />
+        <>Đăng xuất</> */}
       </div>
     ),
     key: '2',
