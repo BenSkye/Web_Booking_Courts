@@ -1,58 +1,78 @@
-import { Card, Col, Row, Avatar, Button } from 'antd';
+import { useEffect, useState } from 'react';
+import { Card, Col, Row, Avatar, Button, Rate } from 'antd';
 import SearchBar from '@/pages/home/components/searchBar';
+import { Link } from 'react-router-dom';
 
 const { Meta } = Card;
 
 export default function Home() {
+  const [courts, setCourts] = useState([]);
+
+  // Mock data
+  useEffect(() => {
+    // Mock data
+    const data = [
+      {
+        id: 1,
+        title: 'Sân cầu lông Thanh Đa',
+        address: 'Thanh Đa, Bình Thạnh, TP.HCM',
+        imageUrl: '...',
+        avatarUrl: '...',
+        rating: 4.5,
+        reviews: 'Đánh giá: 4.5/5 từ 20 người dùng',
+      },
+      {
+        id: 2,
+        title: 'Sân cầu lông Thanh Đa',
+        address: 'Thanh Đa, Bình Thạnh, TP.HCM',
+        imageUrl: '...',
+        avatarUrl: '...',
+        rating: 4.5,
+        reviews: 'Đánh giá: 4.5/5 từ 20 người dùng',
+      },
+    ];
+    setCourts(data);
+  }, []);
+
   return (
-    <Row
-      gutter={[16, 16]}
-      style={{
-        margin: '0 auto', // Căn giữa container
-      }}
-    >
+    <Row gutter={[16, 16]} style={{ margin: '0 auto', padding: '20px' }}>
       <Col span={24}>
         <SearchBar />
       </Col>
 
-      {[1, 2, 3, 4, 5].map((index) => (
+      {courts.map((court, index) => (
         <Col key={index} xs={24} sm={12} lg={8}>
           <Card
             hoverable
-            style={{
-              width: '100%',
-            }}
-            cover={
-              <img
-                alt='example'
-                src='https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
-              />
-            }
+            style={{ width: '100%' }}
+            cover={<img alt={court.title} src={court.imageUrl} />}
           >
             <Meta
-              avatar={
-                <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
+              avatar={<Avatar src={court.avatarUrl} />}
+              title={court.title}
+              description={
+                <div>
+                  <p>{court.address}</p>
+                  <Rate disabled defaultValue={court.rating} />
+                  <p>{court.reviews}</p>
+                </div>
               }
-              title='Sân cầu lông Thanh Đa'
-              description='Thanh Đa, Bình Thạnh, TP.HCM'
             />
             <div
               style={{
-                paddingTop: '30px',
-                paddingBottom: '0px',
+                marginTop: 16,
                 display: 'flex',
                 justifyContent: 'space-between',
-                gap: 16,
-                flexWrap: 'wrap',
               }}
             >
+              {/* Pass the court ID to the detail page */}
+              <Link to={`/detail/${court.id}`}>
+                <Button style={{ height: '40px', width: '150px', fontSize: '18px' }}>
+                  Xem chi tiết
+                </Button>
+              </Link>
               <Button
-                style={{ height: '50px', width: '150px', fontSize: '18px' }}
-              >
-                Xem chi tiết
-              </Button>
-              <Button
-                style={{ height: '50px', width: '150px', fontSize: '18px' }}
+                style={{ height: '40px', width: '150px', fontSize: '18px' }}
                 type='primary'
               >
                 Đặt sân ngay

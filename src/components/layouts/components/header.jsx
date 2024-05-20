@@ -11,50 +11,53 @@ const items = [
   //Items for the dropdown Profile
   {
     label: (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-        }}
-      >
-        <CgProfile size='20px' />
-        <>Thông tin cá nhân</>
-      </div>
+      <Link to='/login'>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
+          }}
+        >
+          <CgProfile size='20px' />
+          <>Đăng nhập</>
+        </div></Link>
     ),
     key: '0',
   },
 
   {
     label: (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-        }}
-      >
-        <GiTennisCourt size='20px' />
-        <>Sân đã đặt</>
-      </div>
+      <Link to='/signup'>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
+          }}
+        >
+          <GiTennisCourt size='20px' />
+          <>Đăng ký</>
+        </div></Link>
     ),
     key: '1',
   },
-  {
-    label: (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-        }}
-      >
-        <GrLogout size='20px' />
-        <>Đăng xuất</>
-      </div>
-    ),
-    key: '2',
-  },
+  // {
+  //   label: (
+
+  //     <div
+  //       style={{
+  //         display: 'flex',
+  //         alignItems: 'center',
+  //         justifyContent: 'start',
+  //       }}
+  //     >
+  //       <GrLogout size='20px' />
+  //       <>Đăng xuất</>
+  //     </div>
+  //   ),
+  //   key: '2',
+  // },
 ];
 
 const menuItems = [
