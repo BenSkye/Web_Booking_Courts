@@ -15,13 +15,12 @@ export default function Home() {
         <SearchBar />
       </Col>
 
-      {[1, 2, 3, 4,5].map((index) => (
+      {[1, 2, 3, 4, 5].map((index) => (
         <Col key={index} xs={24} sm={12} lg={8}>
-          {/* Điều chỉnh các phần tử Col cho phù hợp với các kích thước màn hình khác nhau */}
           <Card
             hoverable
             style={{
-              width: '100%', // Đảm bảo các card chiếm hết chiều rộng của Col
+              width: '100%',
             }}
             cover={
               <img
@@ -43,8 +42,8 @@ export default function Home() {
                 paddingBottom: '0px',
                 display: 'flex',
                 justifyContent: 'space-between',
-                gap: 16, // Thêm khoảng cách giữa các nút
-                flexWrap: 'wrap', // Đảm bảo các nút không bị vỡ ra khỏi card
+                gap: 16,
+                flexWrap: 'wrap',
               }}
             >
               <Button
