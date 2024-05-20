@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Space, Select, Input, DatePicker, Button, Tooltip } from 'antd';
+import { Space, Select, DatePicker, Button, Tooltip } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import {
   fetchDistricts,
@@ -58,7 +58,11 @@ export default function SearchBar() {
       >
         {renderOptions(wardOptions)}
       </Select>
-      <Input style={{ width: '150px' }} placeholder='Tên sân' />
+      <Select
+        showSearch
+        style={{ width: '150px', height: '50px' }}
+        placeholder='Tên sân'
+      />
       <DatePicker placeholder='Ngày' />
       <Select
         defaultValue='Khung giờ'
@@ -66,6 +70,9 @@ export default function SearchBar() {
       >
         <Option value='6'>6:00</Option>
         <Option value='7'>7:00</Option>
+        <Option value='7'>9:00</Option>
+        <Option value='17'>13:00</Option>
+        <Option value='17'>15:00</Option>
         <Option value='17'>17:00</Option>
       </Select>
       <Select
@@ -73,7 +80,10 @@ export default function SearchBar() {
         style={{ width: '150px', height: '50px' }}
       >
         <Option value='1'>1 giờ</Option>
+        <Option value='1.5'>1.5 giờ</Option>
         <Option value='2'>2 giờ</Option>
+        <Option value='2.5'>2.5 giờ</Option>
+        <Option value='3'>3 giờ</Option>
       </Select>
       <Tooltip title='search'>
         <Button
