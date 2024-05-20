@@ -1,0 +1,79 @@
+.container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.paragraph {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    overflow: auto;
+    /* Thêm overflow để xử lý lỗi khi hình ảnh làm nổi văn bản */
+}
+
+.paragraph img {
+    float: left;
+    margin-right: 150px;
+    width: 150px;
+    /* Điều chỉnh độ rộng của hình ảnh */
+    height: auto;
+    border-radius: 50%;
+    clear: both;
+    /* Đảm bảo rằng hình ảnh không trôi sang bên phải hoặc bên dưới các phần tử khác */
+}
+
+.teamSection {
+    margin-top: 40px;
+}
+
+.teamHeader {
+    font-size: 1.5em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.teamList {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.teamMember {
+    text-align: center;
+    max-width: 150px;
+    margin-bottom: 20px;
+}
+
+.image {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
+.teamName {
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.teamRole {
+    font-size: 1em;
+    color: gray;
+}
+
+.image-left {
+    float: left;
+    margin-right: 20px;
+}
+
+.image-right {
+    float: right;
+    margin-left: 20px;
+}

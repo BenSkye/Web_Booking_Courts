@@ -1,6 +1,6 @@
 import { Card, Col, Row, Avatar, Button } from 'antd';
 import SearchBar from '@/pages/home/components/searchBar';
-
+import { Link } from 'react-router-dom';
 const { Meta } = Card;
 
 export default function Home() {
@@ -40,12 +40,13 @@ export default function Home() {
               display: 'flex',
               justifyContent: 'space-between',
             }}
-          >
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-            >
-              Xem chi tiết
-            </Button>
+          ><Link to={`detail`}>
+              <Button
+                style={{ height: '40px', width: '150px', fontSize: '18px' }}
+              >
+                Xem chi tiết
+
+              </Button></Link>
             <Button
               style={{ height: '40px', width: '150px', fontSize: '18px' }}
               type='primary'

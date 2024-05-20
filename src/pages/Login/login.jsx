@@ -1,26 +1,19 @@
 import React from 'react';
 import { Button, Checkbox, Form, Input, Row, Col, Typography } from 'antd';
-import type { FormProps } from 'antd';
-import logo from '../assets/logo.png';
-import { Link } from 'react-router-dom'; // Import the Link component from react-router-dom
+import { Link } from 'react-router-dom';
+import logo from '@/assets/logo.png'; // Chỉnh lại đường dẫn cho phù hợp với cấu trúc thư mục của bạn
 
 const { Text } = Typography;
 
-type FieldType = {
-    username?: string;
-    password?: string;
-    remember?: string;
-};
-
-const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
+const onFinish = (values) => {
     console.log('Success:', values);
 };
 
-const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
+const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
 };
 
-const Login: React.FC = () => (
+const Login = () => (
     <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
         <Col xs={0} sm={0} md={12} lg={8} xl={6} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <img src={logo} alt="Logo" style={{ maxWidth: '100%', height: 'auto' }} />
@@ -39,7 +32,7 @@ const Login: React.FC = () => (
                 autoComplete="off"
                 style={{ maxWidth: 400, margin: 'auto' }}
             >
-                <Form.Item<FieldType>
+                <Form.Item
                     label="Tài khoản"
                     name="username"
                     rules={[{ required: true, message: 'Please input your username!' }]}
@@ -47,15 +40,15 @@ const Login: React.FC = () => (
                     <Input />
                 </Form.Item>
 
-                <Form.Item<FieldType>
-                    label="Mật khẩu "
+                <Form.Item
+                    label="Mật khẩu"
                     name="password"
                     rules={[{ required: true, message: 'Please input your password!' }]}
                 >
                     <Input.Password />
                 </Form.Item>
 
-                <Form.Item<FieldType>
+                <Form.Item
                     name="remember"
                     valuePropName="checked"
                     wrapperCol={{ offset: 8, span: 16 }}
