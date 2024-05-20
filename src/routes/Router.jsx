@@ -4,6 +4,7 @@ import Home from '@/pages/home';
 import AboutUs from '@/components/dashboard/aboutUs';
 import Partner from '@/components/dashboard/partner';
 import Tournament from '@/components/dashboard/tournament';
+import BookingDetail from '@/components/booking/bookingDetails';
 
 function Routing() {
   return (
@@ -13,6 +14,7 @@ function Routing() {
         <Route path='/aboutUs' element={<AboutUs />} />
         <Route path='/partner' element={<Partner />} />
         <Route path='/tournament' element={<Tournament />} />
+        <Route path='/bookingdetail/:id' element={<BookingDetail />} />
       </Route>
     </Routes>
   );

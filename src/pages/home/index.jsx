@@ -1,40 +1,62 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, Col, Row, Avatar, Button } from 'antd';
 import SearchBar from '@/pages/home/components/searchBar';
+import { getAllCourtsAPI } from '@/services/courtAPI/getCourtsAPI';
+import NoImg from '@/assets/noImg.jpg';
 
 const { Meta } = Card;
 
 export default function Home() {
+  const [courts, setCourts] = useState([]);
+
+  useEffect(() => {
+    const getCourts = async () => {
+      const data = await getAllCourtsAPI();
+      setCourts(data);
+    };
+    getCourts();
+  }, []);
+
+  const handleImageError = (e) => {
+    e.target.src = NoImg;
+  };
+
   return (
     <Row
       gutter={[16, 16]}
       style={{
-        margin: '0 auto', // Căn giữa container
+        margin: '0 auto',
       }}
     >
       <Col span={24}>
         <SearchBar />
       </Col>
 
-      {[1, 2, 3, 4, 5].map((index) => (
-        <Col key={index} xs={24} sm={12} lg={8}>
+      {courts.map((court) => (
+        <Col key={court.id} xs={24} sm={12} lg={8}>
           <Card
             hoverable
             style={{
               width: '100%',
             }}
             cover={
-              <img
-                alt='example'
-                src='https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
-              />
+              <div style={{ height: '200px', overflow: 'hidden' }}>
+                <img
+                  alt={court.nameCourt}
+                  src={court.imgCourt}
+                  onError={handleImageError}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
             }
           >
             <Meta
               avatar={
                 <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
               }
-              title='Sân cầu lông Thanh Đa'
-              description='Thanh Đa, Bình Thạnh, TP.HCM'
+              title={court.nameCourt}
+              description={court.locationCourt}
             />
             <div
               style={{
@@ -51,12 +73,14 @@ export default function Home() {
               >
                 Xem chi tiết
               </Button>
-              <Button
-                style={{ height: '50px', width: '150px', fontSize: '18px' }}
-                type='primary'
-              >
-                Đặt sân ngay
-              </Button>
+              <Link to={`/bookingdetail/${court.id}`}>
+                <Button
+                  style={{ height: '50px', width: '150px', fontSize: '18px' }}
+                  type='primary'
+                >
+                  Đặt sân ngay
+                </Button>
+              </Link>
             </div>
           </Card>
         </Col>
