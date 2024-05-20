@@ -5,7 +5,8 @@ import { MdArrowDropDown } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { GiTennisCourt } from 'react-icons/gi';
 import { GrLogout } from 'react-icons/gr';
-import logo from '@/assets/logonew.png';
+// import logo from '@/assets/logonew.png';
+import logo from '@/assets/logoLuan.jpg';
 import bgFooter from '@/assets/backgroundfooter.jpg';
 import FooterLayout from '@/components/layouts/components/footer';
 
