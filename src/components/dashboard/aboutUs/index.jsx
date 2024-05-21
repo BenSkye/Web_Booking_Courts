@@ -80,7 +80,7 @@ export default function AboutUs() {
         <div className="about-us-content">
           <div className="about-us-image-section">
             <img
-              src="src/assets/visionAboutUs.jpg"
+              src="src/assets/valueAboutUs.jpg"
               alt="Person playing badminton"
             />
           </div>
