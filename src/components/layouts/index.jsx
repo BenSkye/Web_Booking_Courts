@@ -20,13 +20,13 @@ const LayoutMain = () => {
     >
       <Header
         style={{
-          position: 'sticky',
+          position: "sticky",
           top: 0,
           zIndex: 1,
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          background: '#141414',
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          background: "#141414",
         }}
       >
         <HeaderLayout />

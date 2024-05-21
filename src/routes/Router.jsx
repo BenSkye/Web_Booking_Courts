@@ -8,7 +8,8 @@ import Login from '@/pages/login/login';
 import SignUp from '@/pages/login/signup';
 import Detail from '@/pages/detail/detail';
 import BookingDetail from '@/components/booking/bookingDetails';
-
+import ProfileAccount from '@/pages/profileAccount';
+import AccountInformation from '@/pages/accountInformation';
 function Routing() {
   return (
     <Routes>
@@ -19,6 +20,8 @@ function Routing() {
         <Route path='/detail/:id' element={<Detail />} />
         <Route path='/tournament' element={<Tournament />} />
         <Route path='/bookingdetail/:id' element={<BookingDetail />} />
+        <Route path="/user" element={<ProfileAccount/>} />
+        <Route path="/user/my-account" element={<AccountInformation/>} />
       </Route>
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<SignUp />} />
