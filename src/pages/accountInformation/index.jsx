@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, Input, Select,DatePicker } from 'antd';
+import { Button, Form, Input, Select, DatePicker } from "antd";
 const onFinish = (values) => {
   console.log("Success:", values);
 };
@@ -20,33 +20,22 @@ const AccountSettingsForm = () => {
       style={{
         maxWidth: 600,
         marginLeft: "450px",
-        marginTop: "50px",
-        height: "100vh"
+        marginTop: "130px",
+        height: "100vh",
       }}
-      
-      
     >
-      <Form.Item
-        label="Họ và tên"
-        name="Họ và tên"
-        
-      >
+      <div style={{ maxWidth: 600, marginLeft: "200px", marginBottom: '20px',fontWeight: '700',fontSize: '16px',color: '#16056b' }}>
+        Cập nhật tài khoản
+      </div>
+      <Form.Item label="Họ và tên" name="Họ và tên">
         <Input />
       </Form.Item>
 
-      <Form.Item
-        label="Email"
-        name="Email"
-        
-      >
+      <Form.Item label="Email" name="Email">
         <Input />
       </Form.Item>
 
-      <Form.Item
-        label="Số điện thoại"
-        name="Số điện thoại"
-        
-      >
+      <Form.Item label="Số điện thoại" name="Số điện thoại">
         <Input />
       </Form.Item>
 
@@ -59,10 +48,7 @@ const AccountSettingsForm = () => {
           },
         ]}
       >
-        <Select
-         
-         
-        >
+        <Select>
           <Option value="male">male</Option>
           <Option value="female">female</Option>
           <Option value="other">other</Option>
@@ -70,19 +56,18 @@ const AccountSettingsForm = () => {
       </Form.Item>
 
       <Form.Item
-      label="Ngày,tháng,năm sinh"
-      name="Ngày,tháng,năm sinh"
-      // rules={[
-      //   {
-      //     required: true,
-      //     message: 'Please input!',
-      //   },
-      // ]}
-    >
-      <DatePicker />
-    </Form.Item>
+        label="Ngày,tháng,năm sinh"
+        name="Ngày,tháng,năm sinh"
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: 'Please input!',
+        //   },
+        // ]}
+      >
+        <DatePicker />
+      </Form.Item>
 
-   
       <Form.Item
         wrapperCol={{
           offset: 8,
