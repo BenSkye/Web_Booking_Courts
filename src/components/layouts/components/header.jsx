@@ -4,7 +4,6 @@ import { Menu, Avatar, Dropdown, Space } from 'antd';
 import { MdArrowDropDown } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { GiTennisCourt } from 'react-icons/gi';
-import { GrLogout } from 'react-icons/gr';
 import logo from '@/assets/logonew.png';
 
 const items = [
@@ -21,7 +20,8 @@ const items = [
         >
           <CgProfile size='20px' />
           <>Đăng nhập</>
-        </div></Link>
+        </div>
+      </Link>
     ),
     key: '0',
   },
@@ -38,7 +38,8 @@ const items = [
         >
           <GiTennisCourt size='20px' />
           <>Đăng ký</>
-        </div></Link>
+        </div>
+      </Link>
     ),
     key: '1',
   },
@@ -69,6 +70,7 @@ const menuItems = [
   { key: '2', label: 'Giới thiệu', path: '/aboutUs' },
   { key: '3', label: 'Đăng kí đối tác', path: '/partner' },
   { key: '4', label: 'Đăng kí giải', path: '/tournament' },
+  { key: '5', label: 'Đăng kí gói', path: '/registerPackageCourt' },
 ];
 
 export default function HeaderLayout() {
