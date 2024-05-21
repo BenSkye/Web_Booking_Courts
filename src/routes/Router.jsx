@@ -7,8 +7,7 @@ import Tournament from '@/components/dashboard/tournament';
 import Login from '@/pages/login/login';
 import SignUp from '@/pages/login/signup';
 import Detail from '@/pages/detail/detail';
-
-
+import BookingDetail from '@/components/booking/bookingDetails';
 
 function Routing() {
   return (
@@ -18,6 +17,8 @@ function Routing() {
         <Route path='/aboutUs' element={<AboutUs />} />
         <Route path='/partner' element={<Partner />} />
         <Route path='/detail/:id' element={<Detail />} />
+        <Route path='/tournament' element={<Tournament />} />
+        <Route path='/bookingdetail/:id' element={<BookingDetail />} />
       </Route>
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<SignUp />} />
