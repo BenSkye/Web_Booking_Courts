@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Layout, Menu, theme, Avatar, Dropdown, Space } from 'antd';
-import { MdArrowDropDown } from 'react-icons/md';
-import { CgProfile } from 'react-icons/cg';
-import { GiTennisCourt } from 'react-icons/gi';
-import { GrLogout } from 'react-icons/gr';
-import logo from '@/assets/logonew.png';
-import bgFooter from '@/assets/backgroundfooter.jpg';
-import FooterLayout from '@/components/layouts/components/footer';
+import { useState, useEffect } from "react";
+import { Outlet, Link, useLocation } from "react-router-dom";
+import { Layout, Menu, theme, Avatar, Dropdown, Space } from "antd";
+import { MdArrowDropDown } from "react-icons/md";
+import { CgProfile } from "react-icons/cg";
+import { GiTennisCourt } from "react-icons/gi";
+import { GrLogout } from "react-icons/gr";
+import logo from "@/assets/logonew.png";
+import bgFooter from "@/assets/backgroundfooter.jpg";
+import FooterLayout from "@/components/layouts/components/footer";
 
 const { Header, Content, Footer } = Layout;
 
@@ -17,59 +17,63 @@ const items = [
     label: (
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "start",
         }}
       >
-        <CgProfile size='20px' />
-        <>Thông tin cá nhân</>
+        <Link to="/user">
+          <div>
+            <CgProfile size="20px" />
+            <>Thông tin cá nhân</>
+          </div>
+        </Link>
       </div>
     ),
-    key: '0',
+    key: "0",
   },
 
   {
     label: (
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "start",
         }}
       >
-        <GiTennisCourt size='20px' />
+        <GiTennisCourt size="20px" />
         <>Sân đã đặt</>
       </div>
     ),
-    key: '1',
+    key: "1",
   },
   {
     label: (
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "start",
         }}
       >
-        <GrLogout size='20px' />
+        <GrLogout size="20px" />
         <>Đăng xuất</>
       </div>
     ),
-    key: '2',
+    key: "2",
   },
 ];
 
 const menuItems = [
   {
-    key: '1',
-    label: 'Tìm sân',
-    path: '/',
+    key: "1",
+    label: "Tìm sân",
+    path: "/",
   },
-  { key: '2', label: 'Giới thiệu', path: '/aboutUs' },
-  { key: '3', label: 'Đăng kí đối tác', path: '/partner' },
-  { key: '4', label: 'Đăng kí giải', path: '/tournament' },
+  { key: "2", label: "Giới thiệu", path: "/aboutUs" },
+  { key: "3", label: "Đăng kí đối tác", path: "/partner" },
+  { key: "4", label: "Đăng kí giải", path: "/tournament" },
 ];
 
 const LayoutMain = () => {
@@ -77,7 +81,7 @@ const LayoutMain = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const [selectedKey, setSelectedKey] = useState('');
+  const [selectedKey, setSelectedKey] = useState("");
   const location = useLocation();
   useEffect(() => {
     // Lấy đường dẫn hiện tại từ useLocation và tìm kiếm nó trong menuItems
@@ -93,13 +97,13 @@ const LayoutMain = () => {
     <Layout>
       <Header
         style={{
-          position: 'sticky',
+          position: "sticky",
           top: 0,
           zIndex: 1,
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          background: '#141414',
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          background: "#141414",
         }}
       >
         <>
@@ -107,21 +111,21 @@ const LayoutMain = () => {
             width={60}
             height={60}
             src={logo}
-            className='demo-logo'
-            style={{ margin: '4px 4px' }}
+            className="demo-logo"
+            style={{ margin: "4px 4px" }}
           />
           <Menu
-            mode='horizontal'
+            mode="horizontal"
             selectedKeys={[selectedKey]}
             style={{
               flex: 1,
               minWidth: 0,
-              fontSize: '24px',
-              background: '#141414',
+              fontSize: "24px",
+              background: "#141414",
             }}
           >
             {menuItems.map((item) => (
-              <Menu.Item key={item.key} style={{ color: 'white' }}>
+              <Menu.Item key={item.key} style={{ color: "white" }}>
                 <Link to={item.path}>{item.label}</Link>
               </Menu.Item>
             ))}
@@ -136,14 +140,14 @@ const LayoutMain = () => {
           <a onClick={(e) => e.preventDefault()}>
             <Space>
               <Avatar
-                size='large'
-                src='https://api.dicebear.com/7.x/miniavs/svg?seed=1'
-                style={{ background: 'white', height: '50px', width: '50px' }}
+                size="large"
+                src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"
+                style={{ background: "white", height: "50px", width: "50px" }}
               />
               <MdArrowDropDown
-                style={{ display: 'flex', alignItems: 'center' }}
-                color='white'
-                size='30px'
+                style={{ display: "flex", alignItems: "center" }}
+                color="white"
+                size="30px"
               />
             </Space>
           </a>
@@ -151,7 +155,7 @@ const LayoutMain = () => {
       </Header>
       <Content
         style={{
-          padding: '0 30px',
+          padding: "0 30px",
           marginTop: 10,
           marginBottom: 10,
         }}
@@ -170,9 +174,9 @@ const LayoutMain = () => {
       <Footer
         style={{
           backgroundImage: `url(${bgFooter})`,
-          backgroundSize: 'cover', // Đảm bảo hình ảnh nền bao phủ toàn bộ phần tử
-          backgroundRepeat: 'no-repeat', // Ngăn lặp lại hình ảnh
-          color: 'white', // Đặt màu chữ trắng để dễ đọc trên nền tối
+          backgroundSize: "cover", // Đảm bảo hình ảnh nền bao phủ toàn bộ phần tử
+          backgroundRepeat: "no-repeat", // Ngăn lặp lại hình ảnh
+          color: "white", // Đặt màu chữ trắng để dễ đọc trên nền tối
         }}
       >
         <FooterLayout />
