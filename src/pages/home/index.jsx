@@ -52,7 +52,9 @@ export default function Home() {
             }
           >
             <Meta
-              avatar={<Avatar src={court.avatarUrl} />}
+              avatar={
+                <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
+              }
               title={court.nameCourt}
               description={court.locationCourt}
             />
