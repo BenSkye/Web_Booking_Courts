@@ -10,6 +10,8 @@ import Detail from "@/pages/detail/detail";
 import BookingDetail from "@/components/booking/bookingDetails";
 import ProfileAccount from "@/pages/profileAccount";
 import AccountInformation from "@/pages/accountInformation";
+import RegisterPackageCourt from "@/components/registerPackageCourt";
+
 function Routing() {
   return (
     <Routes>
@@ -22,6 +24,10 @@ function Routing() {
         <Route path="/bookingdetail/:id" element={<BookingDetail />} />
         <Route path="/user" element={<ProfileAccount />} />
         <Route path="/user/my-account" element={<AccountInformation />} />
+        <Route
+          path="/registerPackageCourt"
+          element={<RegisterPackageCourt />}
+        />
       </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
