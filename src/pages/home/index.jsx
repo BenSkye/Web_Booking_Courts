@@ -60,19 +60,17 @@ export default function Home() {
             />
             <div
               style={{
-                paddingTop: '30px',
-                paddingBottom: '0px',
+                marginTop: 16,
                 display: 'flex',
                 justifyContent: 'space-between',
-                gap: 16,
-                flexWrap: 'wrap',
               }}
             >
-              <Button
-                style={{ height: '50px', width: '150px', fontSize: '18px' }}
-              >
-                Xem chi tiết
-              </Button>
+              {/* Pass the court ID to the detail page */}
+              <Link to={`/detail/${court.id}`}>
+                <Button style={{ height: '40px', width: '150px', fontSize: '18px' }}>
+                  Xem chi tiết
+                </Button>
+              </Link>
               <Link to={`/bookingdetail/${court.id}`}>
                 <Button
                   style={{ height: '50px', width: '150px', fontSize: '18px' }}
