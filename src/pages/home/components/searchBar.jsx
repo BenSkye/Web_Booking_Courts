@@ -1,39 +1,89 @@
-import { Select, Space, DatePicker, Input, Button, Tooltip } from 'antd';
+import { useState, useEffect } from 'react';
+import { Space, Select, DatePicker, Button, Tooltip } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-
+import {
+  fetchDistricts,
+  fetchWards,
+} from '@/services/District_ward-API/districtWardAPI';
+import { HCM_ID } from '@/utils/constants';
 const { Option } = Select;
-const onChange = (date, dateString) => {
-  console.log(date, dateString);
-};
 
 export default function SearchBar() {
+  const [districtOptions, setDistrictOptions] = useState([]);
+  const [wardOptions, setWardOptions] = useState([]);
+
+  useEffect(() => {
+    const getDistricts = async () => {
+      const data = await fetchDistricts(HCM_ID);
+      setDistrictOptions(data);
+    };
+
+    getDistricts();
+  }, []);
+
+  const handleDistrictChange = async (value) => {
+    const data = await fetchWards(value);
+    setWardOptions(data);
+  };
+
+  const renderOptions = (options) =>
+    options.map((option) => (
+      <Option key={option.id} value={option.id}>
+        {option.full_name}
+      </Option>
+    ));
+
   return (
     <Space.Compact block>
-      <Select defaultValue='Vị trí' style={{ width: '150px', height: '50px' }}>
-        <Option value='Option1-1'>Option1-1</Option>
-        <Option value='Option1-2'>Option1-2</Option>
-      </Select>
-      <Input
-        style={{
-          width: '150px',
-        }}
-        placeholder='Nhập vị trí'
-      />
-      <DatePicker onChange={onChange} placeholder='Chọn ngày' />
       <Select
-        defaultValue='Chọn khung giờ'
+        showSearch
+        placeholder='Quận/huyện'
+        style={{ width: '150px', height: '50px' }}
+        optionFilterProp='children'
+        onChange={handleDistrictChange}
+        filterOption={(input, option) =>
+          option.children.toLowerCase().includes(input.toLowerCase())
+        }
+      >
+        {renderOptions(districtOptions)}
+      </Select>
+      <Select
+        showSearch
+        placeholder='Phường/xã'
+        style={{ width: '150px', height: '50px' }}
+        optionFilterProp='children'
+        filterOption={(input, option) =>
+          option.children.toLowerCase().includes(input.toLowerCase())
+        }
+      >
+        {renderOptions(wardOptions)}
+      </Select>
+      <Select
+        showSearch
+        style={{ width: '150px', height: '50px' }}
+        placeholder='Tên sân'
+      />
+      <DatePicker placeholder='Ngày' />
+      <Select
+        defaultValue='Khung giờ'
         style={{ width: '150px', height: '50px' }}
       >
         <Option value='6'>6:00</Option>
         <Option value='7'>7:00</Option>
+        <Option value='7'>9:00</Option>
+        <Option value='17'>13:00</Option>
+        <Option value='17'>15:00</Option>
         <Option value='17'>17:00</Option>
       </Select>
       <Select
-        defaultValue='Chọn số giờ chơi'
+        defaultValue='Số giờ chơi'
         style={{ width: '150px', height: '50px' }}
       >
         <Option value='1'>1 giờ</Option>
+        <Option value='1.5'>1.5 giờ</Option>
         <Option value='2'>2 giờ</Option>
+        <Option value='2.5'>2.5 giờ</Option>
+        <Option value='3'>3 giờ</Option>
       </Select>
       <Tooltip title='search'>
         <Button
