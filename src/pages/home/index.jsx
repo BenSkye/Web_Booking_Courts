@@ -8,258 +8,59 @@ export default function Home() {
     <Row
       gutter={[16, 16]}
       style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
+        margin: '0 auto', // Căn giữa container
       }}
     >
-      <SearchBar />
-      <Col>
-        <Card
-          hoverable
-          style={{
-            width: 440,
-          }}
-          cover={
-            <img
-              alt='example'
-              src='https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
-            />
-          }
-        >
-          <Meta
-            avatar={
-              <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
-            }
-            title='Sân cầu lông Thanh Đa'
-            description='Thanh Đa, Bình Thạnh, TP.HCM'
-          />
-          <div
-            style={{
-              marginTop: 16,
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-            >
-              Xem chi tiết
-            </Button>
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-              type='primary'
-            >
-              Đặt sân ngay
-            </Button>
-          </div>
-        </Card>
+      <Col span={24}>
+        <SearchBar />
       </Col>
-      <Col>
-        <Card
-          hoverable
-          style={{
-            width: 440,
-          }}
-          cover={
-            <img
-              alt='example'
-              src='https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
-            />
-          }
-        >
-          <Meta
-            avatar={
-              <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
-            }
-            title='Sân cầu lông Thanh Đa'
-            description='Thanh Đa, Bình Thạnh, TP.HCM'
-          />
-          <div
+
+      {[1, 2, 3, 4, 5].map((index) => (
+        <Col key={index} xs={24} sm={12} lg={8}>
+          <Card
+            hoverable
             style={{
-              marginTop: 16,
-              display: 'flex',
-              justifyContent: 'space-between',
+              width: '100%',
             }}
-          >
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-            >
-              Xem chi tiết
-            </Button>
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-              type='primary'
-            >
-              Đặt sân ngay
-            </Button>
-          </div>
-        </Card>
-      </Col>
-      <Col>
-        <Card
-          hoverable
-          style={{
-            width: 440,
-          }}
-          cover={
-            <img
-              alt='example'
-              src='https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
-            />
-          }
-        >
-          <Meta
-            avatar={
-              <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
+            cover={
+              <img
+                alt='example'
+                src='https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
+              />
             }
-            title='Sân cầu lông Thanh Đa'
-            description='Thanh Đa, Bình Thạnh, TP.HCM'
-          />
-          <div
-            style={{
-              marginTop: 16,
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
           >
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-            >
-              Xem chi tiết
-            </Button>
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-              type='primary'
-            >
-              Đặt sân ngay
-            </Button>
-          </div>
-        </Card>
-      </Col>
-      <Col>
-        <Card
-          hoverable
-          style={{
-            width: 440,
-          }}
-          cover={
-            <img
-              alt='example'
-              src='https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
+            <Meta
+              avatar={
+                <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
+              }
+              title='Sân cầu lông Thanh Đa'
+              description='Thanh Đa, Bình Thạnh, TP.HCM'
             />
-          }
-        >
-          <Meta
-            avatar={
-              <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
-            }
-            title='Sân cầu lông Thanh Đa'
-            description='Thanh Đa, Bình Thạnh, TP.HCM'
-          />
-          <div
-            style={{
-              marginTop: 16,
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
+            <div
+              style={{
+                paddingTop: '30px',
+                paddingBottom: '0px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: 16,
+                flexWrap: 'wrap',
+              }}
             >
-              Xem chi tiết
-            </Button>
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-              type='primary'
-            >
-              Đặt sân ngay
-            </Button>
-          </div>
-        </Card>
-      </Col>
-      <Col>
-        <Card
-          hoverable
-          style={{
-            width: 440,
-          }}
-          cover={
-            <img
-              alt='example'
-              src='https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
-            />
-          }
-        >
-          <Meta
-            avatar={
-              <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
-            }
-            title='Sân cầu lông Thanh Đa'
-            description='Thanh Đa, Bình Thạnh, TP.HCM'
-          />
-          <div
-            style={{
-              marginTop: 16,
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-            >
-              Xem chi tiết
-            </Button>
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-              type='primary'
-            >
-              Đặt sân ngay
-            </Button>
-          </div>
-        </Card>
-      </Col>
-      <Col>
-        <Card
-          hoverable
-          style={{
-            width: 440,
-          }}
-          cover={
-            <img
-              alt='example'
-              src='https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
-            />
-          }
-        >
-          <Meta
-            avatar={
-              <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
-            }
-            title='Sân cầu lông Thanh Đa'
-            description='Thanh Đa, Bình Thạnh, TP.HCM'
-          />
-          <div
-            style={{
-              marginTop: 16,
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-            >
-              Xem chi tiết
-            </Button>
-            <Button
-              style={{ height: '40px', width: '150px', fontSize: '18px' }}
-              type='primary'
-            >
-              Đặt sân ngay
-            </Button>
-          </div>
-        </Card>
-      </Col>
+              <Button
+                style={{ height: '50px', width: '150px', fontSize: '18px' }}
+              >
+                Xem chi tiết
+              </Button>
+              <Button
+                style={{ height: '50px', width: '150px', fontSize: '18px' }}
+                type='primary'
+              >
+                Đặt sân ngay
+              </Button>
+            </div>
+          </Card>
+        </Col>
+      ))}
     </Row>
   );
 }
