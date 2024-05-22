@@ -1,6 +1,6 @@
 import { fetchDataMockAPI } from '@/services/fetchAPI';
 
-export const getAllCourtsAPI = async () => {
+export const getAllCenterAPI = async () => {
   const data = await fetchDataMockAPI(
     'https://664b5118a300e8795d452247.mockapi.io/courts'
   );
