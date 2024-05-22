@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, Col, Row, Avatar, Button } from 'antd';
-import SearchBar from '@/pages/home/components/searchBar';
-import CardLoader from '@/utils/loader/skeletonLoader/loaderCard';
-import { getAllCourtsAPI } from '@/services/courtAPI/getCourtsAPI';
-import NoImg from '@/assets/noImg.jpg';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Card, Col, Row, Avatar, Button } from "antd";
+import SearchBar from "@/pages/home/components/searchBar";
+import CardLoader from "@/utils/loader/skeletonLoader/loaderCard";
+import { getAllCourtsAPI } from "@/services/courtAPI/getCourtsAPI";
+import NoImg from "@/assets/noImg.jpg";
 
 const { Meta } = Card;
 
@@ -30,7 +30,7 @@ export default function Home() {
     <Row
       gutter={[16, 16]}
       style={{
-        margin: '0 auto',
+        margin: "0 auto",
       }}
     >
       <Col span={24}>
@@ -47,17 +47,17 @@ export default function Home() {
             <Col key={court.id} xs={24} sm={12} lg={8}>
               <Card
                 hoverable
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 cover={
-                  <div style={{ height: '200px', overflow: 'hidden' }}>
+                  <div style={{ height: "200px", overflow: "hidden" }}>
                     <img
-                      alt={court.nameCourt}
+                      alt={court.nameCenter}
                       src={court.imgCourt}
                       onError={handleImageError}
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
                       }}
                     />
                   </div>
@@ -65,7 +65,7 @@ export default function Home() {
               >
                 <Meta
                   avatar={
-                    <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
+                    <Avatar src="https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg" />
                   }
                   title={court.nameCourt}
                   description={court.locationCourt}
@@ -73,18 +73,18 @@ export default function Home() {
                 <div
                   style={{
                     marginTop: 16,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '8px',
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: "8px",
                   }}
                 >
                   <Link to={`/detail/${court.id}`}>
                     <Button
                       style={{
-                        height: '50px',
-                        width: '150px',
-                        fontSize: '18px',
+                        height: "50px",
+                        width: "150px",
+                        fontSize: "18px",
                       }}
                     >
                       Xem chi tiết
@@ -93,11 +93,11 @@ export default function Home() {
                   <Link to={`/bookingdetail/${court.id}`}>
                     <Button
                       style={{
-                        height: '50px',
-                        width: '150px',
-                        fontSize: '18px',
+                        height: "50px",
+                        width: "150px",
+                        fontSize: "18px",
                       }}
-                      type='primary'
+                      type="primary"
                     >
                       Đặt sân ngay
                     </Button>

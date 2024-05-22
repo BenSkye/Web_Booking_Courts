@@ -1,5 +1,6 @@
 import { Button, Space } from "antd";
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function ButtonRouter() {
   return (
@@ -21,9 +22,23 @@ export default function ButtonRouter() {
       >
         Xem các Giải đấu mà bạn đã tạo
       </Button>
-      <Button style={{ flex: 1, backgroundColor: "#57E3CA", color: "black" }}>
-        Tiến hành đăng ký tạo giải đấu
-      </Button>
+      <Link
+        to="/tournament/create"
+        style={{
+          flex: 1,
+        }}
+      >
+        <Button
+          style={{
+            height: "100%",
+            width: "100%",
+            backgroundColor: "#57E3CA",
+            color: "black",
+          }}
+        >
+          Tiến hành đăng ký tạo giải đấu
+        </Button>
+      </Link>
     </div>
   );
 }

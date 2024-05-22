@@ -1,5 +1,5 @@
 import { Card, Pagination } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const ListTournament = [
   {
@@ -98,7 +98,7 @@ export default function HistoryTournament() {
         <Card
           key={index}
           title={tournament.tenGiaiDau}
-          extra={<a href="#">More</a>}
+          extra={<a href="#">Chi tiết</a>}
           bodyStyle={{ padding: "10px" }}
           headStyle={{ backgroundColor: "#f0f0f0", padding: "10px" }}
           style={{
