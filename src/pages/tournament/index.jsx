@@ -8,6 +8,7 @@ export default function tournament() {
     <div>
       <CarouselOverview />
       <Row gutter={16}>
+        y
         <Col span={12}>
           <HistoryTournament />
         </Col>

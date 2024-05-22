@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { Card, Col, Row, Avatar, Button, Carousel } from "antd";
 import SearchBar from "@/pages/home/components/searchBar";
 import CardLoader from "@/utils/loader/skeletonLoader/loaderCard";
-import { getAllCenterAPI } from "@/services/courtAPI/getCourtsAPI";
+//import { getAllCenterAPI } from "@/services/courtAPI/getCourtsAPI";
 import NoImg from "@/assets/noImg.jpg";
+import { getAllCenterAPI } from "../../services/courtAPI/getCourtsAPI";
 
 const { Meta } = Card;
 

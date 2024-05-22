@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllCourtsAPI } from "@/services/courtAPI/getCourtsAPI";
+import { getAllCenterAPI } from "@/services/courtAPI/getCourtsAPI";
 import ListCenter from "./ListCenter";
 export default function ChooseCenter() {
   const [courts, setCourts] = useState([]);
@@ -8,7 +8,7 @@ export default function ChooseCenter() {
   useEffect(() => {
     const getCourts = async () => {
       setLoading(true);
-      const data = await getAllCourtsAPI();
+      const data = await getAllCenterAPI();
       setCourts(data);
       setLoading(false);
     };

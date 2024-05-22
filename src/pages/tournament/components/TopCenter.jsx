@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllCourtsAPI } from "@/services/courtAPI/getCourtsAPI";
+import { getAllCenterAPI } from "@/services/courtAPI/getCourtsAPI";
 import ListCenter from "../../tournamentCreate/components/ListCenter";
 import CenterContext from "../../tournamentCreate/components/CenterContex";
 export default function TopCenter() {
@@ -13,7 +13,7 @@ export default function TopCenter() {
   useEffect(() => {
     const getCourts = async () => {
       setLoading(true);
-      const data = await getAllCourtsAPI();
+      const data = await getAllCenterAPI();
       console.log("top 4", data);
       setCourts(data);
       setLoading(false);
