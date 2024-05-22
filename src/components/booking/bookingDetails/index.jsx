@@ -4,7 +4,7 @@ import { Steps } from 'antd';
 import { MdPayment } from 'react-icons/md';
 import { IoCheckmarkDoneCircleOutline } from 'react-icons/io5';
 import { CiBoxList } from 'react-icons/ci';
-import PickTimeBooking from './components/pickTimeBooking';
+import PickTimeBooking from '@/components/booking/bookingDetails/components/pickTimeBooking';
 import PaymentBooking from './components/paymentBooking';
 import ViewBooking from './components/viewBooking';
 
@@ -19,17 +19,17 @@ export default function BookingDetail() {
   // Mảng chứa các bước
   const steps = [
     {
-      title: 'Booking Details',
+      title: 'Chi tiết đặt sân',
       icon: <CiBoxList />,
       content: <PickTimeBooking checkOut={() => setCurrentStep(1)} />,
     },
     {
-      title: 'Payment',
+      title: 'Thanh toán',
       icon: <MdPayment />,
       content: <PaymentBooking setCurrentStep={setCurrentStep} />,
     },
     {
-      title: 'Done',
+      title: 'Hoàn thành',
       icon: <IoCheckmarkDoneCircleOutline />,
       content: <ViewBooking setCurrentStep={setCurrentStep} />,
     },
@@ -39,13 +39,15 @@ export default function BookingDetail() {
     <div>
       <p>ID sân: {id}</p>
       <>
-        <Steps current={currentStep}>
+        <Steps
+          current={currentStep}
+          style={{ width: '80%', margin: 'auto', fontWeight: 'bold' }}
+        >
           {steps.map((item) => (
             <Step key={item.title} title={item.title} icon={item.icon} />
           ))}
         </Steps>
-        {/* Hiển thị nội dung của bước hiện tại */}
-        {steps[currentStep].content}
+        <div style={{ width: '100%' }}>{steps[currentStep].content}</div>
       </>
     </div>
   );
