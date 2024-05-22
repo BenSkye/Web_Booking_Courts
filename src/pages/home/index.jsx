@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Card, Col, Row, Avatar, Button } from "antd";
+import { Card, Col, Row, Avatar, Button, Carousel } from "antd";
 import SearchBar from "@/pages/home/components/searchBar";
 import CardLoader from "@/utils/loader/skeletonLoader/loaderCard";
-import { getAllCourtsAPI } from "@/services/courtAPI/getCourtsAPI";
+import { getAllCenterAPI } from "@/services/courtAPI/getCourtsAPI";
 import NoImg from "@/assets/noImg.jpg";
 
 const { Meta } = Card;
 
 export default function Home() {
-  const [courts, setCourts] = useState([]);
+  const [centers, setCenters] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getCourts = async () => {
       setLoading(true);
-      const data = await getAllCourtsAPI();
-      setCourts(data);
+      const data = await getAllCenterAPI();
+      setCenters(data);
       setLoading(false);
     };
     getCourts();
@@ -43,32 +43,50 @@ export default function Home() {
               <CardLoader />
             </Col>
           ))
-        : courts.map((court) => (
-            <Col key={court.id} xs={24} sm={12} lg={8}>
+        : centers.map((centers) => (
+            <Col key={centers.id} xs={24} sm={12} lg={8}>
               <Card
                 hoverable
                 style={{ width: "100%" }}
                 cover={
-                  <div style={{ height: "200px", overflow: "hidden" }}>
-                    <img
-                      alt={court.nameCenter}
-                      src={court.imgCourt}
-                      onError={handleImageError}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </div>
+                  <Carousel
+                    autoplay
+                    style={{
+                      background: "#e1e8e3",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    {centers.imgCenter.map((img, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          height: "100%",
+                          width: "100%",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <img
+                          alt={centers.nameCenter}
+                          src={img}
+                          onError={handleImageError}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </Carousel>
                 }
               >
                 <Meta
                   avatar={
                     <Avatar src="https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg" />
                   }
-                  title={court.nameCourt}
-                  description={court.locationCourt}
+                  title={centers.nameCenter}
+                  description={centers.locationCenter}
                 />
                 <div
                   style={{
@@ -79,7 +97,7 @@ export default function Home() {
                     gap: "8px",
                   }}
                 >
-                  <Link to={`/detail/${court.id}`}>
+                  <Link to={`/detail/${centers.id}`}>
                     <Button
                       style={{
                         height: "50px",
@@ -90,7 +108,7 @@ export default function Home() {
                       Xem chi tiết
                     </Button>
                   </Link>
-                  <Link to={`/bookingdetail/${court.id}`}>
+                  <Link to={`/bookingdetail/${centers.id}`}>
                     <Button
                       style={{
                         height: "50px",
