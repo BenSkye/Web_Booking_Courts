@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import moment from 'moment';
 import { Space, Select, DatePicker, Button, Tooltip } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import {
@@ -6,6 +7,7 @@ import {
   fetchWards,
 } from '@/services/District_ward-API/districtWardAPI';
 import { HCM_ID } from '@/utils/constants';
+
 const { Option } = Select;
 
 export default function SearchBar() {
@@ -63,7 +65,14 @@ export default function SearchBar() {
         style={{ width: '150px', height: '50px' }}
         placeholder='Tên sân'
       />
-      <DatePicker placeholder='Ngày' />
+      <DatePicker
+        placeholder='Ngày'
+        disabledDate={(current) =>
+          current &&
+          (current.isBefore(moment().startOf('day')) ||
+            current.isAfter(moment().add(7, 'days').startOf('day')))
+        }
+      />
       <Select
         defaultValue='Khung giờ'
         style={{ width: '150px', height: '50px' }}

@@ -22,7 +22,7 @@ const UpdatePassword = () => {
       style={{
         maxWidth: 600,
         marginLeft: "450px",
-        marginTop: "130px",
+        marginTop: "100px",
         height: "100vh",
       }}
       onFinish={onFinish}
@@ -31,20 +31,36 @@ const UpdatePassword = () => {
       <div
         style={{
           maxWidth: 600,
-          marginLeft: "200px",
-          marginBottom: '20px',
-          fontWeight: '700',
-          fontSize: '16px',
-          color: '#16056b'
+          marginLeft: "150px",
+          marginBottom: "20px",
+          fontWeight: "700",
+          fontSize: "16px",
+          color: "#16056b",
         }}
       >
         Cập nhật mật khẩu
       </div>
-      <Form.Item label="Mật khẩu mới" name="Mật khẩu mới">
+      <Form.Item
+        label="Mật khẩu mới"
+        name="password"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+
+       
+      >
+        
         <Input.Password />
       </Form.Item>
 
-      <Form.Item label="Xác nhận mật khẩu mới" name="Xác nhận mật khẩu mới">
+      <Form.Item
+        label="Xác nhận mật khẩu mới"
+        name="confirmPassword"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        style={{
+          
+        }}
+      >
         <Input.Password />
       </Form.Item>
 
@@ -62,4 +78,4 @@ const UpdatePassword = () => {
   );
 };
 
-export default  UpdatePassword;
+export default UpdatePassword;

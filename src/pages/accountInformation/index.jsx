@@ -43,11 +43,14 @@ const AccountSettingsForm = () => {
       <div
         style={{
           maxWidth: 600,
-          marginLeft: "200px",
+          marginLeft: "180px",
           marginBottom: '20px',
           fontWeight: '700',
           fontSize: '16px',
-          color: '#16056b'
+          color: '#16056b',
+          display: 'flex',
+          justifyContent: 'center', 
+          paddingRight: 70,
         }}
       >
         Cập nhật tài khoản
@@ -63,7 +66,7 @@ const AccountSettingsForm = () => {
       <Form.Item label="Số điện thoại" name="Số điện thoại">
         <Input />
       </Form.Item>
-      <hr className="ant-divider" style={{ borderTop: '1px solid #ccc', width: '100%', margin: 8 }} />
+    
 
       <Form.Item
         name="Giới tính"
