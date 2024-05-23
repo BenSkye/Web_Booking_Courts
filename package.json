@@ -11,6 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.7",
     "antd": "^5.17.2",
     "axios": "^1.7.0",
     "dayjs": "^1.11.11",
