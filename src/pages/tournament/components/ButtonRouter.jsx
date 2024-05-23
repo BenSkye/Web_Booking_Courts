@@ -16,7 +16,8 @@ export default function ButtonRouter() {
         style={{
           flex: 1,
           marginBottom: "10px",
-          backgroundColor: "#D0E357",
+          background:
+            "linear-gradient(90deg, rgba(252,148,69,1) 0%, rgba(131,58,180,1) 100%)",
           color: "black",
         }}
       >
@@ -32,7 +33,8 @@ export default function ButtonRouter() {
           style={{
             height: "100%",
             width: "100%",
-            backgroundColor: "#57E3CA",
+            background:
+              "linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(69,252,136,1) 100%)",
             color: "black",
           }}
         >

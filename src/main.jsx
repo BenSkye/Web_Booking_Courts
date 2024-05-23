@@ -1,33 +1,33 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import { ConfigProvider } from 'antd';
-import App from '@/App.jsx';
-import '@/styles/main.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { ConfigProvider } from "antd";
+import App from "@/App.jsx";
+import "@/styles/main.css";
 
 const theme = {
   token: {
-    colorPrimary: '#FFCD1C',
-    colorBgLayout: 'linear-gradient(to left, #bcbcbc, #444444)',
-    colorTextPlaceholder: 'silver.200',
-    colorBgInput: 'white',
-    addonBg: 'white',
+    colorPrimary: "#FFCD1C",
+    colorBgLayout: "linear-gradient(to left, #bcbcbc, #444444)",
+    colorTextPlaceholder: "silver.200",
+    colorBgInput: "white",
+    addonBg: "white",
   },
   components: {
     Button: {
       algorithm: true,
-      colorText: 'black',
+      colorText: "black",
       variants: {
         primary: {
-          backgroundColor: '#FFCD1C',
-          color: 'white', // text color when the button has the primary color
+          backgroundColor: "#FFCD1C",
+          color: "white", // text color when the button has the primary color
         },
       },
     },
   },
 };
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ConfigProvider theme={theme}>
       <BrowserRouter>
