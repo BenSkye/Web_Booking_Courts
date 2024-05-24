@@ -11,7 +11,12 @@
     "test": "jest"
   },
   "dependencies": {
+<<<<<<< HEAD
     "antd": "^5.17.3",
+=======
+    "@ant-design/icons": "^5.3.7",
+    "antd": "^5.17.2",
+>>>>>>> 04963cb8eab10b7e200af2684cb776cab22913db
     "axios": "^1.7.0",
     "dayjs": "^1.11.11",
     "moment": "^2.30.1",
