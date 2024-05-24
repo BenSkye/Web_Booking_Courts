@@ -11,6 +11,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.19.3",
+    "@vis.gl/react-google-maps": "^1.0.0",
     "@ant-design/icons": "^5.3.7",
     "antd": "^5.17.2",
     "axios": "^1.7.0",
