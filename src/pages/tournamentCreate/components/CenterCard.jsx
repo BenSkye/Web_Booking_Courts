@@ -1,4 +1,4 @@
-import { Avatar, Button, Card } from "antd";
+import { Avatar, Button, Card, Carousel } from "antd";
 import Meta from "antd/es/card/Meta";
 import { Link } from "react-router-dom";
 import NoImg from "@/assets/noImg.jpg";
@@ -11,18 +11,31 @@ export default function CenterCard({ center }) {
       hoverable
       style={{ width: "100%" }}
       cover={
-        <div style={{ height: "200px", overflow: "hidden" }}>
-          <img
-            alt={center.nameCenter}
-            src={center.imgCenter}
-            onError={handleImageError}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
-          />
-        </div>
+        <Carousel
+          autoplay
+          style={{
+            background: "#e1e8e3",
+            width: "100%",
+          }}
+        >
+          {center.imgCenter.map((img, index) => (
+            <div
+              key={index}
+              style={{ height: "200px", width: "100%", overflow: "hidden" }}
+            >
+              <img
+                alt={center.nameCenter}
+                src={img}
+                onError={handleImageError}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          ))}
+        </Carousel>
       }
     >
       <Meta
