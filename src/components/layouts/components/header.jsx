@@ -43,6 +43,22 @@ const items = [
     ),
     key: '1',
   },
+  {
+    label: (
+      <Link to='/user'>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
+          }}
+        >
+          <GiTennisCourt size='20px' />
+          <>Thông tin cá nhân</>
+        </div></Link>
+    ),
+    key: '2',
+  },
   // {
   //   label: (
 
