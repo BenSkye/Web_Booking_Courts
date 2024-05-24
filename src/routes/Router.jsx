@@ -13,6 +13,7 @@ import AccountSettingsForm from "@/pages/accountInformation";
 import RegisterPackageCourt from "@/components/registerPackageCourt";
 import TournamentCreate from "@/pages/tournamentCreate";
 import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTournamentForm";
+import TournamentDetail from "../pages/TournamentDetail";
 
 function Routing() {
   return (
@@ -27,6 +28,10 @@ function Routing() {
         <Route
           path="/tournament/create/:centerID"
           element={<RegistTournamentForm />}
+        />
+        <Route
+          path="/tournament/detail/:tournamentID"
+          element={<TournamentDetail />}
         />
         <Route path="/bookingdetail/:id" element={<BookingDetail />} />
         <Route path="/user" element={<ProfileAccount />} />
