@@ -11,6 +11,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.19.3",
+    "@vis.gl/react-google-maps": "^1.0.0",
     "antd": "^5.17.2",
     "axios": "^1.7.0",
     "dayjs": "^1.11.11",

@@ -5,8 +5,8 @@ import { MdPayment } from 'react-icons/md';
 import { IoCheckmarkDoneCircleOutline } from 'react-icons/io5';
 import { CiBoxList } from 'react-icons/ci';
 import PickTimeBooking from '@/components/booking/bookingDetails/components/pickTimeBooking';
-import PaymentBooking from './components/paymentBooking';
-import ViewBooking from './components/viewBooking';
+import PaymentBooking from '@/components/booking/bookingDetails/components/paymentBooking';
+import ViewBooking from '@/components/booking/bookingDetails/components/viewBooking';
 
 const { Step } = Steps;
 
@@ -21,7 +21,9 @@ export default function BookingDetail() {
     {
       title: 'Chi tiết đặt sân',
       icon: <CiBoxList />,
-      content: <PickTimeBooking checkOut={() => setCurrentStep(1)} />,
+      content: (
+        <PickTimeBooking checkOut={() => setCurrentStep(1)} idCenter={id} />
+      ),
     },
     {
       title: 'Thanh toán',
