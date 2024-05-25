@@ -35,8 +35,8 @@ function Routing() {
         />
         <Route path="/bookingdetail/:id" element={<BookingDetail />} />
         <Route path="/user" element={<ProfileAccount />} />
-        <Route path="/user/my-account" element={<ProfileAccount/>} />
-        <Route path="/user/update-password" element={<ProfileAccount/>} />
+        <Route path="/user/my-account" element={<ProfileAccount />} />
+        <Route path="/user/update-password" element={<ProfileAccount />} />
         <Route
           path="/registerPackageCourt"
           element={<RegisterPackageCourt />}
