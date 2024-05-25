@@ -4,6 +4,7 @@ import { Menu, Avatar, Dropdown, Space } from 'antd';
 import { MdArrowDropDown } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { GiTennisCourt } from 'react-icons/gi';
+import { FaUserPlus } from "react-icons/fa";
 import logo from '@/assets/logonew.png';
 
 const items = [
@@ -36,12 +37,30 @@ const items = [
             justifyContent: 'start',
           }}
         >
-          <GiTennisCourt size='20px' />
+          <FaUserPlus size='20px' />
           <>Đăng ký</>
         </div>
       </Link>
     ),
     key: '1',
+  },
+
+  {
+    label: (
+      <Link to='/courtManage'>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
+          }}
+        >
+          <GiTennisCourt size='20px' />
+          <>Sân của bạn</>
+        </div>
+      </Link>
+    ),
+    key: '2',
   },
   // {
   //   label: (

@@ -13,6 +13,7 @@ import AccountInformation from "@/pages/accountInformation";
 import RegisterPackageCourt from "@/components/registerPackageCourt";
 import TournamentCreate from "@/pages/tournamentCreate";
 import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTournamentForm";
+import CourtManage from "@/pages/courtManage";
 
 function Routing() {
   return (
@@ -35,7 +36,9 @@ function Routing() {
           path="/registerPackageCourt"
           element={<RegisterPackageCourt />}
         />
+        <Route path="/courtManage" element={<CourtManage />} />
       </Route>
+
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
     </Routes>
