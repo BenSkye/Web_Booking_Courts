@@ -9,11 +9,12 @@ import SignUp from "@/pages/login/signup";
 import Detail from "@/pages/detail/detail";
 import BookingDetail from "@/components/booking/bookingDetails";
 import ProfileAccount from "@/pages/profileAccount";
-import AccountInformation from "@/pages/accountInformation";
+import AccountSettingsForm from "@/pages/accountInformation";
 import RegisterPackageCourt from "@/components/registerPackageCourt";
 import TournamentCreate from "@/pages/tournamentCreate";
 import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTournamentForm";
 import CourtManage from "@/pages/courtManage";
+import TournamentDetail from "../pages/TournamentDetail";
 
 function Routing() {
   return (
@@ -29,9 +30,14 @@ function Routing() {
           path="/tournament/create/:centerID"
           element={<RegistTournamentForm />}
         />
+        <Route
+          path="/tournament/detail/:tournamentID"
+          element={<TournamentDetail />}
+        />
         <Route path="/bookingdetail/:id" element={<BookingDetail />} />
         <Route path="/user" element={<ProfileAccount />} />
-        <Route path="/user/my-account" element={<AccountInformation />} />
+        <Route path="/user/my-account" element={<ProfileAccount/>} />
+        <Route path="/user/update-password" element={<ProfileAccount/>} />
         <Route
           path="/registerPackageCourt"
           element={<RegisterPackageCourt />}

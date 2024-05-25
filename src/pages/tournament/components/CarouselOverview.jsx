@@ -5,7 +5,8 @@ const contentStyle = {
   color: "#fff",
   lineHeight: "160px",
   textAlign: "center",
-  background: "#364d79",
+  background:
+    "radial-gradient(circle, rgba(34,193,195,1) 0%, rgba(45,253,128,1) 100%)",
 };
 export default function CarouselOverview() {
   return (

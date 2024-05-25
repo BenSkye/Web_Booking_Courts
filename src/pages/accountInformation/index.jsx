@@ -1,13 +1,26 @@
 import React from "react";
 import { Button, Form, Input, Select, DatePicker } from "antd";
+import moment from "moment";
+
+const { Option } = Select;
+
 const onFinish = (values) => {
   console.log("Success:", values);
 };
+
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
 
 const AccountSettingsForm = () => {
+  const initialValues = {
+    'Họ và tên': 'Nguyễn Văn A',
+    'Email': 'nguyenvana@example.com',
+    'Số điện thoại': '0123456789',
+    'Giới tính': 'male',
+    'Ngày,tháng,năm sinh': moment('1990-01-01', 'YYYY-MM-DD')
+  };
+
   return (
     <Form
       name="basic"
@@ -23,8 +36,23 @@ const AccountSettingsForm = () => {
         marginTop: "130px",
         height: "100vh",
       }}
+      initialValues={initialValues}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
     >
-      <div style={{ maxWidth: 600, marginLeft: "200px", marginBottom: '20px',fontWeight: '700',fontSize: '16px',color: '#16056b' }}>
+      <div
+        style={{
+          maxWidth: 600,
+          marginLeft: "180px",
+          marginBottom: '20px',
+          fontWeight: '700',
+          fontSize: '16px',
+          color: '#16056b',
+          display: 'flex',
+          justifyContent: 'center', 
+          paddingRight: 70,
+        }}
+      >
         Cập nhật tài khoản
       </div>
       <Form.Item label="Họ và tên" name="Họ và tên">
@@ -38,6 +66,7 @@ const AccountSettingsForm = () => {
       <Form.Item label="Số điện thoại" name="Số điện thoại">
         <Input />
       </Form.Item>
+    
 
       <Form.Item
         name="Giới tính"
@@ -49,21 +78,15 @@ const AccountSettingsForm = () => {
         ]}
       >
         <Select>
-          <Option value="male">male</Option>
-          <Option value="female">female</Option>
-          <Option value="other">other</Option>
+          <Option value="male">Male</Option>
+          <Option value="female">Female</Option>
+          <Option value="other">Other</Option>
         </Select>
       </Form.Item>
 
       <Form.Item
         label="Ngày,tháng,năm sinh"
         name="Ngày,tháng,năm sinh"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: 'Please input!',
-        //   },
-        // ]}
       >
         <DatePicker />
       </Form.Item>

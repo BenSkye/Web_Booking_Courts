@@ -12,6 +12,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { TimePicker } from "antd";
 const { TextArea } = Input;
 import { useNavigate } from "react-router-dom";
+import { submitForm } from "../../../services/partnerAPI/index.js";
 
 function Partner() {
   const [form] = Form.useForm();
@@ -20,11 +21,19 @@ function Partner() {
   const onFinish = (values) => {
     console.log("Form values: ", values);
     console.log("Uploaded files: ", fileList);
-    message.success("Form submitted successfully!");
-    navigate("/courtManage");
+    // Call API to submit form data
+    submitForm(values)
+      .then((response) => {
+        message.success("Form submitted successfully!");
+        navigate("/courtManage");
+      })
+      .catch((error) => {
+        message.error("There was an error submitting the form");
+        console.error(error);
+      });
   };
   const handleUploadChange = ({ fileList }) => {
-    form.setFieldsValue({ upload: fileList }); // update form value
+    form.setFieldsValue({ images: fileList }); // update form value
   };
   const handleBeforeUpload = (file) => {
     const isImage = file.type.startsWith("image/");
@@ -64,7 +73,7 @@ function Partner() {
         {/* Section 1: Thông Tin Cá Nhân và Liên Hệ */}
         <Form.Item label="1. Thông Tin Cá Nhân và Liên Hệ">
           <Form.Item
-            name="fullname"
+            name="fullName"
             label="Họ tên"
             rules={[{ required: true, message: "Họ tên là bắt buộc" }]}
           >
@@ -154,7 +163,7 @@ function Partner() {
         {/* Section 3: Hình ảnh khu sân cầu lông */}
 
         <Form.Item
-          name="upload"
+          name="images"
           valuePropName="fileList"
           label="3. Hình ảnh khu sân cầu lông"
           extra="Hãy tải lên hình ảnh về khu sân cầu lông của bạn"
