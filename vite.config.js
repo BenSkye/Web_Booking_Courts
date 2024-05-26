@@ -17,6 +17,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      'mapbox-gl': path.resolve(
+        __dirname,
+        './node_modules/mapbox-gl/dist/mapbox-gl.js'
+      ),
     },
   },
+  envPrefix: 'VITE_',
 });
