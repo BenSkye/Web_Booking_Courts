@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllCenterAPI } from "@/services/courtAPI/getCourtsAPI";
 import ListCenter from "../../tournamentCreate/components/ListCenter";
-import CenterContext from "../../tournamentCreate/components/CenterContex";
+import { Col, Row } from "antd";
 export default function TopCenter() {
   const [centerID, setCenterID] = useState(null);
   useState(() => {
@@ -21,11 +21,13 @@ export default function TopCenter() {
     getCourts();
   }, []);
   return (
-    <CenterContext.Provider value={{ setCenterID }}>
-      <div>
+    <Row>
+      <Col>
         <h1>Các trung tâm thường tổ chức giải</h1>
+      </Col>
+      <Col>
         <ListCenter listCenter={courts} loading={loading} />
-      </div>
-    </CenterContext.Provider>
+      </Col>
+    </Row>
   );
 }

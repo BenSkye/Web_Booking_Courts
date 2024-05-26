@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Input } from "antd";
+import { Button, DatePicker, Form, Input, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -7,13 +7,29 @@ import { useParams } from "react-router-dom";
 export default function RegistTournamentForm() {
   const centerID = useParams().centerID;
   const onFinish = (values) => {
+    values.startDate = dayjs(values.startDate).format("YYYY-MM-DD");
+    values.endDate = dayjs(values.endDate).format("YYYY-MM-DD");
     console.log("Received values from form: ", {
       centerID: centerID,
       ...values,
     });
+    showModal();
   };
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   return (
     <>
       <h1>Điền thông tin về giải đấu</h1>
@@ -126,6 +142,15 @@ export default function RegistTournamentForm() {
           <Input />
         </Form.Item>
 
+        <p>Cơ cấu giải thưởng</p>
+        <Form.Item name="prizeStructure">
+          <TextArea rows={5} />
+        </Form.Item>
+        <p>Đơn vị tài trợ</p>
+        <Form.Item name="sponsor">
+          <TextArea rows={5} />
+        </Form.Item>
+
         <p>Ngày bắt đầu</p>
         <Form.Item
           name="startDate"
@@ -166,6 +191,14 @@ export default function RegistTournamentForm() {
           </Button>
         </Form.Item>
       </Form>
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Yêu cầu đặt sân sẽ được gửi đi và chờ được duyệt từ 1 tới 2 ngày</p>
+      </Modal>
     </>
   );
 }
