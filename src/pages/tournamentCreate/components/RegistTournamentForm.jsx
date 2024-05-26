@@ -3,18 +3,19 @@ import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { createTournamentAPI } from "../../../services/tournamentAPI/tournamentAPI";
 
 export default function RegistTournamentForm() {
   const centerID = useParams().centerID;
+  const [newTournament, setNewTournament] = useState({});
   const onFinish = (values) => {
     values.startDate = dayjs(values.startDate).format("YYYY-MM-DD");
     values.endDate = dayjs(values.endDate).format("YYYY-MM-DD");
-    console.log("Received values from form: ", {
-      centerID: centerID,
-      ...values,
-    });
+    values = { ...values, centerID: centerID };
+    setNewTournament(values);
     showModal();
   };
+
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +24,9 @@ export default function RegistTournamentForm() {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
+    const data = await createTournamentAPI(newTournament);
+    console.log("Received values from form: ", { data });
     setIsModalOpen(false);
   };
 
@@ -157,9 +160,11 @@ export default function RegistTournamentForm() {
           rules={[{ required: true, message: "Chọn ngày bắt đầu!" }]}
         >
           <DatePicker
+            defaultPickerValue={dayjs().add(7, "day")}
             disabledDate={(current) =>
               current &&
-              (current < dayjs().endOf("day") || (endDate && current > endDate))
+              (current < dayjs().add(7, "day").endOf("day") ||
+                (endDate && current > endDate))
             }
             onChange={(date) => setStartDate(date)}
           />
@@ -171,9 +176,10 @@ export default function RegistTournamentForm() {
           rules={[{ required: true, message: "Chọn ngày kết thúc!" }]}
         >
           <DatePicker
+            defaultPickerValue={dayjs().add(7, "day")}
             disabledDate={(current) =>
               current &&
-              (current < dayjs().endOf("day") ||
+              (current < dayjs().add(7, "day").endOf("day") ||
                 (startDate && current < startDate))
             }
             onChange={(date) => setEndDate(date)}

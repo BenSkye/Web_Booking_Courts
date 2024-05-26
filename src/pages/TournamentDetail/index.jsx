@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getTournamentAPI } from "../../services/tournamentAPI/getTournamentAPI";
+import { getTournamentAPI } from "../../services/tournamentAPI/tournamentAPI";
 
 export default function TournamentDetail() {
   const tournamentID = useParams().tournamentID;
