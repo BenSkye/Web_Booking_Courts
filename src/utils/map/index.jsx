@@ -1,65 +1,94 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-
-const GOOGLE_MAPS_API_KEY = '';
-
-const containerStyle = {
-  width: '100%',
-  height: '400px',
-};
+import ReactMapGL, { Marker, Popup } from 'react-map-gl';
+import mapboxgl from 'mapbox-gl';
+import MapboxClient from '@mapbox/mapbox-sdk';
+import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
+import { FaMapMarkerAlt } from 'react-icons/fa';
 
 const MyLocationMap = ({ address }) => {
-  const [location, setLocation] = useState(null);
-  const [error, setError] = useState(null);
+  const [viewport, setViewport] = useState({
+    latitude: 10.7769, // Tọa độ latitude của thành phố Hồ Chí Minh
+    longitude: 106.7009, // Tọa độ longitude của thành phố Hồ Chí Minh
+    zoom: 8, //
+  });
+  const [marker, setMarker] = useState(null);
+  const [popupInfo, setPopupInfo] = useState(null);
+  const [popupKey, setPopupKey] = useState(0); // Key riêng biệt cho Popup
+
+  const mapboxAccessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+  mapboxgl.accessToken = mapboxAccessToken;
 
   useEffect(() => {
     if (address) {
-      geocodeAddress(address);
-    }
-  }, [address]);
+      const mapboxClient = MapboxClient({ accessToken: mapboxAccessToken });
+      const geocodingService = Geocoding(mapboxClient);
 
-  const geocodeAddress = async (address) => {
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-          address
-        )}&key=${GOOGLE_MAPS_API_KEY}`
-      );
-      const data = await response.json();
-      console.log('Geocoding response:', data); // Debugging: log the response
-      if (data.status !== 'OK') {
-        setError(`Geocoding API error: ${data.status}`);
-        return;
-      }
-      if (data.results && data.results[0]) {
-        const { lat, lng } = data.results[0].geometry.location;
-        setLocation({ lat, lng });
-        setError(null);
-      } else {
-        setError('Geocoding API returned no results.');
-      }
-    } catch (err) {
-      console.error('Error fetching geocoding data:', err);
-      setError('Failed to fetch geocoding data.');
+      geocodingService
+        .forwardGeocode({
+          query: address,
+          limit: 1,
+        })
+        .send()
+        .then((response) => {
+          const match = response.body.features[0];
+          if (match) {
+            const [longitude, latitude] = match.center;
+            setMarker({ longitude, latitude });
+            setViewport((prevViewport) => ({
+              ...prevViewport,
+              latitude,
+              longitude,
+              zoom: 14,
+            }));
+            setPopupInfo({
+              longitude,
+              latitude,
+              address: match.place_name,
+            });
+          }
+        })
+        .catch((err) => {
+          console.error('Geocoding error:', err);
+        });
     }
+  }, [address, mapboxAccessToken]);
+
+  const togglePopup = () => {
+    // Thay đổi key của Popup khi muốn hiện/ẩn Popup
+    setPopupKey((prevKey) => prevKey + 1);
+    setPopupInfo(null); // Ẩn Popup
   };
 
   return (
-    <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-      {location ? (
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={location}
-          zoom={15}
-        >
-          <Marker position={location} />
-        </GoogleMap>
-      ) : (
-        <div>Loading map...</div>
-      )}
-      {address && <p>Address: {address}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </LoadScript>
+    <div style={{ width: '450px', height: '450px', margin: 'auto' }}>
+      <ReactMapGL
+        {...viewport}
+        width='100%'
+        height='100%'
+        mapboxAccessToken={mapboxAccessToken}
+        onMove={(evt) => setViewport(evt.viewState)}
+        mapStyle='mapbox://styles/mapbox/streets-v11'
+      >
+        {marker && (
+          <Marker longitude={marker.longitude} latitude={marker.latitude}>
+            <FaMapMarkerAlt style={{ color: 'red', fontSize: '24px' }} />
+          </Marker>
+        )}
+        {popupInfo && (
+          <Popup
+            key={popupKey}
+            longitude={popupInfo.longitude}
+            latitude={popupInfo.latitude}
+            closeButton={true}
+            closeOnClick={false}
+            onClose={() => setPopupInfo(null)}
+            anchor='top'
+          >
+            <div onClick={togglePopup}>{popupInfo.address}</div>
+          </Popup>
+        )}
+      </ReactMapGL>
+    </div>
   );
 };
 
