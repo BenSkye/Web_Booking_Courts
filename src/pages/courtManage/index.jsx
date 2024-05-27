@@ -42,6 +42,24 @@ export default function CourtManage() {
                   />
                 }
               >
+                <div style={{ marginBottom: "16px" }}>
+                  <p style={{
+                    margin: "8px 0",
+                    color: "#3f6600",
+                    fontWeight: "bold",
+                    fontSize: "16px"
+                  }}>
+                  Trạng thái duyệt bài: {data.approvalStatus}
+                  </p>
+                  <p style={{
+                    margin: "8px 0",
+                    color: "#d4380d",
+                    fontWeight: "bold",
+                    fontSize: "16px"
+                  }}>
+                  Trạng thái thanh toán: {data.paymentStatus}
+                  </p>
+                </div>
                 <Meta title={data.courtName} description={data.courtAddress} />
                 <Link to={`/courtManage/${data.id}`}>
                   <Button
@@ -49,9 +67,9 @@ export default function CourtManage() {
                       height: "50px",
                       width: "150px",
                       fontSize: "18px",
-                      margin: "auto", // Căn giữa button
-                      marginTop: "20px", // Tạo khoảng cách ở phía trên
-                      display: "block" // Đảm bảo button hiển thị dưới dạng block để margin: auto hoạt động
+                      margin: "auto", // Center the button
+                      marginTop: "20px", // Add space at the top
+                      display: "block", // Ensure the button is displayed as a block to center it
                     }}
                   >
                     Xem chi tiết
