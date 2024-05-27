@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x, 18.x]  # Run jobs for both Node.js versions
+        node-version: ['16.x', '18.x']  # Run jobs for Node.js 16.x and 18.x
 
     steps:
       - name: Checkout repository
@@ -42,17 +42,27 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
+          name: artifact-${{ matrix.node-version }}-${{ github.run_id }}  # Add a unique name
 
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Download artifact
+      - name: Download artifact for Node.js 16.x
         uses: actions/download-pages-artifact@v1
+        with:
+          name: artifact-16.x-${{ github.run_id }}
+          path: ./dist/16
+
+      - name: Download artifact for Node.js 18.x
+        uses: actions/download-pages-artifact@v1
+        with:
+          name: artifact-18.x-${{ github.run_id }}
+          path: ./dist/18
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          path: ./dist/16  # Deploy using artifacts from Node.js 16.x
+          # You can switch to ./dist/18 to deploy using artifacts from Node.js 18.x
