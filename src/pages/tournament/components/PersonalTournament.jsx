@@ -1,10 +1,13 @@
 import { Button, Card, Modal, Pagination, Skeleton } from "antd";
 import { useEffect, useState } from "react";
-import { getAllTournamentAPI } from "../../../services/tournamentAPI/tournamentAPI";
+import {
+  getAllTournamentAPI,
+  getPersonalTournamentAPI,
+} from "../../../services/tournamentAPI/tournamentAPI";
 import TournamentDetail from "../../TournamentDetail";
 
 const pageSize = 3;
-export default function HistoryTournament() {
+export default function PersonalTournament() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tournamentId, setTournamentId] = useState();
   const showModal = (tournamentId) => {
@@ -16,14 +19,29 @@ export default function HistoryTournament() {
     setIsModalOpen(false);
   };
 
+  const getColorByStatus = (status) => {
+    switch (status) {
+      case "Ongoing":
+        return "green";
+      case "Pending":
+        return "orange";
+      case "Accepted":
+        return "blue";
+      case "Completed":
+        return "gray";
+      case "Rejected":
+        return "red";
+      default:
+        return "black";
+    }
+  };
   const [currentPage, setCurrentPage] = useState(1);
   const [ListTournament, setListTournament] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const getCourts = async () => {
       setLoading(true);
-      const data = await getAllTournamentAPI();
-      console.log("top 4", data);
+      const data = await getPersonalTournamentAPI();
       setListTournament(data);
       setLoading(false);
     };
@@ -34,7 +52,6 @@ export default function HistoryTournament() {
   };
   return (
     <div>
-      <h1>Các giải đấu đã được tổ chức</h1>
       {loading
         ? [1, 2, 3].map((key) => (
             <Card
@@ -62,7 +79,14 @@ export default function HistoryTournament() {
           ).map((tournament, index) => (
             <Card
               key={index}
-              title={tournament.tournamentName}
+              title={
+                <span>
+                  {tournament.tournamentName + " "}
+                  <span style={{ color: getColorByStatus(tournament.status) }}>
+                    {tournament.status}
+                  </span>
+                </span>
+              }
               extra={
                 // <Link to={`/tournament/detail/${tournament.id}`}>Chi tiết</Link>
                 <Button type="link" onClick={() => showModal(tournament.id)}>
