@@ -1,8 +1,23 @@
-import { Button, Space } from "antd";
-import React from "react";
+import { Button, Modal, Space } from "antd";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import PersonalTournament from "../components/PersonalTournament";
 
 export default function ButtonRouter() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div
       style={{
@@ -20,6 +35,7 @@ export default function ButtonRouter() {
             "linear-gradient(90deg, rgba(252,148,69,1) 0%, rgba(131,58,180,1) 100%)",
           color: "black",
         }}
+        onClick={() => showModal()}
       >
         Xem các Giải đấu mà bạn đã tạo
       </Button>
@@ -41,6 +57,15 @@ export default function ButtonRouter() {
           Tiến hành đăng ký tạo giải đấu
         </Button>
       </Link>
+
+      <Modal
+        title="Giải đấu bạn đã tạo"
+        open={isModalOpen}
+        footer={null}
+        onCancel={handleOk}
+      >
+        <PersonalTournament />
+      </Modal>
     </div>
   );
 }

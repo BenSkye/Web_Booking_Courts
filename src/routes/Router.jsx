@@ -30,10 +30,10 @@ function Routing() {
           path="/tournament/create/:centerID"
           element={<RegistTournamentForm />}
         />
-        <Route
+        {/* <Route
           path="/tournament/detail/:tournamentID"
           element={<TournamentDetail />}
-        />
+        /> */}
         <Route path="/bookingdetail/:id" element={<BookingDetail />} />
         <Route path="/user" element={<ProfileAccount />} />
         <Route path="/user/my-account" element={<ProfileAccount />} />
