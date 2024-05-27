@@ -23,3 +23,17 @@ export const fetchDataMockAPI = async (url) => {
   }
   return [];
 };
+
+export const postData = async (url, data) => {
+  try {
+    const response = await axios.post(url, data);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.error("Error posting data:", response.status);
+    }
+  } catch (error) {
+    console.error("Error posting data:", error.message);
+  }
+  return null;
+};

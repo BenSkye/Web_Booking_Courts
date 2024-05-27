@@ -14,8 +14,10 @@ import {
   Divider,
   Carousel,
   Empty,
+  Modal,
 } from 'antd';
-import MyLocationMap from '../../../../../utils/map';
+import { FaMapMarkerAlt } from 'react-icons/fa';
+import MyLocationMap from '@/utils/map';
 import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
 
 const { Step } = Steps;
@@ -29,6 +31,15 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   const [duration, setDuration] = useState(null);
   const [selectedCourts, setSelectedCourts] = useState([]);
   const [center, setCenter] = useState({});
+  const [showModal, setShowModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   const availableCourts = [
     { id: 1, name: 'Sân 1', price: '200000' },
@@ -233,7 +244,6 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center',
                 height: '150px',
                 width: '100%',
               }}
@@ -242,9 +252,13 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                 <div style={{ width: '100%' }}>
                   {center.nameCenter && <strong>{center.nameCenter}</strong>}
                 </div>
-                <div style={{ width: '100%' }}>
-                  {center.addressCenter && <p>{center.addressCenter}</p>}
-                </div>
+                <a style={{ width: '100%' }} onClick={handleOpenModal}>
+                  {center.addressCenter && (
+                    <p>
+                      {center.addressCenter} <FaMapMarkerAlt />
+                    </p>
+                  )}
+                </a>
               </Col>
               <Col span={12}>
                 <Carousel autoplay>
@@ -292,7 +306,11 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                 <Divider />
               </>
             )}
-
+            <div>
+              <strong style={{ fontSize: '20px' }}>
+                Tổng tiền: {formatPrice(calculateTotalPrice())} đ
+              </strong>
+            </div>
             <Flex
               style={{ marginTop: 16 }}
               align='center'
@@ -306,18 +324,20 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
               >
                 Thanh toán
               </Button>
-              <strong style={{ fontSize: '20px' }}>
-                Tổng tiền: {formatPrice(calculateTotalPrice())} đ
-              </strong>
             </Flex>
           </Card>
         </Col>
       </Row>
-      <MyLocationMap
-        address={
-          '456 Đường Lê Thánh Tôn, Phường Bến Thành, Quận 1, TPHCM, Việt Nam'
-        }
-      />
+      <Modal
+        visible={showModal}
+        title='Vị trí'
+        onCancel={handleCloseModal}
+        footer={null}
+        centered
+        style={{ height: '80vh' }} // Thiết lập chiều cao của modal
+      >
+        <MyLocationMap address={center.addressCenter} />
+      </Modal>
     </div>
   );
 }
