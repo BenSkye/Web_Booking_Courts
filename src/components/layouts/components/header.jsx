@@ -1,63 +1,82 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, Avatar, Dropdown, Space } from 'antd';
-import { MdArrowDropDown } from 'react-icons/md';
-import { CgProfile } from 'react-icons/cg';
-import { GiTennisCourt } from 'react-icons/gi';
-import logo from '@/assets/logonew.png';
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, Avatar, Dropdown, Space } from "antd";
+import { MdArrowDropDown } from "react-icons/md";
+import { CgProfile } from "react-icons/cg";
+import { GiTennisCourt } from "react-icons/gi";
+import { FaUserPlus } from "react-icons/fa";
+import logo from "@/assets/logonew.png";
 
 const items = [
   //Items for the dropdown Profile
   {
     label: (
-      <Link to='/login'>
+      <Link to="/login">
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'start',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "start",
           }}
         >
-          <CgProfile size='20px' />
+          <CgProfile size="20px" />
           <>Đăng nhập</>
         </div>
       </Link>
     ),
-    key: '0',
+    key: "0",
   },
 
   {
     label: (
-      <Link to='/signup'>
+      <Link to="/signup">
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'start',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "start",
           }}
         >
-          <GiTennisCourt size='20px' />
+          <FaUserPlus size="20px" />
           <>Đăng ký</>
         </div>
       </Link>
     ),
-    key: '1',
+    key: "1",
   },
   {
     label: (
-      <Link to='/user'>
+      <Link to="/user">
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'start',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "start",
           }}
         >
-          <GiTennisCourt size='20px' />
+          <GiTennisCourt size="20px" />
           <>Thông tin cá nhân</>
-        </div></Link>
+        </div>
+      </Link>
     ),
-    key: '2',
+    key: "2",
+  },
+  {
+    label: (
+      <Link to="/courtManage">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "start",
+          }}
+        >
+          <GiTennisCourt size="20px" />
+          <>Sân của bạn</>
+        </div>
+      </Link>
+    ),
+    key: "3",
   },
   // {
   //   label: (
@@ -79,18 +98,18 @@ const items = [
 
 const menuItems = [
   {
-    key: '1',
-    label: 'Tìm sân',
-    path: '/',
+    key: "1",
+    label: "Tìm sân",
+    path: "/",
   },
-  { key: '2', label: 'Giới thiệu', path: '/aboutUs' },
-  { key: '3', label: 'Đăng kí đối tác', path: '/partner' },
-  { key: '4', label: 'Đăng kí giải', path: '/tournament' },
-  { key: '5', label: 'Đăng kí gói', path: '/registerPackageCourt' },
+  { key: "2", label: "Giới thiệu", path: "/aboutUs" },
+  { key: "3", label: "Đăng kí đối tác", path: "/partner" },
+  { key: "4", label: "Đăng kí giải", path: "/tournament" },
+  { key: "5", label: "Đăng kí gói", path: "/registerPackageCourt" },
 ];
 
 export default function HeaderLayout() {
-  const [selectedKey, setSelectedKey] = useState('');
+  const [selectedKey, setSelectedKey] = useState("");
   const location = useLocation();
   useEffect(() => {
     // Lấy đường dẫn hiện tại từ useLocation và tìm kiếm nó trong menuItems
@@ -108,21 +127,21 @@ export default function HeaderLayout() {
           width={60}
           height={60}
           src={logo}
-          className='demo-logo'
-          style={{ margin: '4px 4px' }}
+          className="demo-logo"
+          style={{ margin: "4px 4px" }}
         />
         <Menu
-          mode='horizontal'
+          mode="horizontal"
           selectedKeys={[selectedKey]}
           style={{
             flex: 1,
             minWidth: 0,
-            fontSize: '24px',
-            background: '#141414',
+            fontSize: "24px",
+            background: "#141414",
           }}
         >
           {menuItems.map((item) => (
-            <Menu.Item key={item.key} style={{ color: 'white' }}>
+            <Menu.Item key={item.key} style={{ color: "white" }}>
               <Link to={item.path}>{item.label}</Link>
             </Menu.Item>
           ))}
@@ -137,14 +156,14 @@ export default function HeaderLayout() {
         <a onClick={(e) => e.preventDefault()}>
           <Space>
             <Avatar
-              size='large'
-              src='https://api.dicebear.com/7.x/miniavs/svg?seed=1'
-              style={{ background: 'white', height: '50px', width: '50px' }}
+              size="large"
+              src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"
+              style={{ background: "white", height: "50px", width: "50px" }}
             />
             <MdArrowDropDown
-              style={{ display: 'flex', alignItems: 'center' }}
-              color='white'
-              size='30px'
+              style={{ display: "flex", alignItems: "center" }}
+              color="white"
+              size="30px"
             />
           </Space>
         </a>

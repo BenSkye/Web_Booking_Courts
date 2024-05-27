@@ -1,6 +1,6 @@
 import { Card, Col, Pagination, Skeleton } from "antd";
 import { useEffect, useState } from "react";
-import { getAllTournamentAPI } from "../../../services/tournamentAPI/getTournamentAPI";
+import { getAllTournamentAPI } from "../../../services/tournamentAPI/tournamentAPI";
 import { Link } from "react-router-dom";
 
 const pageSize = 3;
