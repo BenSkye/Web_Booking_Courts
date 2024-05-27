@@ -38,6 +38,7 @@ function Routing() {
         <Route path="/user" element={<ProfileAccount />} />
         <Route path="/user/my-account/:id" element={<ProfileAccount/>} />
         <Route path="/user/update-password/:id" element={<UpdatePassword/>} />
+        <Route path="/user/bill" element={<ProfileAccount/>} />
         <Route
           path="/registerPackageCourt"
           element={<RegisterPackageCourt />}
