@@ -17,7 +17,7 @@ import CourtManage from "@/pages/courtManage";
 import TournamentDetail from "../pages/TournamentDetail";
 import CourtManageDetail from "../pages/courtManage/courtManageDetail";
 
-import UpdatePassword from '../pages/updatePassword/index';
+import UpdatePassword from "../pages/updatePassword/index";
 function Routing() {
   return (
     <Routes>
@@ -38,9 +38,9 @@ function Routing() {
         /> */}
         <Route path="/bookingdetail/:id" element={<BookingDetail />} />
         <Route path="/user" element={<ProfileAccount />} />
-        <Route path="/user/my-account/:id" element={<ProfileAccount/>} />
-        <Route path="/user/update-password/:id" element={<UpdatePassword/>} />
-        <Route path="/user/bill" element={<ProfileAccount/>} />
+        <Route path="/user/my-account/:id" element={<ProfileAccount />} />
+        <Route path="/user/update-password/:id" element={<UpdatePassword />} />
+        <Route path="/user/bill" element={<ProfileAccount />} />
         <Route
           path="/registerPackageCourt"
           element={<RegisterPackageCourt />}

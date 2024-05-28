@@ -1,11 +1,14 @@
-import Home from '@/pages/home';
-import Routing from '@/routes/Router';
+import Home from "@/pages/home";
+import Routing from "@/routes/Router";
+import { AuthProvider } from "@/services/authAPI/authProvideAPI";
 
 function App() {
   return (
-    <Routing>
-      <Home />
-    </Routing>
+    <AuthProvider>
+      <Routing>
+        <Home />
+      </Routing>
+    </AuthProvider>
   );
 }
 

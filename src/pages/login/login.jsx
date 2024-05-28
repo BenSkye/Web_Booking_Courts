@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Checkbox, Form, Input, Row, Col, Typography } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png"; // Chỉnh lại đường dẫn cho phù hợp với cấu trúc thư mục của bạn
-import  LoginByGoogle  from "../loginGoogle/loginGoogle";
+import LoginByGoogle from "../loginGoogle/loginGoogle";
+import AuthContext from "@/services/authAPI/authProvideAPI";
 
 const { Text } = Typography;
 
 const Login = () => {
   const [registerClicked, setRegisterClicked] = useState(false);
-
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   const onFinish = (values) => {
-    
-    console.log("Success:", values);
+    const result = login(values.username, values.password);
+    if (result) {
+      navigate("/");
+    } else {
+      console.log("Login failed");
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -101,12 +107,10 @@ const Login = () => {
               Submit
             </Button>
           </Form.Item>
-        
+
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-           <LoginByGoogle/>
+            <LoginByGoogle />
           </Form.Item>
-      
-          
         </Form>
         <div style={{ textAlign: "center" }}>
           <Text>
