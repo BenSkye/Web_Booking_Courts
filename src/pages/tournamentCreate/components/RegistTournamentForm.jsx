@@ -198,12 +198,14 @@ export default function RegistTournamentForm() {
         </Form.Item>
       </Form>
       <Modal
-        title="Basic Modal"
+        title="Gửi yêu cầu đặt sân"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <p>Yêu cầu đặt sân sẽ được gửi đi và chờ được duyệt từ 1 tới 2 ngày</p>
+        <p>
+          Yêu cầu đặt sân sẽ được gửi đi và chờ chủ sân duyệt từ 1 tới 2 ngày
+        </p>
       </Modal>
     </>
   );

@@ -22,13 +22,13 @@ export const getAllTournamentAPI = async () => {
 
 export const getPersonalTournamentAPI = async () => {
   const data = await fetchDataMockAPI(
-    "https://664e992dfafad45dfae087c5.mockapi.io/Tournament"
+    "https://664e992dfafad45dfae087c5.mockapi.io/Tournament?userId=1"
   );
   if (Array.isArray(data)) {
     const statusOrder = [
       "Ongoing",
-      "Pending",
       "Accepted",
+      "Pending",
       "Completed",
       "Rejected",
     ];
