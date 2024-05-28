@@ -61,7 +61,7 @@ export default function CourtManage() {
                   </p>
                 </div>
                 <Meta title={data.courtName} description={data.courtAddress} />
-                <Link to={`/courtManage/${data.id}`}>
+                <Link to={`/courtManage/detail/${data.id}`}>
                   <Button
                     style={{
                       height: "50px",

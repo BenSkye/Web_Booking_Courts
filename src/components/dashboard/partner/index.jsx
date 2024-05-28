@@ -35,8 +35,8 @@ function Partner() {
     // Add default values for approvalStatus and paymentStatus
     const updatedValues = {
       ...values,
-      approvalStatus: "waiting",
-      paymentStatus: "Wait for pay",
+      approvalStatus: "Chờ đợi phê duyệt",
+      paymentStatus: "Chờ thanh toán",
     };
 
     // Call API to submit form data
