@@ -20,12 +20,13 @@ import {
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import MyLocationMap from '@/utils/map';
 import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
+
 import {
   addToCart,
   removeFromCart,
   updateTotalPrice,
   setCenter,
-} from '../../../../../../redux/actions/cartActions';
+} from '../../../../../../../redux/actions/cartActions';
 
 const { Step } = Steps;
 const { Option } = Select;
