@@ -43,7 +43,7 @@ export default function CenterCard({ center }) {
           <Avatar src="https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg" />
         }
         title={center.nameCenter}
-        description={center.locationCenter}
+        description={center.districtCenter}
       />
       <div
         style={{

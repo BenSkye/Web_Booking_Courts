@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom'; // Import the Link component from react
 
 const { Text } = Typography;
 
+
+
+
 const onFinish = (values) => {
     console.log('Success:', values);
 };
@@ -106,6 +109,7 @@ const SignUp = () => (
                         Register
                     </Button>
                 </Form.Item>
+            
             </Form>
             <div style={{ textAlign: 'center' }}>
                 <Text>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   DatePicker,
@@ -20,17 +21,26 @@ import { FaMapMarkerAlt } from 'react-icons/fa';
 import MyLocationMap from '@/utils/map';
 import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
 
+import {
+  addToCart,
+  removeFromCart,
+  updateTotalPrice,
+  setCenter,
+} from '../../../../../../../redux/actions/cartActions';
+
 const { Step } = Steps;
 const { Option } = Select;
 
 // eslint-disable-next-line react/prop-types
 export default function PickTimeBooking({ checkOut, idCenter }) {
+  const dispatch = useDispatch();
+  const { selectedCourts, center, totalPrice } = useSelector(
+    (state) => state.cart
+  );
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedDate, setSelectedDate] = useState(null);
   const [startTime, setStartTime] = useState(null);
   const [duration, setDuration] = useState(null);
-  const [selectedCourts, setSelectedCourts] = useState([]);
-  const [center, setCenter] = useState({});
   const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {
@@ -60,25 +70,21 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
     }
   }, [selectedDate, startTime, duration]);
 
-  const addToCart = (court) => {
-    if (
-      !selectedCourts.some((selectedCourt) => selectedCourt.id === court.id)
-    ) {
-      setSelectedCourts((prev) => [...prev, court]);
-    }
+  const handleAddToCart = (court) => {
+    dispatch(addToCart(court));
   };
 
-  const removeFromCart = (courtId) => {
-    setSelectedCourts((prev) => prev.filter((court) => court.id !== courtId));
+  const handleRemoveFromCart = (court) => {
+    dispatch(removeFromCart(court));
   };
 
   useEffect(() => {
     const getCourts = async (id) => {
       const data = await getCenterByIdAPI(id);
-      setCenter(data);
+      dispatch(setCenter(data));
     };
     getCourts(idCenter);
-  }, [idCenter]);
+  }, [idCenter, dispatch]);
 
   const formatPrice = (price) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -90,6 +96,11 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
       0
     );
   };
+
+  useEffect(() => {
+    // Dispatch action để cập nhật tổng giá tiền mỗi khi có thay đổi trong giỏ hàng
+    dispatch(updateTotalPrice(calculateTotalPrice()));
+  }, [selectedCourts]);
 
   return (
     <div>
@@ -165,7 +176,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                     >
                       {durationOptions.map((duration) => (
                         <Option key={duration} value={duration}>
-                          {duration} giờ {duration > 1 ? 's' : ''}
+                          {duration} giờ
                         </Option>
                       ))}
                     </Select>
@@ -214,7 +225,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                                 <Col>
                                   <Button
                                     type='primary'
-                                    onClick={() => addToCart(court)}
+                                    onClick={() => handleAddToCart(court)}
                                     disabled={selectedCourts.some(
                                       (selectedCourt) =>
                                         selectedCourt.id === court.id
@@ -293,7 +304,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                         // eslint-disable-next-line react/jsx-key
                         <Button
                           type='link'
-                          onClick={() => removeFromCart(court.id)}
+                          onClick={() => handleRemoveFromCart(court.id)}
                         >
                           Xóa
                         </Button>,
@@ -308,7 +319,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
             )}
             <div>
               <strong style={{ fontSize: '20px' }}>
-                Tổng tiền: {formatPrice(calculateTotalPrice())} đ
+                Tổng tiền: {formatPrice(totalPrice)} đ
               </strong>
             </div>
             <Flex

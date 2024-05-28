@@ -6,7 +6,36 @@ export const getAllTournamentAPI = async () => {
     "https://664e992dfafad45dfae087c5.mockapi.io/Tournament"
   );
   if (Array.isArray(data)) {
-    return data; // Đảm bảo trả về mảng
+    const filteredData = data.filter(
+      (tournament) =>
+        tournament.status === "Completed" || tournament.status === "Ongoing"
+    );
+    const sortedData = filteredData.sort((a, b) =>
+      a.status === b.status ? 0 : a.status === "Ongoing" ? -1 : 1
+    );
+    return sortedData;
+  } else {
+    console.error("Invalid data format:", data);
+    return [];
+  }
+};
+
+export const getPersonalTournamentAPI = async () => {
+  const data = await fetchDataMockAPI(
+    "https://664e992dfafad45dfae087c5.mockapi.io/Tournament?userId=1"
+  );
+  if (Array.isArray(data)) {
+    const statusOrder = [
+      "Ongoing",
+      "Accepted",
+      "Pending",
+      "Completed",
+      "Rejected",
+    ];
+    const sortedData = data.sort((a, b) => {
+      return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+    });
+    return sortedData;
   } else {
     console.error("Invalid data format:", data);
     return [];
