@@ -38,18 +38,15 @@ export default function BookingByDate({ id }) {
 
   return (
     <div>
-      <p>ID sân: {id}</p>
-      <>
-        <Steps
-          current={currentStep}
-          style={{ width: '100%', margin: 'auto', fontWeight: 'bold' }}
-        >
-          {steps.map((item) => (
-            <Step key={item.title} title={item.title} icon={item.icon} />
-          ))}
-        </Steps>
-        <div style={{ width: '100%' }}>{steps[currentStep].content}</div>
-      </>
+      <Steps
+        current={currentStep}
+        style={{ width: '100%', margin: 'auto', fontWeight: 'bold' }}
+      >
+        {steps.map((item) => (
+          <Step key={item.title} title={item.title} icon={item.icon} />
+        ))}
+      </Steps>
+      <div style={{ width: '100%' }}>{steps[currentStep].content}</div>
     </div>
   );
 }

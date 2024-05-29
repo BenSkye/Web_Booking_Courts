@@ -5,6 +5,7 @@ import SearchBar from '@/pages/home/components/searchBar';
 import CardLoader from '@/utils/loader/skeletonLoader/loaderCard';
 import NoImg from '@/assets/noImg.jpg';
 import { getAllCenterAPI } from '@/services/centersAPI/getCenters';
+import GetAllLocationCenter from '../../utils/getAllCenterMap';
 
 const { Meta } = Card;
 
@@ -13,13 +14,13 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getCourts = async () => {
+    const getCenters = async () => {
       setLoading(true);
       const data = await getAllCenterAPI();
       setCenters(data);
       setLoading(false);
     };
-    getCourts();
+    getCenters();
   }, []);
 
   const handleImageError = (e) => {
@@ -33,6 +34,9 @@ export default function Home() {
         margin: '0 auto',
       }}
     >
+      <Col span={24}>
+        <GetAllLocationCenter locations={centers} />
+      </Col>
       <Col span={24}>
         <SearchBar />
       </Col>
