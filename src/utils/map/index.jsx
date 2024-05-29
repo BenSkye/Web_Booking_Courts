@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ReactMapGL, { Marker, Popup } from 'react-map-gl';
 import mapboxgl from 'mapbox-gl';
 import MapboxClient from '@mapbox/mapbox-sdk';
