@@ -1,5 +1,14 @@
 import React, { useContext, useState } from "react";
-import { Button, Checkbox, Form, Input, Row, Col, Typography } from "antd";
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Row,
+  Col,
+  Typography,
+  message,
+} from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png"; // Chỉnh lại đường dẫn cho phù hợp với cấu trúc thư mục của bạn
 import LoginByGoogle from "../loginGoogle/loginGoogle";
@@ -12,11 +21,11 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
   const onFinish = (values) => {
-    const result = login(values.username, values.password);
+    const result = login(values.email, values.password);
     if (result) {
       navigate("/");
     } else {
-      console.log("Login failed");
+      message.error("Email hoặc mật khẩu không đúng!");
     }
   };
 
@@ -46,7 +55,7 @@ const Login = () => {
       </Col>
       <Col xs={24} sm={24} md={12} lg={8} xl={6}>
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <h1>CourtArena</h1>
+          <h1>RacketRise</h1>
         </div>
         <Form
           name="basic"
@@ -59,12 +68,12 @@ const Login = () => {
           style={{ maxWidth: 400, margin: "auto" }}
         >
           <Form.Item
-            label="Tài khoản"
-            name="username"
+            label="Email"
+            name="email"
             rules={[
               {
                 required: registerClicked,
-                message: "Please input your username!",
+                message: "vui lòng nhập email!",
               },
             ]}
           >
@@ -77,7 +86,7 @@ const Login = () => {
             rules={[
               {
                 required: registerClicked,
-                message: "Please input your password!",
+                message: "vui lòng nhập mật khẩu!",
               },
             ]}
           >

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, Avatar, Dropdown, Space, Button } from "antd";
 import { MdArrowDropDown } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
@@ -16,7 +16,11 @@ import AuthContext from "../../../services/authAPI/authProvideAPI";
 export default function HeaderLayout() {
   const { user } = useContext(AuthContext);
   const { logout } = useContext(AuthContext);
-
+  const navigate = useNavigate();
+  const logouthander = () => {
+    logout();
+    navigate("/");
+  };
   const itemsManager = [
     //Items for the dropdown Profile
     {
@@ -61,7 +65,7 @@ export default function HeaderLayout() {
             alignItems: "center",
             justifyContent: "start",
           }}
-          onClick={logout}
+          onClick={logouthander}
         >
           <CiLogout size="20px" />
           <>Đăng xuất</>
@@ -131,7 +135,7 @@ export default function HeaderLayout() {
             alignItems: "center",
             justifyContent: "start",
           }}
-          onClick={logout}
+          onClick={logouthander}
         >
           <CiLogout size="20px" />
           <>Đăng xuất</>
@@ -154,7 +158,7 @@ export default function HeaderLayout() {
     { key: "5", label: "Đăng kí gói", path: "/registerPackageCourt" },
   ];
   const menuItemsManager = [
-    { key: "1", label: "Tổng quan", path: "/" },
+    { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
     { key: "2", label: "Lịch hoạt động", path: "/" },
     { key: "3", label: "Yêu cầu tổ chức giải", path: "/" },
     { key: "4", label: "Thông tin sân", path: "/" },

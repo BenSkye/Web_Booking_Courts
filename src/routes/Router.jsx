@@ -18,6 +18,7 @@ import TournamentDetail from "../pages/TournamentDetail";
 import CourtManageDetail from "../pages/courtManage/courtManageDetail";
 
 import UpdatePassword from "../pages/updatePassword/index";
+import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 function Routing() {
   return (
     <Routes>
@@ -47,6 +48,7 @@ function Routing() {
         />
         <Route path="/courtManage" element={<CourtManage />} />
         <Route path="/courtManage/detail/:id" element={<CourtManageDetail />} />
+        <Route path="/courtManage/Dashboard" element={<ManagerDashboar />} />
       </Route>
 
       <Route path="/login" element={<Login />} />
