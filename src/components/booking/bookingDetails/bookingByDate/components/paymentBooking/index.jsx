@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux';
 import { List, Card, Row, Col, Divider } from 'antd';
-import VNPayPaymentForm from '@/components/booking/bookingDetails/components/paymentBooking/components/vnpayForm';
+import VNPayPaymentForm from '@/components/booking/bookingDetails/bookingByDate/components/paymentBooking/components/vnPayForm';
 
+// eslint-disable-next-line react/prop-types
 export default function PaymentBooking({ setCurrentStep }) {
   const { selectedCourts, center, totalPrice } = useSelector(
     (state) => state.cart

@@ -7,6 +7,7 @@ import {
 import TournamentDetail from "../../TournamentDetail";
 
 const pageSize = 3;
+
 export default function PersonalTournament() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tournamentId, setTournamentId] = useState();

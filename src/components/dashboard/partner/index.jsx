@@ -7,22 +7,40 @@ import {
   Upload,
   message,
   InputNumber,
+  TimePicker,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { TimePicker } from "antd";
-const { TextArea } = Input;
 import { useNavigate } from "react-router-dom";
 import { submitForm } from "../../../services/partnerAPI/index.js";
+
+const { TextArea } = Input;
+const { RangePicker } = TimePicker;
 
 function Partner() {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-  const onFinish = (values) => {
+
+  const onFinish = async (values) => {
+    setSubmitting(true);
     console.log("Form values: ", values);
     console.log("Uploaded files: ", fileList);
+
+    // Convert file objects to Base64 strings or prepare FormData
+    const images = await Promise.all(
+      fileList.map((file) => getBase64(file.originFileObj))
+    );
+
+    // Add default values for approvalStatus and paymentStatus
+    const updatedValues = {
+      ...values,
+      approvalStatus: "Chờ đợi phê duyệt",
+      paymentStatus: "Chờ thanh toán",
+    };
+
     // Call API to submit form data
-    submitForm(values)
+    submitForm(updatedValues)
       .then((response) => {
         message.success("Form submitted successfully!");
         navigate("/courtManage");
@@ -30,20 +48,25 @@ function Partner() {
       .catch((error) => {
         message.error("There was an error submitting the form");
         console.error(error);
+      })
+      .finally(() => {
+        setSubmitting(false); // Enable the button again
       });
   };
+
   const handleUploadChange = ({ fileList }) => {
-    form.setFieldsValue({ images: fileList }); // update form value
+    setFileList(fileList);
+    form.setFieldsValue({ images: fileList });
   };
+
   const handleBeforeUpload = (file) => {
     const isImage = file.type.startsWith("image/");
     if (!isImage) {
       message.error("You can only upload image files!");
     }
-    return isImage ? true : Upload.LIST_IGNORE; // return Upload.LIST_IGNORE if not image
+    return isImage ? true : Upload.LIST_IGNORE;
   };
 
-  const { RangePicker } = TimePicker;
   const validateRange = (_, value) => {
     if (!value || value.length !== 2) {
       return Promise.reject(new Error("Giờ hoạt động là bắt buộc"));
@@ -55,6 +78,15 @@ function Partner() {
       );
     }
     return Promise.resolve();
+  };
+
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   return (
@@ -104,15 +136,6 @@ function Partner() {
           >
             <Input type="email" placeholder="Địa chỉ email của bạn" />
           </Form.Item>
-          {/* <Form.Item
-            name="contactAddress"
-            label="Địa chỉ liên lạc"
-            rules={[
-              { required: true, message: "Địa chỉ liên lạc là bắt buộc" },
-            ]}
-          >
-            <Input placeholder="Địa chỉ liên lạc của bạn" />
-          </Form.Item> */}
         </Form.Item>
 
         {/* Section 2: Thông Tin Về Sân Cầu Lông */}
@@ -147,21 +170,9 @@ function Partner() {
           >
             <InputNumber placeholder="Số lượng sân (nhập số)" />
           </Form.Item>
-
-          {/* <Form.Item
-            name="courtType"
-            label="Loại sân"
-            rules={[{ required: true, message: "Loại sân là bắt buộc" }]}
-          >
-            <Checkbox.Group>
-              <Checkbox value="indoor">Sân trong nhà</Checkbox>
-              <Checkbox value="outdoor">Sân ngoài trời</Checkbox>
-            </Checkbox.Group>
-          </Form.Item> */}
         </Form.Item>
 
         {/* Section 3: Hình ảnh khu sân cầu lông */}
-
         <Form.Item
           name="images"
           valuePropName="fileList"
@@ -181,8 +192,8 @@ function Partner() {
           <Upload
             listType="picture"
             onChange={handleUploadChange}
-            beforeUpload={handleBeforeUpload} // use handleBeforeUpload
-            multiple // allow multiple files
+            beforeUpload={handleBeforeUpload}
+            multiple
           >
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
@@ -226,15 +237,6 @@ function Partner() {
 
         {/* Section 5: Chính Sách và Quy Định */}
         <Form.Item label="5. Chính Sách và Quy Định">
-          {/* <Form.Item
-            name="cancellationPolicy"
-            label="Chính sách hủy đặt sân"
-            rules={[
-              { required: true, message: "Chính sách hủy đặt sân là bắt buộc" },
-            ]}
-          >
-            <TextArea placeholder="Chính sách hủy đặt sân, Ví dụ: không được hoàn tiền nếu huỷ đặt sân" />
-          </Form.Item> */}
           <Form.Item
             name="usagePolicy"
             label="Quy định sử dụng sân"
@@ -244,20 +246,6 @@ function Partner() {
           >
             <TextArea placeholder="Quy định sử dụng sân, Ví dụ: phải có giày thể thao thì mới được vào sân" />
           </Form.Item>
-
-          {/* <Form.Item
-            name="paymentMethods"
-            label="Thông tin thanh toán"
-            rules={[
-              { required: true, message: "Thông tin thanh toán là bắt buộc" },
-            ]}
-          >
-            <Checkbox.Group>
-              <Checkbox value="bankTransfer">Chuyển khoản ngân hàng</Checkbox>
-              <Checkbox value="eWallet">Ví điện tử</Checkbox>
-              <Input placeholder="các thanh toán khác" />
-            </Checkbox.Group>
-          </Form.Item> */}
         </Form.Item>
 
         {/* Section 6: Thông Tin Bổ Sung Khác */}
@@ -268,16 +256,15 @@ function Partner() {
           >
             <TextArea placeholder="nhập giới thiệu" rows={4} />
           </Form.Item>
-          {/* <Form.Item
-            name="promotions"
-            label="Chương trình khuyến mãi hoặc ưu đãi"
-          >
-            <TextArea placeholder="nhập chương trình khuyến mãi" rows={4} />
-          </Form.Item> */}
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" className="submit-btn">
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="submit-btn"
+            disabled={submitting}
+          >
             Hoàn thành (tạo sân cầu lông đầu tiên của bạn)
           </Button>
         </Form.Item>
