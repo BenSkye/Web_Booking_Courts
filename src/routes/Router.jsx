@@ -1,20 +1,23 @@
-import { Routes, Route } from 'react-router-dom';
-import LayoutMain from '@/components/layouts';
-import Home from '@/pages/home';
-import AboutUs from '@/components/dashboard/aboutUs';
-import Partner from '@/components/dashboard/partner';
-import Tournament from '@/pages/tournament';
-import Login from '@/pages/login/login';
-import SignUp from '@/pages/login/signup';
-import Detail from '@/pages/detail/detail';
-import BookingDetail from '@/components/booking/bookingDetails';
-import ProfileAccount from '@/pages/profileAccount';
-import AccountSettingsForm from '@/pages/accountInformation';
-import RegisterPackageCourt from '@/components/registerPackageCourt';
-import TournamentCreate from '@/pages/tournamentCreate';
-import RegistTournamentForm from '@/pages/tournamentCreate/components/RegistTournamentForm';
-import CourtManage from '@/pages/courtManage';
-import TournamentDetail from '../pages/TournamentDetail';
+
+import { Routes, Route } from "react-router-dom";
+import LayoutMain from "@/components/layouts";
+import Home from "@/pages/home";
+import AboutUs from "@/components/dashboard/aboutUs";
+import Partner from "@/components/dashboard/partner";
+import Tournament from "@/pages/tournament";
+import Login from "@/pages/login/login";
+import SignUp from "@/pages/login/signup";
+import Detail from "@/pages/detail/detail";
+import BookingDetail from "@/components/booking/bookingDetails";
+import ProfileAccount from "@/pages/profileAccount";
+import AccountSettingsForm from "@/pages/accountInformation";
+import RegisterPackageCourt from "@/components/registerPackageCourt";
+import TournamentCreate from "@/pages/tournamentCreate";
+import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTournamentForm";
+import CourtManage from "@/pages/courtManage";
+import TournamentDetail from "../pages/TournamentDetail";
+import CourtManageDetail from "../pages/courtManage/courtManageDetail";
+
 import UpdatePassword from '../pages/updatePassword/index';
 import PaymentBookingFixed from '../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed';
 function Routing() {
@@ -45,7 +48,10 @@ function Routing() {
           path='/registerPackageCourt'
           element={<RegisterPackageCourt />}
         />
-        <Route path='/courtManage' element={<CourtManage />} />
+
+        <Route path="/courtManage" element={<CourtManage />} />
+        <Route path="/courtManage/detail/:id" element={<CourtManageDetail />} />
+
       </Route>
 
       <Route path='/login' element={<Login />} />
