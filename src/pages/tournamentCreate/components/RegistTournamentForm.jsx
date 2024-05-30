@@ -2,7 +2,7 @@ import { Button, DatePicker, Form, Input, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { createTournamentAPI } from "../../../services/tournamentAPI/tournamentAPI";
 
 export default function RegistTournamentForm() {
@@ -23,11 +23,12 @@ export default function RegistTournamentForm() {
   const showModal = () => {
     setIsModalOpen(true);
   };
-
+  const navigate = useNavigate();
   const handleOk = async () => {
     const data = await createTournamentAPI(newTournament);
     console.log("Received values from form: ", { data });
     setIsModalOpen(false);
+    navigate("/tournament");
   };
 
   const handleCancel = () => {

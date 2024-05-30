@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { List, Card, Row, Col, Divider } from 'antd';
+import { formatPrice } from '../../../../../../utils/priceFormatter';
 import VNPayPaymentForm from '@/components/booking/bookingDetails/bookingByDate/components/paymentBooking/components/vnPayForm';
 
 // eslint-disable-next-line react/prop-types
@@ -7,9 +8,6 @@ export default function PaymentBooking({ setCurrentStep }) {
   const { selectedCourts, center, totalPrice } = useSelector(
     (state) => state.cart
   );
-  const formatPrice = (price) => {
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  };
 
   return (
     <Row

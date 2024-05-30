@@ -1,7 +1,7 @@
-import { Outlet } from 'react-router-dom';
-import { Layout, theme } from 'antd';
-import FooterLayout from '@/components/layouts/components/footer';
-import HeaderLayout from '@/components/layouts/components/header';
+import { Outlet } from "react-router-dom";
+import { Layout, theme } from "antd";
+import FooterLayout from "@/components/layouts/components/footer";
+import HeaderLayout from "@/components/layouts/components/header";
 
 const { Header, Content, Footer } = Layout;
 
@@ -13,9 +13,9 @@ const LayoutMain = () => {
   return (
     <Layout
       style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <Header
@@ -34,10 +34,10 @@ const LayoutMain = () => {
       <Content
         style={{
           flexGrow: 1,
-          padding: '0 30px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
+          padding: "0 30px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
           marginTop: 10,
           marginBottom: 10,
         }}
@@ -55,8 +55,8 @@ const LayoutMain = () => {
       </Content>
       <Footer
         style={{
-          background: 'black',
-          color: 'white',
+          background: "black",
+          color: "white",
         }}
       >
         <FooterLayout />

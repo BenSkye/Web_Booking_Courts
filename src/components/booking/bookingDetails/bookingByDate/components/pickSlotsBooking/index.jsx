@@ -19,8 +19,8 @@ import {
 } from 'antd';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import MyLocationMap from '@/utils/map';
+import { formatPrice } from '../../../../../../utils/priceFormatter';
 import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
-
 import {
   addToCart,
   removeFromCart,
@@ -79,16 +79,12 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   };
 
   useEffect(() => {
-    const getCourts = async (id) => {
+    const getCenters = async (id) => {
       const data = await getCenterByIdAPI(id);
       dispatch(setCenter(data));
     };
-    getCourts(idCenter);
+    getCenters(idCenter);
   }, [idCenter, dispatch]);
-
-  const formatPrice = (price) => {
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  };
 
   const calculateTotalPrice = () => {
     return selectedCourts.reduce(
@@ -123,6 +119,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
               description={
                 <div>
                   <DatePicker
+                    placeholder='Chọn ngày'
                     onChange={(date) => setSelectedDate(date)}
                     disabledDate={(current) =>
                       current &&
