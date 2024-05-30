@@ -1,134 +1,83 @@
-import React, { useState } from 'react';
-import { Table, Popover, Button } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
+import React, { useState } from "react";
+import { Card, Button, Image } from "antd";
+import styled from "styled-components";
 
-
-const BadmintonInvoiceForm = () => {
-  const [invoiceVisible, setInvoiceVisible] = useState(false);
-  const [currentInvoice, setCurrentInvoice] = useState(null);
-
-  const Wrapper = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+const InvoiceCard = styled(Card)`
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  margin-bottom: 16px;
 `;
- 
 
-  const data = [
-    {
-      id: '001',
-      customerName: 'Nguyễn Văn A',
-      customerPhone: '0123456789',
-      courtName: 'Sân cầu lông ABC',
-      courtAddress: '123 Đường XYZ, Quận 1, TP.HCM',
-      amount: 100000,
-      bookingDate: '2023-05-27'
-    },
-    {
-      id: '002',
-      customerName: 'Trần Thị B',
-      customerPhone: '0987654321',
-      courtName: 'Sân tennis XYZ',
-      courtAddress: '456 Đường ABC, Quận 2, TP.HCM',
-      amount: 200000,
-      bookingDate: '2023-05-28'
-    },
-    {
-      id: '003',
-      customerName: 'Lê Văn C',
-      customerPhone: '0456789123',
-      courtName: 'Sân bóng rổ PQR',
-      courtAddress: '789 Đường DEF, Quận 3, TP.HCM',
-      amount: 150000,
-      bookingDate: '2023-05-29'
-    }
-  ];
+const InvoiceDetails = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id'
-    },
-    {
-      title: 'Tên khách hàng',
-      dataIndex: 'customerName',
-      key: 'customerName'
-    },
-    {
-      title: 'Số điện thoại',
-      dataIndex: 'customerPhone',
-      key: 'customerPhone'
-    },
-    {
-      title: 'Tên sân',
-      dataIndex: 'courtName',
-      key: 'courtName'
-    },
-    {
-      title: 'Địa chỉ sân',
-      dataIndex: 'courtAddress',
-      key: 'courtAddress'
-    },
-    {
-      title: 'Số tiền thanh toán',
-      dataIndex: 'amount',
-      key: 'amount'
-    },
-    {
-      title: 'Ngày đặt lịch',
-      dataIndex: 'bookingDate',
-      key: 'bookingDate',
-      render: (bookingDate) => (
-        <div>
-          {bookingDate}
-          <Button
-            type="link"
-            icon={<EyeOutlined />}
-            onClick={() => showInvoiceDetails(bookingDate)}
-          />
-        </div>
-      )
-    }
-  ];
+const InvoiceInfo = styled.div`
+  margin-left: 16px;
+`;
 
-  const showInvoiceDetails = (bookingDate) => {
-    const invoice = data.find((item) => item.bookingDate === bookingDate);
-    setCurrentInvoice(invoice);
-    setInvoiceVisible(true);
+const InvoiceActions = styled.div`
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Divider = styled.hr`
+  margin: 16px 0;
+  border: 0;
+  border-top: 1px solid #e8e8e8;
+`;
+
+const Header = styled.div`
+  margin-bottom: 16px;
+`;
+
+const InvoiceItem = ({ invoice }) => (
+  <InvoiceCard>
+    <Header>
+      <h3>{invoice.name}</h3>
+      <p>Phone: {invoice.phone}</p>
+    </Header>
+    <Divider />
+    <InvoiceDetails>
+      <Image
+        width={80}
+        src={invoice.image}
+        alt={invoice.title}
+      />
+      <InvoiceInfo>
+        <h3>{invoice.title}</h3>
+        <p>{invoice.description}</p>
+        <p style={{ fontWeight: "bold" }}>{invoice.price} ₫</p>
+      </InvoiceInfo>
+    </InvoiceDetails>
+    <InvoiceActions>
+      <p style={{ fontWeight: "bold" }}>Tổng tiền: {invoice.price} ₫</p>
+      <div>
+        <Button type="primary" style={{ marginRight: 8 }}>Mua lại</Button>
+        <Button>Xem chi tiết</Button>
+      </div>
+    </InvoiceActions>
+  </InvoiceCard>
+);
+
+const App = () => {
+  const invoice = {
+    name: "Nguyễn Văn A",
+    phone: "0123456789",
+    image: "https://via.placeholder.com/80",
+    title: "Tên sân: Sân bóng ABC",
+    description: "Địa chỉ sân: 123 Đường XYZ, Quận 1, TP.HCM",
+    price: "188.000",
   };
 
   return (
-    <>
-      <Table
-        dataSource={data}
-        columns={columns}
-        rowKey="id"
-        pagination={false}
-      />
-      {currentInvoice && (
-        <Popover
-           visible={invoiceVisible}
-          onVisibleChange={(visible) => setInvoiceVisible(visible)}
-          placement="leftTop"
-          content={
-            <div>
-              <p>Mã hóa đơn: {currentInvoice.id}</p>
-              <p>Tên khách hàng: {currentInvoice.customerName}</p>
-              <p>Số điện thoại: {currentInvoice.customerPhone}</p>
-              <p>Tên sân: {currentInvoice.courtName}</p>
-              <p>Địa chỉ sân: {currentInvoice.courtAddress}</p>
-              <p>Số tiền thanh toán: {currentInvoice.amount}</p>
-              <p>Ngày đặt lịch: {currentInvoice.bookingDate}</p>
-            </div>
-          }
-          trigger="click"
-        
-        />
-      )}
-    </>
-  
+    <div style={{ padding: 24, width: "100%", margin: "0 auto" }}>
+      <InvoiceItem invoice={invoice} />
+    </div>
   );
 };
 
-export default BadmintonInvoiceForm;
+export default App;
