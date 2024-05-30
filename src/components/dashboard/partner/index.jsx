@@ -142,12 +142,15 @@ function Partner() {
         <Form.Item label="2. Thông Tin Về Sân Cầu Lông">
           <Form.Item
             name="courtName"
-            label="Tên khu sân cầu lông"
+            label="Tên trung tâm sân cầu lông"
             rules={[
-              { required: true, message: "Tên khu sân cầu lông là bắt buộc" },
+              {
+                required: true,
+                message: "Tên trung tâm sân cầu lông là bắt buộc",
+              },
             ]}
           >
-            <Input placeholder="Tên khu sân cầu lông" />
+            <Input placeholder="Tên trung tâm sân cầu lông" />
           </Form.Item>
           <Form.Item
             name="courtAddress"
@@ -172,12 +175,12 @@ function Partner() {
           </Form.Item>
         </Form.Item>
 
-        {/* Section 3: Hình ảnh khu sân cầu lông */}
+        {/* Section 3: Hình ảnh trung tâm sân cầu lông */}
         <Form.Item
           name="images"
           valuePropName="fileList"
-          label="3. Hình ảnh khu sân cầu lông"
-          extra="Hãy tải lên hình ảnh về khu sân cầu lông của bạn"
+          label="3. Hình ảnh trung tâm sân cầu lông"
+          extra="Hãy tải lên hình ảnh về trung tâm sân cầu lông của bạn"
           rules={[
             {
               validator: (_, value) =>
@@ -207,21 +210,62 @@ function Partner() {
               <Checkbox value="changingRoom">Phòng thay đồ</Checkbox>
               <Checkbox value="freeWifi">Wifi miễn phí</Checkbox>
               <Checkbox value="sportsShop">Quầy bán/thuê đồ thể thao</Checkbox>
+              <Checkbox value="toilet">Nhà vệ sinh</Checkbox>
+              <Checkbox value="refreshments">
+                Quầy bán đồ ăn nhẹ và nước uống
+              </Checkbox>
+              <Checkbox value="equipmentRental">
+                Dịch vụ cho thuê dụng cụ
+              </Checkbox>
+              <Checkbox value="coaching">Dịch vụ huấn luyện</Checkbox>
+              <Checkbox value="firstAid">Dịch vụ sơ cứu, massage</Checkbox>
+              <Checkbox value="showerFacilities">Phòng tắm</Checkbox>
+              <Checkbox value="lockers">Tủ đựng đồ cá nhân</Checkbox>
             </Checkbox.Group>
           </Form.Item>
-          <Form.Item name="otherService" label="Các dịch vụ khác">
-            <Input placeholder="Các dịch vụ khác" />
-          </Form.Item>
+        </Form.Item>
+
+        {/* Section 5: Chính Sách và Quy Định */}
+        <Form.Item label="5. Giờ hoạt động và giá tiền">
           <Form.Item
-            name="openingHours"
-            label="Giờ hoạt động của sân (ít nhất phải 8 giờ)"
+            name="nomalHours"
+            label="Giờ hoạt động bình thường của sân (ít nhất phải 8 giờ)"
             rules={[{ validator: validateRange }]}
           >
             <RangePicker format="HH:mm" />
           </Form.Item>
+
           <Form.Item
-            name="rentalPrice"
-            label="Bảng giá thuê sân (đồng/giờ)"
+            name="nomalPrice"
+            label="Bảng giá thuê sân vào giờ bình thường (đồng/giờ)"
+            rules={[
+              { required: true, message: "Bảng giá thuê sân là bắt buộc" },
+              {
+                type: "number",
+                min: 1,
+                message: "Giá tiền phải lớn hơn 0",
+              },
+            ]}
+          >
+            <InputNumber placeholder="VD: 10000" />
+          </Form.Item>
+
+          {/* khung giờ vàng */}
+          <Form.Item
+            name="goldenHours"
+            label="Khung giờ vàng của sân (phải nằm trong giờ hoạt động bình thường)"
+            rules={[
+              {
+                validator: validateRange,
+              },
+            ]}
+          >
+            <RangePicker format="HH:mm" />
+          </Form.Item>
+
+          <Form.Item
+            name="goldenPrice"
+            label="Bảng giá thuê sân vào khung giờ vàng (đồng/giờ)"
             rules={[
               { required: true, message: "Bảng giá thuê sân là bắt buộc" },
               {
@@ -235,8 +279,8 @@ function Partner() {
           </Form.Item>
         </Form.Item>
 
-        {/* Section 5: Chính Sách và Quy Định */}
-        <Form.Item label="5. Chính Sách và Quy Định">
+        {/* Section 6: Thông Tin Bổ Sung Khác */}
+        <Form.Item label="6. Quy định và giới thiệu">
           <Form.Item
             name="usagePolicy"
             label="Quy định sử dụng sân"
@@ -246,13 +290,9 @@ function Partner() {
           >
             <TextArea placeholder="Quy định sử dụng sân, Ví dụ: phải có giày thể thao thì mới được vào sân" />
           </Form.Item>
-        </Form.Item>
-
-        {/* Section 6: Thông Tin Bổ Sung Khác */}
-        <Form.Item label="6. Thông Tin Bổ Sung Khác">
           <Form.Item
             name="courtIntro"
-            label="Giới thiệu ngắn về khu sân cầu lông"
+            label="Giới thiệu ngắn về trung tâm sân cầu lông"
           >
             <TextArea placeholder="nhập giới thiệu" rows={4} />
           </Form.Item>
