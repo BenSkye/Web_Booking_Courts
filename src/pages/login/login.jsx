@@ -1,17 +1,32 @@
-import React, { useState } from "react";
-import { Button, Checkbox, Form, Input, Row, Col, Typography } from "antd";
-import { Link } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Row,
+  Col,
+  Typography,
+  message,
+} from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png"; // Chỉnh lại đường dẫn cho phù hợp với cấu trúc thư mục của bạn
-import  LoginByGoogle  from "../loginGoogle/loginGoogle";
+import LoginByGoogle from "../loginGoogle/loginGoogle";
+import AuthContext from "@/services/authAPI/authProvideAPI";
 
 const { Text } = Typography;
 
 const Login = () => {
   const [registerClicked, setRegisterClicked] = useState(false);
-
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   const onFinish = (values) => {
-    
-    console.log("Success:", values);
+    const result = login(values.email, values.password);
+    if (result) {
+      navigate("/");
+    } else {
+      message.error("Email hoặc mật khẩu không đúng!");
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -40,7 +55,7 @@ const Login = () => {
       </Col>
       <Col xs={24} sm={24} md={12} lg={8} xl={6}>
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <h1>CourtArena</h1>
+          <h1>RacketRise</h1>
         </div>
         <Form
           name="basic"
@@ -53,12 +68,12 @@ const Login = () => {
           style={{ maxWidth: 400, margin: "auto" }}
         >
           <Form.Item
-            label="Tài khoản"
-            name="username"
+            label="Email"
+            name="email"
             rules={[
               {
                 required: registerClicked,
-                message: "Please input your username!",
+                message: "vui lòng nhập email!",
               },
             ]}
           >
@@ -71,7 +86,7 @@ const Login = () => {
             rules={[
               {
                 required: registerClicked,
-                message: "Please input your password!",
+                message: "vui lòng nhập mật khẩu!",
               },
             ]}
           >
@@ -101,12 +116,10 @@ const Login = () => {
               Submit
             </Button>
           </Form.Item>
-        
+
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-           <LoginByGoogle/>
+            <LoginByGoogle />
           </Form.Item>
-      
-          
         </Form>
         <div style={{ textAlign: "center" }}>
           <Text>

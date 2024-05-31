@@ -8,7 +8,24 @@ import {
   message,
   InputNumber,
   TimePicker,
+  Card,
+  Row,
+  Col,
 } from "antd";
+
+import {
+  FaCar,
+  FaHome,
+  FaWifi,
+  FaStore,
+  FaRestroom,
+  FaCoffee,
+  FaTools,
+  FaUser,
+  FaFirstAid,
+  FaShower,
+  FaLock,
+} from "react-icons/fa";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { submitForm } from "../../../services/partnerAPI/index.js";
@@ -21,6 +38,9 @@ function Partner() {
   const [fileList, setFileList] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+  const [isFixedScheduleChecked, setIsFixedScheduleChecked] = useState(false);
+  const [isBuyHourChecked, setIsBuyHourChecked] = useState(false);
+  const [isGoldenHourChecked, setIsGoldenHourChecked] = useState(false);
 
   const onFinish = async (values) => {
     setSubmitting(true);
@@ -88,6 +108,36 @@ function Partner() {
       reader.onerror = (error) => reject(error);
     });
   };
+
+  const services = [
+    { value: "parking", label: "Bãi đỗ xe", icon: <FaCar /> },
+    { value: "changingRoom", label: "Phòng thay đồ", icon: <FaHome /> },
+    { value: "freeWifi", label: "Wifi miễn phí", icon: <FaWifi /> },
+    {
+      value: "sportsShop",
+      label: "Quầy bán/thuê đồ thể thao",
+      icon: <FaStore />,
+    },
+    { value: "toilet", label: "Nhà vệ sinh", icon: <FaRestroom /> },
+    {
+      value: "refreshments",
+      label: "Quầy bán đồ ăn nhẹ và nước uống",
+      icon: <FaCoffee />,
+    },
+    {
+      value: "equipmentRental",
+      label: "Dịch vụ cho thuê dụng cụ",
+      icon: <FaTools />,
+    },
+    { value: "coaching", label: "Dịch vụ huấn luyện", icon: <FaUser /> },
+    {
+      value: "firstAid",
+      label: "Dịch vụ sơ cứu, massage",
+      icon: <FaFirstAid />,
+    },
+    { value: "showerFacilities", label: "Phòng tắm", icon: <FaShower /> },
+    { value: "lockers", label: "Tủ đựng đồ cá nhân", icon: <FaLock /> },
+  ];
 
   return (
     <div className="App">
@@ -206,79 +256,141 @@ function Partner() {
         <Form.Item label="4. Dịch Vụ và Tiện Ích">
           <Form.Item name="services" label="Dịch Vụ">
             <Checkbox.Group>
-              <Checkbox value="parking">Bãi đỗ xe</Checkbox>
-              <Checkbox value="changingRoom">Phòng thay đồ</Checkbox>
-              <Checkbox value="freeWifi">Wifi miễn phí</Checkbox>
-              <Checkbox value="sportsShop">Quầy bán/thuê đồ thể thao</Checkbox>
-              <Checkbox value="toilet">Nhà vệ sinh</Checkbox>
-              <Checkbox value="refreshments">
-                Quầy bán đồ ăn nhẹ và nước uống
-              </Checkbox>
-              <Checkbox value="equipmentRental">
-                Dịch vụ cho thuê dụng cụ
-              </Checkbox>
-              <Checkbox value="coaching">Dịch vụ huấn luyện</Checkbox>
-              <Checkbox value="firstAid">Dịch vụ sơ cứu, massage</Checkbox>
-              <Checkbox value="showerFacilities">Phòng tắm</Checkbox>
-              <Checkbox value="lockers">Tủ đựng đồ cá nhân</Checkbox>
+              <Row gutter={[16, 16]}>
+                {services.map((service) => (
+                  <Col span={8} key={service.value}>
+                    <Card style={{ textAlign: "center" }}>
+                      <Checkbox value={service.value}>
+                        {service.icon} {service.label}
+                      </Checkbox>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
             </Checkbox.Group>
           </Form.Item>
         </Form.Item>
 
         {/* Section 5: Chính Sách và Quy Định */}
         <Form.Item label="5. Giờ hoạt động và giá tiền">
-          <Form.Item
-            name="nomalHours"
-            label="Giờ hoạt động bình thường của sân (ít nhất phải 8 giờ)"
-            rules={[{ validator: validateRange }]}
-          >
-            <RangePicker format="HH:mm" />
-          </Form.Item>
+          <Form.Item>
+            <h3>Giờ hoạt động</h3>
+            <Form.Item
+              name="nomalHours"
+              label="Giờ hoạt động bình thường của sân (ít nhất phải 8 giờ)"
+              rules={[{ validator: validateRange }]}
+            >
+              <RangePicker format="HH:mm" />
+            </Form.Item>
 
-          <Form.Item
-            name="nomalPrice"
-            label="Bảng giá thuê sân vào giờ bình thường (đồng/giờ)"
-            rules={[
-              { required: true, message: "Bảng giá thuê sân là bắt buộc" },
-              {
-                type: "number",
-                min: 1,
-                message: "Giá tiền phải lớn hơn 0",
-              },
-            ]}
-          >
-            <InputNumber placeholder="VD: 10000" />
+            <Form.Item
+              name="nomalPrice"
+              label="Bảng giá thuê sân vào giờ bình thường (đồng/giờ)"
+              rules={[
+                { required: true, message: "Bảng giá thuê sân là bắt buộc" },
+                {
+                  type: "number",
+                  min: 1,
+                  message: "Giá tiền phải lớn hơn 0",
+                },
+              ]}
+            >
+              <InputNumber placeholder="VD: 10000" />
+            </Form.Item>
           </Form.Item>
 
           {/* khung giờ vàng */}
-          <Form.Item
-            name="goldenHours"
-            label="Khung giờ vàng của sân (phải nằm trong giờ hoạt động bình thường)"
-            rules={[
-              {
-                validator: validateRange,
-              },
-            ]}
-          >
-            <RangePicker format="HH:mm" />
+          <Form.Item>
+            <h3>Khung giờ vàng</h3>
+            <Checkbox
+              onChange={(e) => setIsGoldenHourChecked(e.target.checked)}
+            >
+              Đặt khung giờ vàng
+            </Checkbox>
+            {isGoldenHourChecked && (
+              <Form.Item>
+                <Form.Item
+                  name="goldenHours"
+                  label="Khung giờ vàng của sân (phải nằm trong giờ hoạt động bình thường)"
+                  rules={[
+                    {
+                      validator: validateRange,
+                    },
+                  ]}
+                >
+                  <RangePicker format="HH:mm" />
+                </Form.Item>
+
+                <Form.Item
+                  name="goldenPrice"
+                  label="Bảng giá thuê sân vào khung giờ vàng (đồng/giờ)"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Bảng giá thuê sân là bắt buộc",
+                    },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Giá tiền phải lớn hơn 0",
+                    },
+                  ]}
+                >
+                  <InputNumber placeholder="VD: 10000" />
+                </Form.Item>
+              </Form.Item>
+            )}
           </Form.Item>
 
-          <Form.Item
-            name="goldenPrice"
-            label="Bảng giá thuê sân vào khung giờ vàng (đồng/giờ)"
-            rules={[
-              { required: true, message: "Bảng giá thuê sân là bắt buộc" },
-              {
-                type: "number",
-                min: 1,
-                message: "Giá tiền phải lớn hơn 0",
-              },
-            ]}
-          >
-            <InputNumber placeholder="VD: 10000" />
+          {/* Đặt lịch cố định */}
+          <Form.Item>
+            <h3>Đặt lịch cố định trong tháng</h3>
+            <Checkbox
+              onChange={(e) => setIsFixedScheduleChecked(e.target.checked)}
+            >
+              Đặt lịch cố định
+            </Checkbox>
+            {isFixedScheduleChecked && (
+              <Form.Item
+                name="monthPrice"
+                label="Bảng giá đặt sân lịch cố định (đồng/giờ vd 80000/h), người chơi đặt lịch trong tháng cố định sẽ chỉ trả 60k dù có đánh giờ vàng hay giờ thường"
+                rules={[
+                  { required: true, message: "Bảng giá thuê sân là bắt buộc" },
+                  {
+                    type: "number",
+                    min: 1,
+                    message: "Giá tiền phải lớn hơn 0",
+                  },
+                ]}
+              >
+                <InputNumber placeholder="VD: 10000" />
+              </Form.Item>
+            )}
+          </Form.Item>
+
+          <Form.Item>
+            <h3>Mua giờ chơi</h3>
+            <Checkbox onChange={(e) => setIsBuyHourChecked(e.target.checked)}>
+              Mua giờ chơi
+            </Checkbox>
+            {isBuyHourChecked && (
+              <Form.Item
+                name="buyHourPrice"
+                label="Bảng giá mua giờ chơi (đồng/giờ vd 80000/h), người chơi nếu mua giờ chơi sẽ có thể đặt bất kì giờ nào còn trống, nghĩa là nếu họ đặt trong giờ vàng thì họ sẽ chỉ mất số tiền của 1h chơi"
+                rules={[
+                  { required: true, message: "Bảng giá thuê sân là bắt buộc" },
+                  {
+                    type: "number",
+                    min: 1,
+                    message: "Giá tiền phải lớn hơn 0 và phải là số",
+                  },
+                ]}
+              >
+                <InputNumber placeholder="VD: 10000" />
+              </Form.Item>
+            )}
           </Form.Item>
         </Form.Item>
-
         {/* Section 6: Thông Tin Bổ Sung Khác */}
         <Form.Item label="6. Quy định và giới thiệu">
           <Form.Item
