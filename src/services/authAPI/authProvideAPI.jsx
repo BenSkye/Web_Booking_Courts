@@ -16,13 +16,13 @@ export const AuthProvider = ({ children }) => {
   const login = (email, password) => {
     if (email === "customer@gmail.com" && password === "customer123") {
       const user = { email, role: "customer" };
-      Cookies.set("user", JSON.stringify(user));
+      Cookies.set("user", JSON.stringify(user), { expires: 60 });
       setUser(user);
       return true;
     }
     if (email === "manager@gmail.com" && password === "manager123") {
       const user = { email, role: "manager" };
-      Cookies.set("user", JSON.stringify(user));
+      Cookies.set("user", JSON.stringify(user), { expires: 60 });
       setUser(user);
       return true;
     } else {
