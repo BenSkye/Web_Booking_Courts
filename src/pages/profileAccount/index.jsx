@@ -39,6 +39,17 @@ const App = () => {
           style={{ marginTop: "60px" }}
           onClick={handleClick}
         >
+            <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: "16px",
+              width: 64,
+              height: 64,
+              color: "#fff"
+            }}
+          />
           <Menu.Item key="1" icon={<UserOutlined />}>
           <Link to="/user/my-account"></Link>
           Tài khoản của tôi
@@ -60,23 +71,14 @@ const App = () => {
         </Menu>
       </Sider>
       <Layout>
-        <Header
+        {/* <Header
           style={{
             padding: 0,
             background: colorBgContainer,
           }}
         >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
-          />
-        </Header>
+        
+        </Header> */}
         <Content
           style={{
             margin: "24px 16px",
