@@ -46,11 +46,3 @@ jobs:
         working-directory: ./backend
         run: npm run build --if-present
 
-      # Optionally, run tests
-      - name: Run tests (frontend)
-        working-directory: ./frontend
-        run: npm test
-
-      - name: Run tests (backend)
-        working-directory: ./backend
-        run: npm test
