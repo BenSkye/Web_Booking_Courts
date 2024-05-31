@@ -1,21 +1,28 @@
-name: Main CI Trigger
+name: CI Trigger
 
 on:
   push:
-    branches: [ main ]
+    branches: ["main"]
   pull_request:
-    branches: [ main ]
+    branches: ["main"]
 
 jobs:
-  trigger:
+  frontend:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger frontend CI
+      - name: Trigger Frontend CI
         uses: actions/github-script@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
+            fs.writeFileSync('.github/workflows/frontend-ci-trigger.txt', 'trigger frontend');
 
-            // Trigger frontend CI workflow
-            fs.writeFileSync('.github/workflows/frontend-ci-trigger.txt', '');
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Backend CI
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs');
+            fs.writeFileSync('.github/workflows/backend-ci-trigger.txt', 'trigger backend');
