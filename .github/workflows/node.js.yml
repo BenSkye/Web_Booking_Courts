@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x, 20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -28,6 +28,8 @@ jobs:
       - name: Install dependencies (frontend)
         working-directory: ./frontend
         run: npm ci
+        env:
+          CI: true
 
       - name: Lint frontend
         working-directory: ./frontend
@@ -41,8 +43,9 @@ jobs:
       - name: Install dependencies (backend)
         working-directory: ./backend
         run: npm ci
+        env:
+          CI: true
 
       - name: Build backend
         working-directory: ./backend
         run: npm run build --if-present
-
