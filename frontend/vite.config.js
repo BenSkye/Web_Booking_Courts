@@ -11,6 +11,9 @@ const __dirname = path.dirname(__filename);
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    'process.env': {},
+  },
   server: {
     port: 2003,
   },
