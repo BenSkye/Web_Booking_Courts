@@ -1,5 +1,5 @@
-import { Table, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
+import { Tag, Tooltip } from "antd";
 import { useParams } from "react-router-dom";
 
 const center = {
@@ -60,52 +60,8 @@ const courtSlotInDay = [
   { courtid: "4324", courtnumber: "03", bookings: [] },
 ];
 
-const transformData = (data, columns) => {
-  return data.map((court) => {
-    const courtRow = { key: court.courtid, court: `Sân ${court.courtnumber}` };
-    court.bookings.forEach((booking) => {
-      const columnsInRange = columns.filter(
-        (col) =>
-          new Date(`1970-01-01T${booking.startTime}:00`) <=
-            new Date(`1970-01-01T${col.title}:00`) &&
-          new Date(`1970-01-01T${booking.endTime}:00`) >
-            new Date(`1970-01-01T${col.title}:00`)
-      );
-
-      columnsInRange.forEach((column, index) => {
-        courtRow[column.dataIndex] = (
-          <Tooltip title={`Sân đã đặt ${booking.bookingId}`}>
-            <div
-              className={
-                index === 0
-                  ? "booking-start"
-                  : index === columnsInRange.length - 1
-                  ? "booking-end"
-                  : "booking-ontime"
-              }
-              style={{
-                backgroundColor: "#44E3CF",
-                height: "6vh",
-                borderTopLeftRadius: index === 0 ? "10px" : "0",
-                borderBottomLeftRadius: index === 0 ? "10px" : "0",
-                borderTopRightRadius:
-                  index === columnsInRange.length - 1 ? "10px" : "0",
-                borderBottomRightRadius:
-                  index === columnsInRange.length - 1 ? "10px" : "0",
-              }}
-            ></div>
-          </Tooltip>
-        );
-      });
-    });
-    return courtRow;
-  });
-};
-
 const generateSlots = (center) => {
-  const slotsArray = [
-    { title: "", dataIndex: "court", fixed: "left", width: 80 },
-  ];
+  const slotsArray = [{ dataIndex: "court" }];
   let currentTime = new Date(`1970-01-01T${center.openTime}:00`);
   const closeTime = new Date(`1970-01-01T${center.closeTime}:00`);
 
@@ -116,7 +72,6 @@ const generateSlots = (center) => {
       title: slotString,
       dataIndex: slotString,
       key: slotString,
-      width: 80,
     });
     currentTime = nextTime;
   }
@@ -124,8 +79,85 @@ const generateSlots = (center) => {
   return slotsArray;
 };
 
+const transformData = (data, columns) => {
+  return data.map((court) => {
+    const courtRow = { key: court.courtid, court: `Sân ${court.courtnumber}` };
+    const columnTracker = {};
+
+    columns.forEach((col) => {
+      if (col.dataIndex !== "court") columnTracker[col.dataIndex] = false;
+    });
+
+    court.bookings.forEach((booking) => {
+      const start = new Date(`1970-01-01T${booking.startTime}:00`);
+      const end = new Date(`1970-01-01T${booking.endTime}:00`);
+
+      const columnsInRange = columns.filter(
+        (col) =>
+          new Date(`1970-01-01T${col.title}:00`) >= start &&
+          new Date(`1970-01-01T${col.title}:00`) < end
+      );
+
+      if (columnsInRange.length > 0) {
+        const startColumn = columnsInRange[0].dataIndex;
+        courtRow[startColumn] = (
+          <Tooltip title={`Xem chi tiết đặt sân`}>
+            <td
+              colSpan={columnsInRange.length}
+              style={{
+                paddingRight: "2px",
+                paddingLeft: "2px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                <Tag
+                  style={{
+                    width: "100%",
+                    height: "6vh",
+                    margin: "0",
+                    textAlign: "center",
+                  }}
+                  color="cyan"
+                >
+                  {" "}
+                  {booking.startTime} - {booking.endTime}
+                </Tag>
+              </div>
+            </td>
+          </Tooltip>
+        );
+
+        columnsInRange.forEach((col) => {
+          columnTracker[col.dataIndex] = true;
+        });
+      }
+    });
+
+    columns.forEach((col) => {
+      if (col.dataIndex !== "court" && !columnTracker[col.dataIndex]) {
+        courtRow[col.dataIndex] = (
+          <td
+            key={col.key}
+            style={{ paddingRight: "30px", paddingLeft: "30px" }}
+            colSpan={1}
+          ></td>
+        );
+      }
+    });
+
+    return courtRow;
+  });
+};
+
 export default function CalendarSlot() {
-  const { centerId } = useParams(); // Lấy id từ URL
+  const { centerId } = useParams();
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
 
@@ -134,23 +166,39 @@ export default function CalendarSlot() {
     setColumns(slots);
     setDataSource(transformData(courtSlotInDay, slots));
   }, []);
+  useEffect(() => {
+    console.log(dataSource);
+  }, [dataSource]);
 
   return (
     <>
       <style>
         {`
-          td:has(.booking-start) { padding-right: 0 !important; }
-          td:has(.booking-end) { padding-left: 0 !important; }
-          td:has(.booking-ontime) { padding-right: 0 !important; padding-left: 0 !important; }
+          td {
+            border: 1px solid #ccc;
+            text-align: center;
+            vertical-align: middle;
+          }
         `}
       </style>
       <div style={{ width: "100%", overflowX: "auto" }}>
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          tableLayout="fixed"
-          scroll={{ x: "max-content" }}
-        />
+        <table>
+          <thead>
+            <tr>
+              {columns.map((col) => (
+                <th key={col.key}>{col.title}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {dataSource.map((data) => (
+              <tr key={data.key}>
+                <td style={{ minWidth: "100px" }}>{data.court}</td>{" "}
+                {columns.slice(1).map((col) => data[col.dataIndex])}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
