@@ -15,14 +15,17 @@ function Partner() {
   const [fileList, setFileList] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+  const [formValues, setFormValues] = useState({});
 
-  const onFinish = async (values) => {
+  const onFinish = async () => {
     setSubmitting(true);
     const images = await Promise.all(
       fileList.map((file) => getBase64(file.originFileObj))
     );
+    const currentFormValues = form.getFieldsValue();
     const updatedValues = {
-      ...values,
+      ...formValues,
+      ...currentFormValues,
       approvalStatus: "Chờ đợi phê duyệt",
       paymentStatus: "Chờ thanh toán",
     };
@@ -54,6 +57,20 @@ function Partner() {
     return isImage ? true : Upload.LIST_IGNORE;
   };
 
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const steps = [
+    <PersonalInfo />,
+    <CourtInfo />,
+    <CourtImages
+      handleUploadChange={handleUploadChange}
+      handleBeforeUpload={handleBeforeUpload}
+    />,
+    <ServicesAndAmenities />,
+    <HoursAndPricing />,
+    <AdditionalInfo />,
+  ];
+
   return (
     <div className="App">
       <h1>Đăng ký trở thành cộng tác viên</h1>
@@ -63,24 +80,43 @@ function Partner() {
         onFinish={onFinish}
         initialValues={{ services: [], courtType: [], paymentMethods: [] }}
       >
-        <PersonalInfo />
-        <CourtInfo />
-        <CourtImages
-          handleUploadChange={handleUploadChange}
-          handleBeforeUpload={handleBeforeUpload}
-        />
-        <ServicesAndAmenities />
-        <HoursAndPricing />
-        <AdditionalInfo />
+        {steps[currentStep]}
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="submit-btn"
-            disabled={submitting}
-          >
-            Hoàn thành (tạo sân cầu lông đầu tiên của bạn)
-          </Button>
+          {currentStep > 0 && (
+            <Button
+              type="default"
+              onClick={() => setCurrentStep(currentStep - 1)}
+            >
+              Quay lại
+            </Button>
+          )}
+          {currentStep < steps.length - 1 ? (
+            <Button
+              type="primary"
+              onClick={() => {
+                form
+                  .validateFields()
+                  .then((values) => {
+                    setFormValues({ ...formValues, ...values });
+                    setCurrentStep(currentStep + 1);
+                  })
+                  .catch((errorInfo) => {
+                    console.log("Failed:", errorInfo);
+                  });
+              }}
+            >
+              Tiếp theo
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="submit-btn"
+              disabled={submitting}
+            >
+              Hoàn thành (tạo sân cầu lông đầu tiên của bạn)
+            </Button>
+          )}
         </Form.Item>
       </Form>
     </div>
