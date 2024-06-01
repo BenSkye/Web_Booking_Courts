@@ -1,112 +1,164 @@
-import React from 'react';
-import { Layout, Image, Typography, Space, Row, Col } from 'antd';
-import {
-    EnvironmentOutlined,
-    PhoneOutlined,
-    DollarCircleOutlined,
-    LeftOutlined,
-    RightOutlined
-} from '@ant-design/icons';
-import { Button } from 'antd';
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import React, { useState, useEffect } from 'react';
+import { Layout, Typography, Space, Row, Col, Card, Button, Divider, Modal, Carousel, Empty } from 'antd';
+import { PhoneOutlined } from '@ant-design/icons';
+import { Link, useParams } from 'react-router-dom';
+import MyLocationMap from '@/utils/map';
+import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
+import { FaMapMarkerAlt } from 'react-icons/fa';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
-const images = [
-    'https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp',
-    'https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp',
-    'https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp',
-    'https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp'
+const pricingData = [
+    { time: '05h30 – 07h00', price: '300.000 ₫' },
+    { time: '07h00 – 08h30', price: '500.000 ₫' },
+    { time: '08h30 – 10h00', price: '500.000 ₫' },
+    { time: '10h00 – 11h30', price: '500.000 ₫' },
+    { time: '11h30 – 13h00', price: '300.000 ₫' },
 ];
 
-const SamplePrevArrow = (props) => {
-    const { className, style, onClick } = props;
+function Detail() {
+    const { id } = useParams();
+    const [center, setCenter] = useState({});
+    const [showModal, setShowModal] = useState(false);
+
+    useEffect(() => {
+        const fetchCenterData = async () => {
+            const data = await getCenterByIdAPI(id);
+            setCenter(data);
+        };
+        fetchCenterData();
+    }, [id]);
+
+    const handleRevealPhone = () => {
+        const hiddenPhoneNumber = document.getElementById('hidden-phone-number');
+        hiddenPhoneNumber.innerText = '0978210***';
+    };
+
+    const handleOpenModal = () => {
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
     return (
-        <div className={className} style={{ ...style, zIndex: 1 }} onClick={onClick}>
-            <LeftOutlined style={{ fontSize: '24px', color: '#000' }} />
-        </div>
-    );
-};
+        <Content style={{ padding: '24px', marginTop: 16, backgroundColor: '#fff' }}>
+            <Row gutter={[24, 24]}>
+                <Col span={12}>
+                    <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                        <img
+                            src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Badminton_Semifinal_Pan_2007.jpg/640px-Badminton_Semifinal_Pan_2007.jpg' // Use the uploaded image path
+                            alt='Stadium'
+                            style={{ borderRadius: '10px', width: '100%' }}
+                        />
+                    </div>
+                </Col>
+                <Col span={12}>
+                    <Card style={{ maxWidth: 700 }}>
+                        <Title level={4}>Thông Tin Chủ Sân</Title>
+                        <Divider />
+                        <Space direction="vertical" size="middle">
+                            <Space direction="vertical">
+                                <Text strong>Chủ sân:</Text>
+                                <Text>Anh Linh</Text>
+                            </Space>
+                            <Space direction="vertical">
+                                <Text strong>Số điện thoại:</Text>
+                                <Button type="primary" onClick={handleRevealPhone}>
+                                    <PhoneOutlined /> Bấm để hiện số
+                                </Button>
+                                <Text id="hidden-phone-number">Ẩn số</Text>
+                            </Space>
+                            <Space direction="vertical">
+                                <Text strong>Email:</Text>
+                                <Text>phungvanlinh195@gmail.com</Text>
+                            </Space>
+                            <Space direction="vertical">
+                                <Text strong>Địa chỉ:</Text>
+                                <Text>{center.addressCenter || 'Loading...'}</Text>
+                            </Space>
+                        </Space>
+                    </Card>
+                </Col>
+            </Row>
 
-const SampleNextArrow = (props) => {
-    const { className, style, onClick } = props;
-    return (
-        <div className={className} style={{ ...style, zIndex: 1 }} onClick={onClick}>
-            <RightOutlined style={{ fontSize: '24px', color: '#000' }} />
-        </div>
-    );
-};
+            <Divider />
 
-const carouselSettings = {
-    autoplay: true,
-    prevArrow: <SamplePrevArrow />,
-    nextArrow: <SampleNextArrow />,
-    dots: true
-};
-
-const Detail = () => (
-    <Content style={{ padding: '24px', marginTop: 16, backgroundColor: '#fff' }}>
-        <Row>
-            <Col span={6}>
-                <div style={{ textAlign: 'center' }}>
-                    <Image src="https://img.courtsite.my/insecure/rs:auto:640:0:0/g:sm/aHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jb3VydHNpdGUtdGVycmFmb3JtLmFwcHNwb3QuY29tL28vY2VudHJlSW1hZ2VzJTJGY2tzcGhtYXkxMDAwMDA3YzlqZTR3dTN3YyUyRkdwRFE1QUZaQ3pQRDV3TjFzdm5RU3BReEpUUDItNTk4NTIwNzQtOGJkZC00ZjJjLWEyNjktMjQwODQxY2NiYmM5LmpwZz9hbHQ9bWVkaWEmdG9rZW49N2IzYzE0NDYtZDJjNS00ZTgxLWExZGUtZjM0NzIyNTgxYTNj.webp" style={{ width: 80, height: 80, borderRadius: '50%' }} />
-                    <Text style={{ display: 'block' }}>Tên người đăng</Text>
-                </div>
-            </Col>
-            <Col span={18} style={{ maxWidth: '55%', marginLeft: '200px' }}>
-                <div style={{ textAlign: 'center' }}>
-                    <Slider {...carouselSettings}>
-                        {images.map((image, index) => (
-                            <div key={index}>
-                                <Image src={image} />
-                            </div>
+            <Row gutter={[24, 24]}>
+                <Col span={12}>
+                    <Title level={4}>Bảng Giá</Title>
+                    <Row gutter={[16, 16]}>
+                        {pricingData.map((slot, index) => (
+                            <Col span={24} key={index}>
+                                <Card>
+                                    <Row justify="space-between">
+                                        <Col>
+                                            <Text>{slot.time}</Text>
+                                        </Col>
+                                        <Col>
+                                            <Text>{slot.price}</Text>
+                                        </Col>
+                                    </Row>
+                                </Card>
+                            </Col>
                         ))}
-                    </Slider>
-                </div>
-                <div style={{ marginTop: 24, textAlign: 'center' }}>
-                    <Title level={3}>Sân cầu lông</Title>
-                </div>
-            </Col>
-        </Row>
+                    </Row>
+                </Col>
+                <Col span={12}>
+                    <Card
+                        title='Thông tin sân'
+                        style={{ boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)' }}
+                    >
+                        <Text>
+                            {center.nameCenter && <strong>{center.nameCenter}</strong>}
+                            <a onClick={handleOpenModal}>
+                                {center.addressCenter && (
+                                    <p>
+                                        {center.addressCenter} <FaMapMarkerAlt />
+                                    </p>
+                                )}
+                            </a>
+                        </Text>
+                        <Carousel autoplay style={{ height: '10rem', width: '10rem' }}>
+                            {!center.imgCenter || center.imgCenter.length === 0 ? (
+                                <Empty />
+                            ) : (
+                                center.imgCenter.map((image, index) => (
+                                    <div key={index}>
+                                        <img
+                                            src={image}
+                                            style={{ width: '100%' }}
+                                            alt={center.nameCenter}
+                                        />
+                                    </div>
+                                ))
+                            )}
+                        </Carousel>
+                        <Modal
+                            visible={showModal}
+                            title='Vị trí'
+                            onCancel={handleCloseModal}
+                            footer={null}
+                            centered
+                            style={{ height: '80vh' }} // Thiết lập chiều cao của modal
+                        >
+                            <MyLocationMap address={center.addressCenter} />
+                        </Modal>
+                    </Card>
+                </Col>
+            </Row>
 
-        <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
-            <Col span={8} style={{ textAlign: 'center' }}>
-                <Space direction="vertical">
-                    <EnvironmentOutlined style={{ fontSize: '24px' }} />
-                    <Title level={5}>Address</Title>
-                    <Text>Thành phố Thủ Đức, Thành Phố Hồ Chí Minh</Text>
-                </Space>
-            </Col>
-            <Col span={8} style={{ textAlign: 'center' }}>
-                <Space direction="vertical">
-                    <PhoneOutlined style={{ fontSize: '24px' }} />
-                    <Title level={5}>Điện Thoại</Title>
-                    <Text>+60123533716</Text>
-                </Space>
-            </Col>
-            <Col span={8} style={{ textAlign: 'center' }}>
-                <Space direction="vertical">
-                    <DollarCircleOutlined style={{ fontSize: '24px' }} />
-                    <Title level={5}>Price</Title>
-                    <Text>200,000vnđ</Text>
-                </Space>
-            </Col>
-        </Row>
-        <div style={{ textAlign: 'left', marginTop: 24 }}>
-            <Title level={4}>Mô tả</Title>
-            <Text>
-                Ardence Arena là một sân cầu lông hiện đại nằm ở Eco Ardence, Shah Alam. Sân được trang bị đầy đủ tiện nghi và có môi trường tập luyện tốt. Đây là nơi lý tưởng để bạn và bạn bè đến rèn luyện và thư giãn.
-            </Text>
-        </div>
-        <div style={{ textAlign: 'center', marginTop: 24 }}>
-            <Button type="primary" size="large">Đặt sân</Button>
-        </div>
-    </Content>
-);
+            <Divider />
 
-
+            <div style={{ textAlign: 'center', marginTop: 24 }}>
+                <Link to={`/bookingdetail/${id}`}>
+                    <Button type="primary" size="large">Đặt sân</Button>
+                </Link>
+            </div>
+        </Content>
+    );
+}
 
 export default Detail;
