@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Form, Button, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { submitForm } from "../../../services/partnerAPI/index.js";
 import PersonalInfo from "./components/PersonalInfo.jsx";
