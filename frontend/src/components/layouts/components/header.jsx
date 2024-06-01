@@ -159,7 +159,7 @@ export default function HeaderLayout() {
   ];
   const menuItemsManager = [
     { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
-    { key: "2", label: "Lịch hoạt động", path: "/" },
+    { key: "2", label: "Lịch hoạt động", path: "/courtManage/ManagerCalendar" },
     { key: "3", label: "Yêu cầu tổ chức giải", path: "/" },
     { key: "4", label: "Thông tin sân", path: "/" },
     { key: "5", label: "Tìm sân", path: "/" },

@@ -20,6 +20,7 @@ import CourtManageDetail from "../pages/courtManage/courtManageDetail";
 import UpdatePassword from "../pages/updatePassword/index";
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
+import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
 function Routing() {
   return (
     <Routes>
@@ -52,6 +53,10 @@ function Routing() {
         <Route path="/courtManage" element={<CourtManage />} />
         <Route path="/courtManage/detail/:id" element={<CourtManageDetail />} />
         <Route path="/courtManage/Dashboard" element={<ManagerDashboar />} />
+        <Route
+          path="/courtManage/ManagerCalendar"
+          element={<ManagerCalendar />}
+        />
       </Route>
 
       <Route path="/login" element={<Login />} />
