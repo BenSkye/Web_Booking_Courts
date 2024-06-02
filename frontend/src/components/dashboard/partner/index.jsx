@@ -45,8 +45,9 @@ function Partner() {
   };
 
   const handleUploadChange = ({ fileList }) => {
-    setFileList(fileList);
-    form.setFieldsValue({ images: fileList });
+    const filteredFileList = fileList.filter(file => file.type.startsWith("image/"));
+    setFileList(filteredFileList);
+    form.setFieldsValue({ images: filteredFileList });
   };
 
   const handleBeforeUpload = (file) => {
