@@ -18,6 +18,7 @@ import TournamentDetail from "../pages/TournamentDetail";
 import CourtManageDetail from "../pages/courtManage/courtManageDetail";
 
 import UpdatePassword from "../pages/updatePassword/index";
+import OrderDetails from "../pages/bill/index";
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
@@ -43,7 +44,7 @@ function Routing() {
         <Route path="/user" element={<ProfileAccount />} />
         <Route path="/user/my-account/:id" element={<ProfileAccount />} />
         <Route path="/user/update-password/:id" element={<UpdatePassword />} />
-        <Route path="/user/bill" element={<ProfileAccount />} />
+        <Route path="/user/bill" element={<OrderDetails />} />
         <Route path="/paymentBookingFixed" element={<PaymentBookingFixed />} />
         <Route
           path="/registerPackageCourt"
