@@ -1,11 +1,16 @@
 import app from './app'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-dotenv.config({ path: './config.env' })
 
-// mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/RacketRise').then((con) => {
-//   console.log('DB connected')
-// })
+dotenv.config({ path: '.env' })
+
+let DB = ''
+if (process.env.DATABASE && process.env.DATABASE_PASSWORD) {
+  DB = process.env.DATABASE.replace('<password>', process.env.DATABASE_PASSWORD)
+}
+mongoose.connect(DB, {}).then(() => {
+  console.log('DB connection successful!')
+})
 const hostname = process.env.HOSTNAME || 'localhost'
 const port = process.env.PORT || 5050
 
