@@ -11,11 +11,14 @@ const CourtImages = ({ handleUploadChange, handleBeforeUpload }) => (
     rules={[
       {
         validator: (_, value) =>
-          value && value.length > 0 ? Promise.resolve() : Promise.reject(new Error("Hình ảnh sân của bạn là bắt buộc")),
+          value && value.length > 0
+            ? Promise.resolve()
+            : Promise.reject(new Error("Hình ảnh sân của bạn là bắt buộc")),
       },
     ]}
   >
     <Upload
+      accept="image/*"
       listType="picture"
       onChange={handleUploadChange}
       beforeUpload={handleBeforeUpload}

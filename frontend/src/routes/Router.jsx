@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import LayoutMain from "@/components/layouts";
 import Home from "@/pages/home";
 import AboutUs from "@/components/dashboard/aboutUs";
-import Partner from "@/components/dashboard/partner";
+import Partner from "@/pages/courtManage/partner";
 import Tournament from "@/pages/tournament";
 import Login from "@/pages/login/login";
 import SignUp from "@/pages/login/signup";
@@ -10,7 +10,7 @@ import Detail from "@/pages/detail/detail";
 import BookingDetail from "@/components/booking/bookingDetails";
 import ProfileAccount from "@/pages/profileAccount";
 import AccountSettingsForm from "@/pages/accountInformation";
-import RegisterPackageCourt from "@/components/registerPackageCourt";
+import RegisterPackageCourt from "@/pages/courtManage/registerPackageCourt";
 import TournamentCreate from "@/pages/tournamentCreate";
 import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTournamentForm";
 import CourtManage from "@/pages/courtManage";
@@ -22,13 +22,15 @@ import OrderDetails from "../pages/bill/index";
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
+
+import SignupPartner from "../pages/login/signupPartner";
 function Routing() {
   return (
     <Routes>
       <Route path="/" element={<LayoutMain />}>
         <Route index element={<Home />} />
         <Route path="/aboutUs" element={<AboutUs />} />
-        <Route path="/partner" element={<Partner />} />
+        <Route path="/courtManage/partner" element={<Partner />} />
         <Route path="/detail/:id" element={<Detail />} />
         <Route path="/tournament" element={<Tournament />} />
         <Route path="/tournament/create" element={<TournamentCreate />} />
@@ -47,7 +49,7 @@ function Routing() {
         <Route path="/user/bill" element={<OrderDetails />} />
         <Route path="/paymentBookingFixed" element={<PaymentBookingFixed />} />
         <Route
-          path="/registerPackageCourt"
+          path="/courtManage/registerPackageCourt"
           element={<RegisterPackageCourt />}
         />
 
@@ -62,6 +64,7 @@ function Routing() {
 
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/signupPartner" element={<SignupPartner />} />
     </Routes>
   );
 }
