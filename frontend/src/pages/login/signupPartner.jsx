@@ -2,32 +2,18 @@ import React from "react";
 import { Button, Checkbox, Form, Input, Row, Col, Typography } from "antd";
 import logo from "@/assets/logo.png"; // Chỉnh lại đường dẫn cho phù hợp với cấu trúc thư mục của bạn
 import { Link } from "react-router-dom"; // Import the Link component from react-router-dom
-import Register from "../../services/authAPI/RegisteApi"; // Import the Register function from the RegisterApi file
+
 const { Text } = Typography;
 
-const onFinish = async (values) => {
-  const newUser = {
-    userName: values.userName,
-    userEmail: values.email,
-    password: values.password,
-    userPhone: values.phoneNumber,
-    // Add any other fields you need here
-  };
-  const response = await Register(newUser);
-  console.log(response);
+const onFinish = (values) => {
+  console.log("Success:", values);
 };
-
-// ...
-
-// const onFinish = (values) => {
-//     console.log('Success:', values);
-// };
 
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
 
-const SignUp = () => (
+const SignupPartner = () => (
   <Row justify="center" align="middle" style={{ minHeight: "100vh" }}>
     <Col
       xs={0}
@@ -45,7 +31,7 @@ const SignUp = () => (
     </Col>
     <Col xs={24} sm={24} md={12} lg={8} xl={6}>
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
-        <h1>Đăng ký trở thành thành viên của Racket Rise</h1>
+        <h1>Đăng ký trở thành cộng tác viên của Racket Rise</h1>
       </div>
       <Form
         name="basic"
@@ -152,12 +138,12 @@ const SignUp = () => (
         </Text>
         <br />
         <Text>
-          Bạn muốn làm cộng tác viên ?{" "}
-          <Link to="/signupPartner">Đăng ký làm cộng tác viên</Link>
+          Bạn chưa có tài khoản thành viên ?{" "}
+          <Link to="/signup">Đăng ký làm thành viên</Link>
         </Text>
       </div>
     </Col>
   </Row>
 );
 
-export default SignUp;
+export default SignupPartner;

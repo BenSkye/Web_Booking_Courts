@@ -3,12 +3,12 @@ import { Form, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { submitForm } from "../../../services/partnerAPI/index.js";
 import PersonalInfo from "./components/PersonalInfo.jsx";
-import CourtInfo from "./components/CourtInfo";
-import CourtImages from "./components/CourtImages";
-import ServicesAndAmenities from "./components/ServicesAndAmenities";
-import HoursAndPricing from "./components/HoursAndPricing";
-import AdditionalInfo from "./components/AdditionalInfo";
-import { getBase64 } from "./components/fileUtils";
+import CourtInfo from "./components/CourtInfo.jsx";
+import CourtImages from "./components/CourtImages.jsx";
+import ServicesAndAmenities from "./components/ServicesAndAmenities.jsx";
+import HoursAndPricing from "./components/HoursAndPricing.jsx";
+import AdditionalInfo from "./components/AdditionalInfo.jsx";
+import { getBase64 } from "./components/fileUtils.jsx";
 
 function Partner() {
   const [form] = Form.useForm();
