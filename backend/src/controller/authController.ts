@@ -4,7 +4,6 @@ import catchAsync from '~/utils/catchAsync'
 
 class authController {
   static registerUser = catchAsync(async (req: any, res: any, next: any) => {
-    console.log('req.body', req.body)
     const newUser = await authService.registerUser(req.body)
     res.status(201).json({
       status: 'success',
@@ -21,13 +20,15 @@ class authController {
     const { foundUser, token } = await authService.loginUser(userEmail, password)
     res
       .cookie('access_token', token, {
-        httpOnly: true
+        httpOnly: true,
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
       })
-      .status(200)
+      .status(201)
       .json({
         status: 'success',
         data: {
-          user: foundUser
+          user: foundUser,
+          token: token
         }
       })
   })

@@ -28,9 +28,9 @@ export const postData = async (url, data) => {
   try {
     console.log("Data to post:", data);
     const response = await axios.post(url, data);
-    console.log(response);
-    if (response.status === 200) {
-      return response.data;
+    console.log("response", response);
+    if (response.status === 201) {
+      return response;
     } else {
       console.error("Error posting data:", response.status);
     }

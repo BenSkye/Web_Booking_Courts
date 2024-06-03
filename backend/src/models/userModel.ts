@@ -19,7 +19,7 @@ const userSchema = new Schema(
     },
     userAddress: {
       type: String,
-      required: true
+      default: ''
     },
     avatar: {
       type: String,

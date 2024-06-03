@@ -18,7 +18,7 @@ class authService {
     if (!isMatch) {
       throw new Error('Mật khẩu không đúng')
     }
-    const token = jwt.sign({ id: foundUser._id }, process.env.JWT_SECRET ?? '')
+    const token = jwt.sign({ id: foundUser._id, role: foundUser.role }, process.env.JWT_SECRET ?? '')
     const { password: userPassword, ...user } = foundUser.toObject()
     return { foundUser, token }
   }
