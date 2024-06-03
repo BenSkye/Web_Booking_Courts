@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import AccountSettingsForm from "../accountInformation/index";
 import UpdatePassword from "../updatePassword/index";
 import { Link } from "react-router-dom";
-import BadmintonInvoiceForm from "../bill/index";
+import OrderDetails from "../bill/index";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -87,8 +87,8 @@ const App = () => {
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
             border: "2px solid #d9d9d9", // Đặt đường viền màu xám nhạt
-            display: "flex",
-            justifyContent: "flex-start",
+            // display: "flex",
+            // justifyContent: "flex-start",
           }}
         >
           {selectedKey === "1" && (
@@ -99,7 +99,7 @@ const App = () => {
           {selectedKey === "2" && <UpdatePassword />}
           {selectedKey === "3" && <h1>Bookings Content</h1>}
           {selectedKey === "4" && <h1>Game Content</h1>}
-          {selectedKey === "5" && <h1><BadmintonInvoiceForm/></h1>}
+          {selectedKey === "5" && <h1><OrderDetails/></h1>}
         </Content>
       </Layout>
     </Layout>

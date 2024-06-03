@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Descriptions, Image, List, Spin, Alert } from 'antd';
-import { useParams } from 'react-router-dom'; // Import useParams
+import { Descriptions, Image, List, Spin, Alert, Card, Badge } from 'antd';
+import { useParams } from 'react-router-dom';
 import { getFormDataByIdAPI } from '../../../services/partnerAPI';
 
 const CourtManageDetail = () => {
-  const { id } = useParams(); // Lấy id từ URL
+  const { id } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +13,7 @@ const CourtManageDetail = () => {
     const fetchData = async () => {
       try {
         const result = await getFormDataByIdAPI(id);
-        console.log("API Data: ", result); // Log dữ liệu để kiểm tra
+        console.log("API Data: ", result);
         setData(result);
       } catch (error) {
         console.error("API Error: ", error);
@@ -39,35 +39,56 @@ const CourtManageDetail = () => {
   }
 
   return (
-    <Descriptions title="Court Detail" bordered>
-      <Descriptions.Item label="Full Name">{data.fullName}</Descriptions.Item>
-      <Descriptions.Item label="Phone">{data.phone}</Descriptions.Item>
-      <Descriptions.Item label="Email">{data.email}</Descriptions.Item>
-      <Descriptions.Item label="Court Name">{data.courtName}</Descriptions.Item>
-      <Descriptions.Item label="Court Address">{data.courtAddress}</Descriptions.Item>
-      <Descriptions.Item label="Court Quantity">{data.courtQuantity}</Descriptions.Item>
-      <Descriptions.Item label="Images">
-        <Image width={200} src={data.thumbUrl} />
-      </Descriptions.Item>
-      <Descriptions.Item label="Services">
-        <List
-          dataSource={data.services}
-          renderItem={item => <List.Item>{item}</List.Item>}
-        />
-      </Descriptions.Item>
-      <Descriptions.Item label="Other Service">{data.otherService}</Descriptions.Item>
-      <Descriptions.Item label="Opening Hours">
-        <List
-          dataSource={data.openingHours}
-          renderItem={item => <List.Item>{item}</List.Item>}
-        />
-      </Descriptions.Item>
-      <Descriptions.Item label="Rental Price">{data.rentalPrice}</Descriptions.Item>
-      <Descriptions.Item label="Usage Policy">{data.usagePolicy}</Descriptions.Item>
-      <Descriptions.Item label="Court Intro">{data.courtIntro}</Descriptions.Item>
-      <Descriptions.Item label="Approval Status">{data.approvalStatus}</Descriptions.Item>
-      <Descriptions.Item label="Payment Status">{data.paymentStatus}</Descriptions.Item>
-    </Descriptions>
+    <Card title="Court Detail" bordered={false} style={{ maxWidth: 800, margin: 'auto' }}>
+      <Descriptions bordered column={1}>
+        <Descriptions.Item label="Full Name">{data.fullName}</Descriptions.Item>
+        <Descriptions.Item label="Phone">{data.phone}</Descriptions.Item>
+        <Descriptions.Item label="Email">{data.email}</Descriptions.Item>
+        <Descriptions.Item label="Court Name">{data.courtName}</Descriptions.Item>
+        <Descriptions.Item label="Court Address">{data.courtAddress}</Descriptions.Item>
+        <Descriptions.Item label="Court Quantity">{data.courtQuantity}</Descriptions.Item>
+        <Descriptions.Item label="Images">
+          {data.images.map((image, index) => (
+            <Image key={index} width={200} src={image.thumbUrl} style={{ marginRight: 8 }} />
+          ))}
+        </Descriptions.Item>
+        <Descriptions.Item label="Services">
+          <List
+            dataSource={data.services}
+            renderItem={item => <List.Item>{item}</List.Item>}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Normal Hours">
+          <List
+            dataSource={data.nomalHours}
+            renderItem={item => <List.Item>{item}</List.Item>}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Normal Price">{data.nomalPrice}</Descriptions.Item>
+        <Descriptions.Item label="Golden Hours">
+          <List
+            dataSource={data.goldenHours}
+            renderItem={item => <List.Item>{item}</List.Item>}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Golden Price">{data.goldenPrice}</Descriptions.Item>
+        <Descriptions.Item label="Monthly Price">{data.monthPrice}</Descriptions.Item>
+        <Descriptions.Item label="Hourly Purchase Price">{data.buyHourPrice}</Descriptions.Item>
+        <Descriptions.Item label="Is Golden Hours">
+          <Badge status={data.isGoldenHours ? "success" : "error"} text={data.isGoldenHours ? "Yes" : "No"} />
+        </Descriptions.Item>
+        <Descriptions.Item label="Is Monthly Price">
+          <Badge status={data.isMonthPrice ? "success" : "error"} text={data.isMonthPrice ? "Yes" : "No"} />
+        </Descriptions.Item>
+        <Descriptions.Item label="Is Hourly Purchase Price">
+          <Badge status={data.isBuyHourPrice ? "success" : "error"} text={data.isBuyHourPrice ? "Yes" : "No"} />
+        </Descriptions.Item>
+        <Descriptions.Item label="Usage Policy">{data.usagePolicy}</Descriptions.Item>
+        <Descriptions.Item label="Court Intro">{data.courtIntro}</Descriptions.Item>
+        <Descriptions.Item label="Approval Status">{data.approvalStatus}</Descriptions.Item>
+        <Descriptions.Item label="Payment Status">{data.paymentStatus}</Descriptions.Item>
+      </Descriptions>
+    </Card>
   );
 };
 
