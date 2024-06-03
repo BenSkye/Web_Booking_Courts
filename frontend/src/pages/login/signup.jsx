@@ -2,12 +2,26 @@ import React from "react";
 import { Button, Checkbox, Form, Input, Row, Col, Typography } from "antd";
 import logo from "@/assets/logo.png"; // Chỉnh lại đường dẫn cho phù hợp với cấu trúc thư mục của bạn
 import { Link } from "react-router-dom"; // Import the Link component from react-router-dom
-
+import Register from "../../services/authAPI/RegisteApi"; // Import the Register function from the RegisterApi file
 const { Text } = Typography;
 
-const onFinish = (values) => {
-  console.log("Success:", values);
+const onFinish = async (values) => {
+  const newUser = {
+    userName: values.userName,
+    userEmail: values.email,
+    password: values.password,
+    userPhone: values.phoneNumber,
+    // Add any other fields you need here
+  };
+  const response = await Register(newUser);
+  console.log(response);
 };
+
+// ...
+
+// const onFinish = (values) => {
+//     console.log('Success:', values);
+// };
 
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);

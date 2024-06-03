@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Tag, Tooltip } from "antd";
+import { Modal, Tag, Tooltip } from "antd";
 import { useParams } from "react-router-dom";
+import BookingDetail from "./bookingDetail";
 
 const center = {
   _id: { $oid: "6659c9640c9744e84bee0fe7" },
@@ -79,7 +80,7 @@ const generateSlots = (center) => {
   return slotsArray;
 };
 
-const transformData = (data, columns) => {
+const transformData = (data, columns, showModal) => {
   return data.map((court) => {
     const courtRow = { key: court.courtid, court: `Sân ${court.courtnumber}` };
     const columnTracker = {};
@@ -103,6 +104,7 @@ const transformData = (data, columns) => {
         courtRow[startColumn] = (
           <Tooltip title={`Xem chi tiết đặt sân`}>
             <td
+              onClick={() => showModal(booking.bookingId)}
               colSpan={columnsInRange.length}
               style={{
                 paddingRight: "2px",
@@ -160,15 +162,23 @@ export default function CalendarSlot() {
   const { centerId } = useParams();
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [BookingId, setBookingId] = useState();
+  const showModal = (id) => {
+    setBookingId(id);
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   useEffect(() => {
     const slots = generateSlots(center);
     setColumns(slots);
-    setDataSource(transformData(courtSlotInDay, slots));
+    setDataSource(transformData(courtSlotInDay, slots, showModal));
   }, []);
-  useEffect(() => {
-    console.log(dataSource);
-  }, [dataSource]);
 
   return (
     <>
@@ -200,6 +210,14 @@ export default function CalendarSlot() {
           </tbody>
         </table>
       </div>
+      <Modal
+        title="Chi tiết đặt sân"
+        open={isModalOpen}
+        footer={null}
+        onCancel={handleOk}
+      >
+        <BookingDetail id={BookingId} />
+      </Modal>
     </>
   );
 }
