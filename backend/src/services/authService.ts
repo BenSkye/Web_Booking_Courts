@@ -18,9 +18,23 @@ class authService {
     if (!isMatch) {
       throw new Error('Mật khẩu không đúng')
     }
-    const token = jwt.sign({ id: foundUser._id }, process.env.JWT_SECRET ?? '')
+    const token = jwt.sign({ id: foundUser._id, role: foundUser.role }, process.env.JWT_SECRET ?? '')
     const { password: userPassword, ...user } = foundUser.toObject()
     return { foundUser, token }
+  }
+  static async protect(token: string) {
+    if (!token) {
+      throw new Error('Token không tồn tại')
+    }
+    const decoded: jwt.JwtPayload = jwt.verify(token, process.env.JWT_SECRET ?? '') as jwt.JwtPayload
+    const currentUser = await userRepository.findUser({ _id: decoded.id })
+    if (!currentUser) {
+      throw new Error('Người dùng không tồn tại')
+    }
+    // if (currentUser.changePasswordAfter(decoded.iat)) {
+    //   throw new Error('Người dùng đã đổi mật khẩu')
+    // }
+    return currentUser
   }
 }
 export default authService
