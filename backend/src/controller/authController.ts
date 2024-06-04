@@ -32,5 +32,29 @@ class authController {
         }
       })
   })
+
+  //check user đã đăng nhập chưa
+  static protect = catchAsync(async (req: any, res: any, next: any) => {
+    let token
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1]
+    }
+    if (!token) {
+      return next(new AppError('Vui lòng đăng nhập để truy cập', 401))
+    }
+    const currentUser = await authService.protect(token)
+    req.user = currentUser as any
+    next()
+  })
+
+  //Check user role có qyền thực hiện action không
+  static restricTO = (...roles: [string]) => {
+    return (req: any, res: any, next: any) => {
+      if (!roles.includes(req.user.role)) {
+        return next(new AppError('You do not have permission to perform this action', 403))
+      }
+      next()
+    }
+  }
 }
 export default authController
