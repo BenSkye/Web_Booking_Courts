@@ -20,9 +20,10 @@ const Login = () => {
   const [registerClicked, setRegisterClicked] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-  const onFinish = (values) => {
-    const result = login(values.email, values.password);
+  const onFinish = async (values) => {
+    const result = await login(values.email, values.password);
     if (result) {
+      console.log(result);
       navigate("/");
     } else {
       message.error("Email hoặc mật khẩu không đúng!");
@@ -55,7 +56,7 @@ const Login = () => {
       </Col>
       <Col xs={24} sm={24} md={12} lg={8} xl={6}>
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <h1>RacketRise</h1>
+          <h1>Đăng nhập</h1>
         </div>
         <Form
           name="basic"
@@ -123,7 +124,13 @@ const Login = () => {
         </Form>
         <div style={{ textAlign: "center" }}>
           <Text>
-            Bạn chưa có tài khoản? <Link to="/signup">Đăng ký</Link>
+            Bạn chưa có tài khoản thành viên ?{" "}
+            <Link to="/signup">Đăng ký làm thành viên</Link>
+          </Text>
+          <br />
+          <Text>
+            Bạn muốn làm cộng tác viên ?{" "}
+            <Link to="/signupPartner">Đăng ký làm cộng tác viên</Link>
           </Text>
         </div>
       </Col>

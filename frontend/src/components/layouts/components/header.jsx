@@ -40,23 +40,23 @@ export default function HeaderLayout() {
       ),
       key: "0",
     },
-    {
-      label: (
-        <Link to="/courtManage">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "start",
-            }}
-          >
-            <GiTennisCourt size="20px" />
-            <>Sân của bạn</>
-          </div>
-        </Link>
-      ),
-      key: "1",
-    },
+    // {
+    //   label: (
+    //     <Link to="/courtManage">
+    //       <div
+    //         style={{
+    //           display: "flex",
+    //           alignItems: "center",
+    //           justifyContent: "start",
+    //         }}
+    //       >
+    //         <GiTennisCourt size="20px" />
+    //         <>Sân của bạn</>
+    //       </div>
+    //     </Link>
+    //   ),
+    //   key: "1",
+    // },
     {
       label: (
         <div
@@ -153,16 +153,18 @@ export default function HeaderLayout() {
       path: "/",
     },
     { key: "2", label: "Giới thiệu", path: "/aboutUs" },
-    { key: "3", label: "Đăng kí đối tác", path: "/partner" },
+    // { key: "3", label: "Đăng kí đối tác", path: "/partner" },
     { key: "4", label: "Đăng kí giải", path: "/tournament" },
-    { key: "5", label: "Đăng kí gói", path: "/registerPackageCourt" },
+    // { key: "5", label: "Đăng kí gói", path: "/registerPackageCourt" },
   ];
   const menuItemsManager = [
     { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
-    { key: "2", label: "Lịch hoạt động", path: "/" },
+    { key: "2", label: "Lịch hoạt động", path: "/courtManage/ManagerCalendar" },
     { key: "3", label: "Yêu cầu tổ chức giải", path: "/" },
-    { key: "4", label: "Thông tin sân", path: "/" },
-    { key: "5", label: "Tìm sân", path: "/" },
+    { key: "4", label: "Quản lý sân", path: "/courtManage" },
+    { key: "5", label: "Đặt sân trực tiếp", path: "/" },
+    { key: "6", label: "Đăng kí gói", path: "/courtManage/registerPackageCourt" },
+    { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
   ];
   const menuItems = user?.role === "manager" ? menuItemsManager : menuItemsUser;
 
@@ -226,7 +228,7 @@ export default function HeaderLayout() {
           </a>
         </Dropdown>
       ) : (
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Link to="/login" style={{ paddingRight: "20px" }}>
             <Button
               style={{
@@ -239,7 +241,7 @@ export default function HeaderLayout() {
               <>Đăng nhập</>
             </Button>
           </Link>
-          <Link to="/signup">
+          <Link to="/signup" style={{ margin: "0 20px" }}>
             <Button
               style={{
                 display: "flex",
@@ -249,6 +251,18 @@ export default function HeaderLayout() {
             >
               <FaUserPlus size="20px" />
               <>Đăng ký</>
+            </Button>
+          </Link>
+          <Link to="/signupPartner">
+            <Button
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "start",
+              }}
+            >
+              <FaUserPlus size="20px" />
+              <>Đăng ký trở thành cộng tác viên</>
             </Button>
           </Link>
         </div>
