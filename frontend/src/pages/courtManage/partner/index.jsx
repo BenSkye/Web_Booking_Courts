@@ -65,11 +65,11 @@ function Partner() {
 
   const steps = [
     <CourtInfo key="courtInfo" />,
-    <CourtImages
-      key="courtImages"
-      handleUploadChange={handleUploadChange}
-      handleBeforeUpload={handleBeforeUpload}
-    />,
+    // <CourtImages
+    //   key="courtImages"
+    //   handleUploadChange={handleUploadChange}
+    //   handleBeforeUpload={handleBeforeUpload}
+    // />,
     <ServicesAndAmenities key="servicesAndAmenities" />,
     <HoursAndPricing key="hoursAndPricing" />,
     <AdditionalInfo key="additionalInfo" />,

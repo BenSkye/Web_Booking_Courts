@@ -15,21 +15,28 @@ import { useParams } from "react-router-dom";
 // }
 // In partnerAPI/index.js
 export const submitForm = async (formValues, token) => {
-  const response = await fetch('http://localhost:5050/api/v1/center', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` // Add this line
-    },
-    body: JSON.stringify(formValues)
-  });
+  try {
+    const response = await fetch('http://localhost:5050/api/v1/center', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(formValues)
+    });
 
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Network response was not ok');
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    throw error;
   }
-
-  return response.json();
 };
+
 
 
 
