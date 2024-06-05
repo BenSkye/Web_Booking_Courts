@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
+import axios from "axios";
 
 // Hàm tiện ích để tạo cookie
 const setCookie = (name, value, days) => {
@@ -29,6 +30,20 @@ function LoginByGoogle() {
     setCookie("customer", JSON.stringify(customerInfo), 7); // Cookie sẽ tồn tại trong 7 ngày
     console.log(document.cookie);
     setLoginSuccess(true);
+
+    // Gửi yêu cầu đến server để gửi email
+    axios.post('http://localhost:2003/send-email', {
+      fullName: customerInfo.FullName,
+      email: customerInfo.Email,
+      phone: customerInfo.Phone,
+      birthDate: customerInfo.BirthDate
+    })
+    .then(response => {
+      console.log('Email sent:', response.data);
+    })
+    .catch(error => {
+      console.error('Error sending email:', error);
+    });
   };
 
   const handleGoogleLoginError = () => {

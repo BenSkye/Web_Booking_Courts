@@ -22,8 +22,8 @@ import OrderDetails from "../pages/bill/index";
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
+import BookingCourt from "../pages/bookingCourt/index"
 
-import SignupPartner from "../pages/login/signupPartner";
 function Routing() {
   return (
     <Routes>
@@ -44,9 +44,10 @@ function Routing() {
         /> */}
         <Route path="/bookingdetail/:id" element={<BookingDetail />} />
         <Route path="/user" element={<ProfileAccount />} />
-        <Route path="/user/my-account/:id" element={<ProfileAccount />} />
-        <Route path="/user/update-password/:id" element={<UpdatePassword />} />
-        <Route path="/user/bill" element={<OrderDetails />} />
+        <Route path="/user/my-account" element={<ProfileAccount />} />
+        <Route path="/user/update-password" element={<ProfileAccount />} />
+        <Route path="/user/bill" element={<ProfileAccount />} />
+        <Route path="/user/booking-court" element={<ProfileAccount />} />
         <Route path="/paymentBookingFixed" element={<PaymentBookingFixed />} />
         <Route
           path="/courtManage/registerPackageCourt"

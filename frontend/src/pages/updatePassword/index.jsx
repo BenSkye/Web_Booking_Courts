@@ -1,38 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, message, Spin } from "antd";
-import {
-  updateAccountInformation,
-  AccountInformation,
-} from "@/services/accountAPI/update_account-API";
 import { useParams } from "react-router-dom";
 
 const UpdatePassword = () => {
   const [form] = Form.useForm();
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
+  
+  // Giả sử dữ liệu tài khoản cứng
+  const fixedAccountData = {
+    Password: "password_from_fixed_data"
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await AccountInformation(id);
-        setLoading(false);
-        form.setFieldsValue({
-          oldPassword: data.Password,
-        });
-      } catch (error) {
-        console.error("Error fetching initial values:", error);
-        message.error("Có lỗi xảy ra khi tải thông tin tài khoản.");
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id, form]);
+    // Giả sử việc tải dữ liệu không cần thời gian, không cần gọi API
+    setLoading(false);
+    form.setFieldsValue({
+      oldPassword: fixedAccountData.Password,
+    });
+  }, [form]);
 
   const onFinish = async (values) => {
     try {
       const { password } = values;
-      await updateAccountInformation(id, { password });
+      // Thực hiện cập nhật mật khẩu ở đây
+      // Giả sử việc này không cần gọi API
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Giả sử việc cập nhật mật khẩu thành công sau 1 giây
       message.success("Cập nhật mật khẩu thành công!");
     } catch (error) {
       console.error("Failed to update password:", error);

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Card, Button, Image, Modal } from "antd";
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 
 const generateInvoiceCode = () => {
   const now = new Date();
@@ -14,10 +12,7 @@ const generateInvoiceCode = () => {
   return `INV-${year}${month}${day}-${hours}${minutes}${seconds}`;
 };
 
-
-
-
-const App = () => {
+const OrderDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
 
@@ -72,17 +67,6 @@ const App = () => {
     }
   ];
 
-  const checkBookingConsistency = (bookingDates) => {
-    const weeks = new Array(5).fill(0); // Chỉ cần tối đa 5 tuần trong một tháng
-    let totalWeeks = 0;
-    for (const date of bookingDates) {
-      const weekIndex = Math.floor(date.getDate() / 7);
-      weeks[weekIndex] = 1;
-    }
-    totalWeeks = weeks.reduce((sum, week) => sum + week, 0);
-    return totalWeeks >= 4;
-  };
-
   return (
     <div style={{ maxHeight: '80vh', overflowY: 'auto', padding: '16px' }}>
       {invoices.map((invoice, index) => (
@@ -116,9 +100,8 @@ const App = () => {
     <p>Giá: {selectedInvoice.price} ₫</p>
     <div>
       <p>Hình thức đặt sân:</p>
-      <p>Ngày đặt sân: {selectedInvoice.bookingDate ? selectedInvoice.bookingDate.toLocaleDateString() : 'N/A'}</p>
-      <p>Giờ đặt sân: {selectedInvoice.bookingTime}</p>
-      <Calendar value={selectedInvoice.bookingDate ? new Date(selectedInvoice.bookingDate) : null} />
+      <p>Ngày thanh toán: {selectedInvoice.bookingDate ? selectedInvoice.bookingDate.toLocaleDateString() : 'N/A'}</p>
+      <p>Giờ thanh toán: {selectedInvoice.bookingTime}</p>
     </div>
   </Modal>
       )}
@@ -126,4 +109,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default OrderDetails;
