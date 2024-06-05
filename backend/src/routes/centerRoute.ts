@@ -4,6 +4,8 @@ import centerController from '~/controller/centerController'
 
 const centerRoute = Router()
 
-centerRoute.route('/').post(authController.protect, authController.restricTO('manager'), centerController.createCenter)
+centerRoute.route('/')
+    .post(authController.protect, authController.restricTO('manager'), centerController.createCenter)
+    .get(centerController.getAllCenters)
 
 export default centerRoute

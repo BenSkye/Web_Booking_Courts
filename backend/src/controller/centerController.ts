@@ -15,5 +15,14 @@ class centerController {
       }
     })
   })
+  static getAllCenters = catchAsync(async (req: any, res: any, next: any) => {
+    const centers = await centerService.getAllCenters()
+    res.status(200).json({
+      status: 'success',
+      data: {
+        centers
+      }
+    })
+  })
 }
 export default centerController

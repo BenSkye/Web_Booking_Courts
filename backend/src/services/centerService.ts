@@ -23,5 +23,14 @@ class centerService {
     }
     return { newcenter, newPrices, newCourts }
   }
+
+  static async getAllCenters() {
+    try {
+      const centers = await centerRepository.getAllCenters()
+      return centers
+    } catch (error) {
+      throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
+    }
+  }
 }
 export default centerService

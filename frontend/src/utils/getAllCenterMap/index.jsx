@@ -27,7 +27,7 @@ const GetAllLocationCenter = ({ locations }) => {
       locations.map((location) => {
         return geocodingService
           .forwardGeocode({
-            query: location.addressCenter,
+            query: location?.location,
             limit: 1,
           })
           .send()

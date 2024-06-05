@@ -14,7 +14,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/api/v1/auth', authRoute)
-app.use('/api/v1/center', centerRoute)
+app.use('/api/v1/centers', centerRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
