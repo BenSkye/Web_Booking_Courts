@@ -17,32 +17,36 @@ function Partner() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState({});
+  const [currentStep, setCurrentStep] = useState(0);
 
   const onFinish = async () => {
     setSubmitting(true);
-    const images = await Promise.all(
-      fileList.map((file) => getBase64(file.originFileObj))
-    );
-    const currentFormValues = form.getFieldsValue();
-    const updatedValues = {
-      ...formValues,
-      ...currentFormValues,
-    };
+    try {
+      const images = fileList && fileList.length > 0 
+        ? await Promise.all(fileList.map((file) => getBase64(file.originFileObj)))
+        : [];
+      
+      const currentFormValues = form.getFieldsValue();
+      const updatedValues = {
+        ...formValues,
+        ...currentFormValues,
+        images, // Add images to form values
+      };
 
-    const token = Cookies.get('jwtToken'); // Get the token from localStorage
+      const token = Cookies.get('jwtToken'); // Get the token from cookies
+      if (!token) {
+        throw new Error('No token found');
+      }
 
-    submitForm(updatedValues, token) // Pass the token here
-    .then(() => {
+      await submitForm(updatedValues, token); // Pass the token here
       message.success("Form submitted successfully!");
       navigate("/courtManage");
-    })
-    .catch((error) => {
-      message.error("There was an error submitting the form");
+    } catch (error) {
+      message.error("There was an error submitting the form: " + error.message);
       console.error(error);
-    })
-    .finally(() => {
+    } finally {
       setSubmitting(false);
-    });
+    }
   };
 
   const handleUploadChange = ({ fileList }) => {
@@ -59,18 +63,16 @@ function Partner() {
     return isImage ? true : Upload.LIST_IGNORE;
   };
 
-  const [currentStep, setCurrentStep] = useState(0);
-
   const steps = [
-    // <PersonalInfo />,
-    <CourtInfo />,
+    <CourtInfo key="courtInfo" />,
     <CourtImages
+      key="courtImages"
       handleUploadChange={handleUploadChange}
       handleBeforeUpload={handleBeforeUpload}
     />,
-    <ServicesAndAmenities />,
-    <HoursAndPricing />,
-    <AdditionalInfo />,
+    <ServicesAndAmenities key="servicesAndAmenities" />,
+    <HoursAndPricing key="hoursAndPricing" />,
+    <AdditionalInfo key="additionalInfo" />,
   ];
 
   return (

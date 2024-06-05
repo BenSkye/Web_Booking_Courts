@@ -36,7 +36,7 @@ const centerSchema = new Schema(
     },
     rule: {
       type: String,
-      default: ''
+      required: true
     },
     status: {
       type: String,
