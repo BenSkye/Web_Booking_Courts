@@ -4,6 +4,7 @@ import AccountSettingsForm from "../accountInformation/index";
 import UpdatePassword from "../updatePassword/index";
 import { Link } from "react-router-dom";
 import OrderDetails from "../bill/index";
+import BookingCourt from "../bookingCourt/index";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -17,7 +18,7 @@ import { Button, Layout, Menu, theme } from "antd";
 
 const { Header, Sider, Content } = Layout;
 
-const App = () => {
+const ProfileAccount = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("1"); // State để lưu trạng thái liên kết được chọn
   const {
@@ -60,12 +61,14 @@ const App = () => {
             Cập nhật mật khẩu
           </Menu.Item>
           <Menu.Item key="3" icon={<BookOutlined />}>
+          <Link to="/user/booking-court"></Link>
             Đặt sân
           </Menu.Item>
           <Menu.Item key="4" icon={<PlayCircleOutlined />}>
-            Số sân đã chơi
+            Số giờ chơi
           </Menu.Item>
           <Menu.Item key="5" icon={<FileTextOutlined />}>
+          <Link to="/user/bill"></Link>
             Hóa đơn
           </Menu.Item>
         </Menu>
@@ -97,7 +100,7 @@ const App = () => {
             
           )}
           {selectedKey === "2" && <UpdatePassword />}
-          {selectedKey === "3" && <h1>Bookings Content</h1>}
+          {selectedKey === "3" && <BookingCourt/>}
           {selectedKey === "4" && <h1>Game Content</h1>}
           {selectedKey === "5" && <h1><OrderDetails/></h1>}
         </Content>
@@ -106,4 +109,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default ProfileAccount;

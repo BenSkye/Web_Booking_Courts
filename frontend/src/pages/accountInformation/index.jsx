@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Input, Select, DatePicker, message, Spin } from "antd";
 import moment from "moment";
-import { AccountInformation, updateAccountInformation } from "@/services/accountAPI/update_account-API";
+import { updateAccountInformation } from "@/services/accountAPI/update_account-API"; // Adjust import as per your API structure
 import { useParams } from 'react-router-dom';
 
 const { Option } = Select;
@@ -12,31 +12,31 @@ const AccountSettingsForm = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await AccountInformation(id);
-        const birthDate = moment.unix(data.Birth).format('YYYY-MM-DD');
-        form.setFieldsValue({
-          'Họ và tên': data.Name,
-          'Email': data.Email,
-          'Số điện thoại': data.Phone,
-          'Giới tính': data.Gender,
-          'Ngày,tháng,năm sinh': moment(birthDate, 'YYYY-MM-DD'),
-        });
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching initial values:", error);
-        message.error('Có lỗi xảy ra khi tải thông tin tài khoản.');
-        setLoading(false);
-      }
+    // Simulated hardcoded data
+    const hardcodedData = {
+      Name: "John Doe",
+      Email: "john@example.com",
+      Phone: "123456789",
+      Gender: "male",
+      Birth: moment().subtract(30, 'years').unix(), // Simulated birth date 30 years ago
     };
 
-    fetchData();
-  }, [form, id]);
+    // Set hardcoded data to form
+    const birthDate = moment.unix(hardcodedData.Birth).format('YYYY-MM-DD');
+    form.setFieldsValue({
+      'Họ và tên': hardcodedData.Name,
+      'Email': hardcodedData.Email,
+      'Số điện thoại': hardcodedData.Phone,
+      'Giới tính': hardcodedData.Gender,
+      'Ngày,tháng,năm sinh': moment(birthDate, 'YYYY-MM-DD'),
+    });
+
+    setLoading(false);
+  }, [form]);
 
   const onFinish = async (values) => {
     try {
-      await updateAccountInformation(id, values);
+      await updateAccountInformation(id, values); // Update account information using API
       message.success('Cập nhật tài khoản thành công!');
     } catch (error) {
       console.error("Failed to update account information:", error);

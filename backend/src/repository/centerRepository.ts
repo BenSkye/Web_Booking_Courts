@@ -5,5 +5,11 @@ class centerRepository {
     const newcenter = new Center(center)
     return newcenter.save()
   }
+  static async getListCenter(query: any) {
+    return await Center.find(query)
+  }
+  static async getCenter(query: any) {
+    return await Center.findOne(query)
+  }
 }
 export default centerRepository
