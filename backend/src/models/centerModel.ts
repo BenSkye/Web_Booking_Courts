@@ -15,11 +15,11 @@ const centerSchema = new Schema(
       required: true
     },
     openTime: {
-      type: Date,
+      type: String,
       required: true
     },
     closeTime: {
-      type: Date,
+      type: String,
       required: true
     },
     courtCount: {
@@ -37,6 +37,27 @@ const centerSchema = new Schema(
     rule: {
       type: String,
       default: ''
+    },
+    subscriptions: {
+      type: [
+        {
+          _id: false,
+          packageId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Package',
+            required: true
+          },
+          activationDate: {
+            type: Date,
+            required: true
+          },
+          expiryDate: {
+            type: Date,
+            required: true
+          }
+        }
+      ],
+      default: []
     },
     status: {
       type: String,

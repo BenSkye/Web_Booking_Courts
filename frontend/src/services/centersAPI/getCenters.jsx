@@ -2,7 +2,7 @@ import { fetchDataMockAPI } from '@/services/fetchAPI';
 
 export const getAllCenterAPI = async () => {
   try {
-    const response = await fetch('http://localhost:5050/api/v1/centers');
+    const response = await fetch('http://localhost:5050/api/v1/center');
     const responseData = await response.json();
     console.log("Data from API:", responseData);
     if (responseData.status === "success") {
@@ -19,7 +19,7 @@ export const getAllCenterAPI = async () => {
 
 export const getCenterByIdAPI = async (id) => {
   const data = await fetchDataMockAPI(
-    `http://localhost:5050/api/v1/centers/${id}`
+    `http://localhost:5050/api/v1/center/${id}`
   );
   if (data) {
     return data;

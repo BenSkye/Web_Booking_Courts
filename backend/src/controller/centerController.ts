@@ -24,5 +24,36 @@ class centerController {
       }
     })
   })
+
+  static getPersonalCenters = catchAsync(async (req: any, res: any, next: any) => {
+    const center = await centerService.getPersonalCenters(req.user._id)
+    if (!center) return next(new AppError('No center found', 404))
+    res.status(200).json({
+      status: 'success',
+      data: {
+        center
+      }
+    })
+  })
+  static getPersonalCenterDetail = catchAsync(async (req: any, res: any, next: any) => {
+    const { center, prices } = await centerService.getPersonalCenterById(req.params.centerId, req.user._id)
+    if (!center) return next(new AppError('No center found', 404))
+    res.status(200).json({
+      status: 'success',
+      data: {
+        center,
+        prices
+      }
+    })
+  })
+  static selectPackage = catchAsync(async (req: any, res: any, next: any) => {
+    const center = await centerService.selectPackage(req.params.centerId, req.params.packageId, req.user._id)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        center
+      }
+    })
+  })
 }
 export default centerController
