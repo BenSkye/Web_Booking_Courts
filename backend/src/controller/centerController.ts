@@ -36,5 +36,14 @@ class centerController {
       }
     })
   })
+  static selectPackage = catchAsync(async (req: any, res: any, next: any) => {
+    const center = await centerService.selectPackage(req.params.centerId, req.params.packageId, req.user._id)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        center
+      }
+    })
+  })
 }
 export default centerController
