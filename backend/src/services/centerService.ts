@@ -1,3 +1,4 @@
+import { List } from '@mui/material'
 import centerRepository from '~/repository/centerRepository'
 import courtRepository from '~/repository/courtRepository'
 import priceRepository from '~/repository/priceRepository'
@@ -22,6 +23,22 @@ class centerService {
       newCourts.push(newCourt)
     }
     return { newcenter, newPrices, newCourts }
+  }
+  static async getPersonalCenters(userId: any) {
+    const ListCenter = await centerRepository.getListCenter({ managerId: userId })
+    // const ListCenterWithPrices = await Promise.all(
+    //   ListCenter.map(async (center: any) => {
+    //     const prices = await priceRepository.getPricesByCenterId(center._id)
+    //     return { ...center._doc, prices }
+    //   })
+    // )
+    return ListCenter
+  }
+  static async getPersonalCenterById(centerId: any, userId: any) {
+    const center: any = await centerRepository.getCenter({ _id: centerId, managerId: userId })
+    console.log(center)
+    const prices = await priceRepository.getPrices({ centerId: center._id })
+    return { center, prices }
   }
 }
 export default centerService
