@@ -16,13 +16,13 @@ import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTour
 import CourtManage from "@/pages/courtManage";
 import TournamentDetail from "../pages/TournamentDetail";
 import CourtManageDetail from "../pages/courtManage/courtManageDetail";
-
 import UpdatePassword from "../pages/updatePassword/index";
 import OrderDetails from "../pages/bill/index";
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
 import BookingCourt from "../pages/bookingCourt/index"
+import SignupPartner from "../pages/login/signupPartner";
 
 function Routing() {
   return (

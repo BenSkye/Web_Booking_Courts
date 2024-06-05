@@ -1,4 +1,3 @@
-import { List } from '@mui/material'
 import centerRepository from '~/repository/centerRepository'
 import courtRepository from '~/repository/courtRepository'
 import priceRepository from '~/repository/priceRepository'

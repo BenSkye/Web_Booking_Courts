@@ -9,6 +9,7 @@ import ServicesAndAmenities from "./components/ServicesAndAmenities.jsx";
 import HoursAndPricing from "./components/HoursAndPricing.jsx";
 import AdditionalInfo from "./components/AdditionalInfo.jsx";
 import { getBase64 } from "./components/fileUtils.jsx";
+import Cookies from 'js-cookie';
 
 function Partner() {
   const [form] = Form.useForm();
@@ -26,22 +27,22 @@ function Partner() {
     const updatedValues = {
       ...formValues,
       ...currentFormValues,
-      approvalStatus: "Chờ đợi phê duyệt",
-      paymentStatus: "Chờ thanh toán",
     };
 
-    submitForm(updatedValues)
-      .then(() => {
-        message.success("Form submitted successfully!");
-        navigate("/courtManage");
-      })
-      .catch((error) => {
-        message.error("There was an error submitting the form");
-        console.error(error);
-      })
-      .finally(() => {
-        setSubmitting(false);
-      });
+    const token = Cookies.get('jwtToken'); // Get the token from localStorage
+
+    submitForm(updatedValues, token) // Pass the token here
+    .then(() => {
+      message.success("Form submitted successfully!");
+      navigate("/courtManage");
+    })
+    .catch((error) => {
+      message.error("There was an error submitting the form");
+      console.error(error);
+    })
+    .finally(() => {
+      setSubmitting(false);
+    });
   };
 
   const handleUploadChange = ({ fileList }) => {
@@ -61,7 +62,7 @@ function Partner() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const steps = [
-    <PersonalInfo />,
+    // <PersonalInfo />,
     <CourtInfo />,
     <CourtImages
       handleUploadChange={handleUploadChange}
