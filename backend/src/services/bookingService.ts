@@ -22,7 +22,6 @@ class bookingService {
       }
 
       const avilable = await timeSlotRepository.checkTimeSlotAvilable(slot)
-      console.log('avilable', avilable)
       if (!avilable) {
         allSlotsAvailable = false
         throw new AppError('Slot not available', 400)

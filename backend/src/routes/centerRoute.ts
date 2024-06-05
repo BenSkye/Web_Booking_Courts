@@ -8,7 +8,6 @@ centerRoute.route('/').post(authController.protect, authController.restricTO('ma
 centerRoute
   .route('/my-centers')
   .get(authController.protect, authController.restricTO('manager'), centerController.getPersonalCenters)
-
 centerRoute
   .route('/my-centers/:centerId')
   .get(authController.protect, authController.restricTO('manager'), centerController.getPersonalCenterDetail)

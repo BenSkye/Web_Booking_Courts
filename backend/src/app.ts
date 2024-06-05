@@ -8,6 +8,7 @@ import authRoute from './routes/authRoute'
 import centerRoute from './routes/centerRoute'
 import centerPackageRoute from './routes/centerPackageRoute'
 import bookingRoute from './routes/bookingRoute'
+import timeslotRoute from './routes/timeslotRoute'
 
 dotenv.config()
 
@@ -19,6 +20,7 @@ app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/center', centerRoute)
 app.use('/api/v1/centerpackage', centerPackageRoute)
 app.use('/api/v1/booking', bookingRoute)
+app.use('/api/v1/timeSlot', timeslotRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })

@@ -22,7 +22,7 @@ import OrderDetails from "../pages/bill/index";
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
-import BookingCourt from "../pages/bookingCourt/index"
+import BookingCourt from "../pages/bookingCourt/index";
 
 function Routing() {
   return (
@@ -65,7 +65,7 @@ function Routing() {
 
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/signupPartner" element={<SignupPartner />} />
+      {/* <Route path="/signupPartner" element={<SignupPartner />} /> */}
     </Routes>
   );
 }
