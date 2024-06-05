@@ -15,11 +15,11 @@ const centerSchema = new Schema(
       required: true
     },
     openTime: {
-      type: Date,
+      type: String,
       required: true
     },
     closeTime: {
-      type: Date,
+      type: String,
       required: true
     },
     courtCount: {
@@ -28,7 +28,7 @@ const centerSchema = new Schema(
     },
     images: {
       type: [String],
-      default: []
+      required: true
     },
     services: {
       type: [String],
