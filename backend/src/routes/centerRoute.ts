@@ -12,4 +12,7 @@ centerRoute
 centerRoute
   .route('/my-centers/:centerId')
   .get(authController.protect, authController.restricTO('manager'), centerController.getPersonalCenterDetail)
+centerRoute
+  .route('/my-centers/:centerId/select-package/:packageId')
+  .patch(authController.protect, authController.restricTO('manager'), centerController.selectPackage)
 export default centerRoute

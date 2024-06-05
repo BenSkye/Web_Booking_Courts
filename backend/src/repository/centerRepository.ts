@@ -11,5 +11,8 @@ class centerRepository {
   static async getCenter(query: any) {
     return await Center.findOne(query)
   }
+  static async updateCenter(query: any, data: any) {
+    return await Center.findOneAndUpdate(query, data, { new: true })
+  }
 }
 export default centerRepository
