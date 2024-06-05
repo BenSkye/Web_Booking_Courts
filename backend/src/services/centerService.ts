@@ -15,6 +15,10 @@ class centerService {
       return priceRepository.addPrice(price)
     })
     const newPrices = await Promise.all(promises)
+    const priceIds = newPrices.map((price) => price._id)
+
+    newcenter.price = priceIds
+    await centerRepository.updateCenter(newcenter._id, newcenter)
     const newCourts = []
     for (let i = 0; i < newcenter.courtCount; i++) {
       const court = {
@@ -63,10 +67,14 @@ class centerService {
         return latest.expiryDate > subscription.expiryDate ? latest : subscription
       })
     }
-    const activationDate = new Date()
-    activationDate.setHours(0, 0, 0, 0)
-    if (latestSubscription && latestSubscription.expiryDate > new Date()) {
-      activationDate.setDate(latestSubscription.expiryDate.getDate() + 1)
+    console.log('latestSubscription', latestSubscription)
+    let activationDate = new Date()
+    activationDate.setUTCHours(0, 0, 0, 0)
+    if (latestSubscription && latestSubscription.expiryDate > activationDate) {
+      const newDate = new Date(latestSubscription.expiryDate.getTime()) //lấy ngày kết thúc gần nhất
+      newDate.setDate(newDate.getDate() + 1) //cộng thêm 1 ngày
+      activationDate = newDate
+      console.log('activationDate', activationDate)
     }
     const expiryDate = new Date(activationDate)
     expiryDate.setMonth(activationDate.getMonth() + centerPackage.durationMonths)
@@ -82,7 +90,6 @@ class centerService {
 
     const modifeCenter = await centerRepository.updateCenter({ _id: centerId }, center)
     const listCourt = await courtRepository.getListCourt({ centerId })
-    console.log(listCourt)
     const slotsAray: { start: string; end: string }[] = []
     const slot = {
       start: center.openTime,
@@ -101,11 +108,11 @@ class centerService {
     }
     const ListTimeslot: { courtId: string; date: Date; slot: { start: string; end: string }[] }[] = []
     listCourt.forEach(async (court: any) => {
-      const startDay = new Date(activationDate)
-      while (startDay < expiryDate) {
+      const startDay = new Date(activationDate.getTime())
+      while (startDay <= expiryDate) {
         const newTimeSlot = {
           courtId: court._id,
-          date: activationDate,
+          date: new Date(startDay.getTime()),
           slot: slotsAray
         }
         ListTimeslot.push(newTimeSlot)
@@ -114,6 +121,18 @@ class centerService {
     })
     await timeSlotRepository.addManyTimeSlots(ListTimeslot)
     return modifeCenter
+  }
+
+  static async changeCenterStatus(
+    centerId: string,
+    status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected'
+  ) {
+    const center = await centerRepository.getCenter({ _id: centerId })
+    if (!center) {
+      throw new AppError('Can not found center', 404)
+    }
+    center.status = status
+    return centerRepository.updateCenter({ _id: centerId }, center)
   }
 }
 export default centerService

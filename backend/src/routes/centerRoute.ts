@@ -15,4 +15,7 @@ centerRoute
 centerRoute
   .route('/my-centers/:centerId/select-package/:packageId')
   .patch(authController.protect, authController.restricTO('manager'), centerController.selectPackage)
+centerRoute
+  .route('/my-centers/:centerId/change-status')
+  .patch(authController.protect, authController.restricTO('admin'), centerController.changeCenterStatus)
 export default centerRoute

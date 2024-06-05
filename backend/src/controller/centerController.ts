@@ -45,5 +45,14 @@ class centerController {
       }
     })
   })
+  static changeCenterStatus = catchAsync(async (req: any, res: any, next: any) => {
+    const center = await centerService.changeCenterStatus(req.params.centerId, req.body.centerStatus)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        center
+      }
+    })
+  })
 }
 export default centerController
