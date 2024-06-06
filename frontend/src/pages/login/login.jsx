@@ -1,14 +1,5 @@
 import React, { useContext, useState } from "react";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Row,
-  Col,
-  Typography,
-  message,
-} from "antd";
+import { Button, Checkbox, Form, Input, Row, Col, Typography, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png"; // Chỉnh lại đường dẫn cho phù hợp với cấu trúc thư mục của bạn
 import Oauth from "../../components/Oauth/Oauth";
@@ -20,11 +11,16 @@ const Login = () => {
   const [registerClicked, setRegisterClicked] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+
   const onFinish = async (values) => {
-    const result = await login(values.email, values.password);
-    if (result) {
-      console.log(result);
-      navigate("/");
+    const user = await login(values.email, values.password);
+    if (user) {
+      console.log(user);
+      if (user.role === 'manager') {
+        navigate('/courtManage');
+      } else {
+        navigate('/');
+      }
     } else {
       message.error("Email hoặc mật khẩu không đúng!");
     }
@@ -48,11 +44,7 @@ const Login = () => {
           alignItems: "center",
         }}
       >
-        <img
-          src={logo}
-          alt="Logo"
-          style={{ maxWidth: "100%", height: "auto" }}
-        />
+        <img src={logo} alt="Logo" style={{ maxWidth: "100%", height: "auto" }} />
       </Col>
       <Col xs={24} sm={24} md={12} lg={8} xl={6}>
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
@@ -74,7 +66,7 @@ const Login = () => {
             rules={[
               {
                 required: registerClicked,
-                message: "vui lòng nhập email!",
+                message: "Vui lòng nhập email!",
               },
             ]}
           >
@@ -87,7 +79,7 @@ const Login = () => {
             rules={[
               {
                 required: registerClicked,
-                message: "vui lòng nhập mật khẩu!",
+                message: "Vui lòng nhập mật khẩu!",
               },
             ]}
           >
@@ -124,17 +116,16 @@ const Login = () => {
         </Form>
         <div style={{ textAlign: "center" }}>
           <Text>
-            Bạn chưa có tài khoản thành viên ?{" "}
-            <Link to="/signup">Đăng ký làm thành viên</Link>
+            Bạn chưa có tài khoản thành viên? <Link to="/signup">Đăng ký làm thành viên</Link>
           </Text>
           <br />
           <Text>
-            Bạn muốn làm cộng tác viên ?{" "}
-            <Link to="/signupPartner">Đăng ký làm cộng tác viên</Link>
+            Bạn muốn làm cộng tác viên? <Link to="/signupPartner">Đăng ký làm cộng tác viên</Link>
           </Text>
         </div>
       </Col>
     </Row>
   );
 };
+
 export default Login;
