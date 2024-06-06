@@ -71,6 +71,7 @@ const centerSchema = new Schema(
     },
     status: {
       type: String,
+      enum: ['pending', 'accepted', 'active', 'expired', 'rejected'],
       default: 'pending'
     }
   },

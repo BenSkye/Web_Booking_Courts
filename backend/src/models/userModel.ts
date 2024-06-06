@@ -15,7 +15,7 @@ const userSchema = new Schema(
     },
     userPhone: {
       type: Number,
-      required: true
+      // required: true
     },
     userAddress: {
       type: String,
