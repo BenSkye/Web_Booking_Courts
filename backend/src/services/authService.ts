@@ -11,6 +11,12 @@ class authService {
     const newUser = userRepository.addUser(user)
     return newUser
   }
+  static async registerPartner(user: any) {
+    const password = bcrypt.hashSync(user.password, 12)
+    user.password = password
+    const newUser = userRepository.addPartner(user)
+    return newUser
+  }
   static async loginUser(userEmail: string, password: string) {
     const foundUser = await userRepository.findUser({ userEmail })
     if (!foundUser) {

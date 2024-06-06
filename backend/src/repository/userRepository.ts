@@ -5,6 +5,11 @@ class userRepository {
     const newUser = new User(user)
     return newUser.save()
   }
+  static async addPartner(user: any) {
+    user.role = 'manager'; // Set the role to 'manager'
+    const newUser = new User(user);
+    return newUser.save();
+  }
   static async findUser(query: any) {
     const user = User.findOne(query)
     return user

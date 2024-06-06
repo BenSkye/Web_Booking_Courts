@@ -12,6 +12,15 @@ class authController {
       }
     })
   })
+  static registerPartner = catchAsync(async (req: any, res: any, next: any) => {
+    const newUser = await authService.registerPartner(req.body)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        user: newUser
+      }
+    })
+  })
   static loginUser = catchAsync(async (req: any, res: any, next: any) => {
     const { userEmail, password } = req.body
     if (!userEmail || !password) {
