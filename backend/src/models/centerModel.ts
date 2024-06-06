@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 const { Schema } = mongoose
 const centerSchema = new Schema(
   {
+
     managerId: {
       type: Schema.Types.ObjectId,
       required: true
@@ -58,6 +59,15 @@ const centerSchema = new Schema(
         }
       ],
       default: []
+    },
+    price: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Price',
+          required: true
+        }
+      ]
     },
     status: {
       type: String,
