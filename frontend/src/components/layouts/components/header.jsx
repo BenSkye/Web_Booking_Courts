@@ -161,14 +161,10 @@ export default function HeaderLayout() {
   const menuItemsManager = [
     { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
     { key: "2", label: "Lịch hoạt động", path: "/courtManage/ManagerCalendar" },
-    { key: "3", label: "Yêu cầu tổ chức giải", path: "/" },
+    { key: "3", label: "Yêu cầu tổ chức giải", path: "/courtManage/RequestToOrganizeATournament" },
     { key: "4", label: "Quản lý sân", path: "/courtManage" },
-    { key: "5", label: "Đặt sân trực tiếp", path: "/" },
-    {
-      key: "6",
-      label: "Đăng kí gói",
-      path: "/courtManage/registerPackageCourt",
-    },
+    { key: "5", label: "Đặt sân trực tiếp", path: "/courtManage/BookingCourtDirectly" },
+    { key: "6", label: "Đăng kí gói", path: "/courtManage/registerPackageCourt" },
     { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
   ];
   const menuItems = user?.role === "manager" ? menuItemsManager : menuItemsUser;

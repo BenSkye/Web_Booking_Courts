@@ -4,21 +4,21 @@ import { Form, Input, InputNumber } from "antd";
 const CourtInfo = () => (
   <Form.Item label="2. Thông Tin Về Sân Cầu Lông">
     <Form.Item
-      name="courtName"
+      name="centerName"
       label="Tên trung tâm sân cầu lông"
       rules={[{ required: true, message: "Tên trung tâm sân cầu lông là bắt buộc" }]}
     >
       <Input placeholder="Tên trung tâm sân cầu lông" />
     </Form.Item>
     <Form.Item
-      name="courtAddress"
+      name="location"
       label="Địa chỉ cụ thể"
       rules={[{ required: true, message: "Địa chỉ cụ thể là bắt buộc" }]}
     >
       <Input placeholder="Địa chỉ cụ thể của sân" />
     </Form.Item>
     <Form.Item
-      name="courtQuantity"
+      name="courtCount"
       label="Số lượng sân cầu lông"
       rules={[{ required: true, message: "Số lượng sân là bắt buộc" }, { type: "number", min: 1, message: "Số lượng sân phải lớn hơn 0" }]}
     >
