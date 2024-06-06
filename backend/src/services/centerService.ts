@@ -40,6 +40,18 @@ class centerService {
     }
   }
 
+  static async getCenterById(id: string) {
+    try {
+      const center = await centerRepository.getCenter({ _id: id })
+      if (!center) {
+        throw new Error(`Center with id ${id} not found`);
+      }
+      return center;
+    } catch (error) {
+      throw new Error(`Could not fetch center: ${(error as Error).message}`);
+    }
+  }
+
   static async getPersonalCenters(userId: string) {
     const ListCenter = await centerRepository.getListCenter({ managerId: userId })
     // const ListCenterWithPrices = await Promise.all(

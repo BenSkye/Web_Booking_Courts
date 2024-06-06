@@ -8,6 +8,8 @@ centerRoute.route('/')
   .post(authController.protect, authController.restricTO('manager'), centerController.createCenter)
   .get(centerController.getAllCenters)
 
+centerRoute.route('/:id')
+  .get(centerController.getCenterById);
 
 centerRoute
   .route('/my-centers')
