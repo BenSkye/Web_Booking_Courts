@@ -8,23 +8,21 @@ import Login from "@/pages/login/login";
 import SignUp from "@/pages/login/signup";
 import Detail from "@/pages/detail/detail";
 import BookingDetail from "@/components/booking/bookingDetails";
-import ProfileAccount from "@/pages/profileAccount";
-import AccountSettingsForm from "@/pages/accountInformation";
+import ProfileAccount from "../pages/account/profileAccount/index";
+
 import RegisterPackageCourt from "@/pages/courtManage/registerPackageCourt";
 import TournamentCreate from "@/pages/tournamentCreate";
 import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTournamentForm";
 import CourtManage from "@/pages/courtManage";
 import TournamentDetail from "../pages/TournamentDetail";
 import CourtManageDetail from "../pages/courtManage/courtManageDetail";
-import UpdatePassword from "../pages/updatePassword/index";
-import OrderDetails from "../pages/bill/index";
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
-import BookingCourt from "../pages/bookingCourt/index"
 import SignupPartner from "../pages/login/signupPartner";
 import BookingCourtDirectly from "../pages/BookingCourtDirectly/BookingCourtDirectly";
 import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/RequestToOrganizeATournament";
+
 
 function Routing() {
   return (

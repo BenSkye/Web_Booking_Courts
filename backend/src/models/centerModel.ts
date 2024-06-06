@@ -38,8 +38,38 @@ const centerSchema = new Schema(
       type: String,
       required: true
     },
+    subscriptions: {
+      type: [
+        {
+          _id: false,
+          packageId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Package',
+            required: true
+          },
+          activationDate: {
+            type: Date,
+            required: true
+          },
+          expiryDate: {
+            type: Date,
+            required: true
+          }
+        }
+      ],
+      default: []
+    },
+    price: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Price'
+        }
+      ]
+    },
     status: {
       type: String,
+      enum: ['pending', 'accepted', 'active', 'expired', 'rejected'],
       default: 'pending'
     }
   },

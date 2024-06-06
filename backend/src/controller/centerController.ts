@@ -15,6 +15,16 @@ class centerController {
       }
     })
   })
+  static getAllCenters = catchAsync(async (req: any, res: any, next: any) => {
+    const centers = await centerService.getAllCenters();
+    res.status(200).json({
+      status: 'success',
+      data: {
+        centers
+      }
+    })
+  })
+
   static getPersonalCenters = catchAsync(async (req: any, res: any, next: any) => {
     const center = await centerService.getPersonalCenters(req.user._id)
     if (!center) return next(new AppError('No center found', 404))
@@ -33,6 +43,24 @@ class centerController {
       data: {
         center,
         prices
+      }
+    })
+  })
+  static selectPackage = catchAsync(async (req: any, res: any, next: any) => {
+    const center = await centerService.selectPackage(req.params.centerId, req.params.packageId, req.user._id)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        center
+      }
+    })
+  })
+  static changeCenterStatus = catchAsync(async (req: any, res: any, next: any) => {
+    const center = await centerService.changeCenterStatus(req.params.centerId, req.body.centerStatus)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        center
       }
     })
   })
