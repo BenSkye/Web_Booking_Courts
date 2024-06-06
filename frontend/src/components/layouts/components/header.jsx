@@ -8,7 +8,7 @@ import { FaUserPlus } from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsCalendarWeek } from "react-icons/bs";
 import { TiClipboard } from "react-icons/ti";
-import {useSelector} from 'react-redux';
+import { useSelector } from "react-redux";
 import logo from "@/assets/logonew.png";
 
 import AuthContext from "../../../services/authAPI/authProvideAPI";
@@ -17,7 +17,7 @@ export default function HeaderLayout() {
   const { user } = useContext(AuthContext);
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const {currentUser} = useSelector((state)=> state.user);
+  console.log("user", user);
   const logouthander = () => {
     logout();
     navigate("/");
@@ -164,7 +164,11 @@ export default function HeaderLayout() {
     { key: "3", label: "Yêu cầu tổ chức giải", path: "/" },
     { key: "4", label: "Quản lý sân", path: "/courtManage" },
     { key: "5", label: "Đặt sân trực tiếp", path: "/" },
-    { key: "6", label: "Đăng kí gói", path: "/courtManage/registerPackageCourt" },
+    {
+      key: "6",
+      label: "Đăng kí gói",
+      path: "/courtManage/registerPackageCourt",
+    },
     { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
   ];
   const menuItems = user?.role === "manager" ? menuItemsManager : menuItemsUser;
@@ -215,11 +219,21 @@ export default function HeaderLayout() {
         >
           <a onClick={(e) => e.preventDefault()}>
             <Space>
-              <Avatar
-                size="large"
-                src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"
-                style={{ background: "white", height: "50px", width: "50px" }}
-              />
+              {user?.avatar ? (
+                <Avatar
+                  size="large"
+                  src={user.avatar} // Sử dụng URL ảnh đại diện từ currentUser nếu đã đăng nhập
+                  style={{ background: "white", height: "50px", width: "50px" }}
+                />
+              ) : (
+                <Avatar
+                  size="large"
+                  src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" // Sử dụng URL ảnh mặc định nếu chưa đăng nhập
+                  style={{ background: "white", height: "50px", width: "50px" }}
+                />
+              )}
+              <div style={{ color: "white" }}>{user?.userName}</div>{" "}
+              {/* Hiển thị tên người dùng */}
               <MdArrowDropDown
                 style={{ display: "flex", alignItems: "center" }}
                 color="white"
@@ -243,7 +257,6 @@ export default function HeaderLayout() {
             </Button>
           </Link>
           <Link to="/signup" style={{ margin: "0 20px" }}>
-            
             <Button
               style={{
                 display: "flex",

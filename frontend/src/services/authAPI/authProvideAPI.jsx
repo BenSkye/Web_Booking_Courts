@@ -31,8 +31,11 @@ export const AuthProvider = ({ children }) => {
         Cookies.set("jwtToken", token, { expires: 60 });
         const decodedToken = jwtDecode(token);
         setUser(decodedToken);
+        
       }
+      // setUser({ userName: data.userName, avatar: data.avatar }); 
     }
+  
     return response;
   };
 
@@ -69,7 +72,9 @@ export const AuthProvider = ({ children }) => {
       console.log(data.data.user?._id);
       setUser({
         id: data.data.user?._id,
-        role: data.data.user?.role
+        role: data.data.user?.role,
+        avatar: data.data.user?.avatar,
+        name: data.data.user?.userName
       });
       return data;
     } catch (error) {
@@ -84,9 +89,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
+    <div>
     <AuthContext.Provider value={{ user, login, logout, handleGoogleClick }}>
       {children}
     </AuthContext.Provider>
+
+    
+    </div>
   );
 };
 
