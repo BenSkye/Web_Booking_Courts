@@ -11,5 +11,15 @@ class timeSlotController {
       }
     })
   }
+  static getMaxTimeAviableFromStartTime = async (req: any, res: any, next: any) => {
+    const { centerId, date, start } = req.params
+    const maxfretime = await timeSlotService.getMaxTimeAviableFromStartTime(centerId, date, start)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        maxfretime
+      }
+    })
+  }
 }
 export default timeSlotController
