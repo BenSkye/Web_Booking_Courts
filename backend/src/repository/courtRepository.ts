@@ -8,5 +8,8 @@ class courtRepository {
   static async getListCourt(query: any) {
     return await Court.find(query)
   }
+  static async getListCourtId(query: any) {
+    return await Court.find(query).select('_id')
+  }
 }
 export default courtRepository

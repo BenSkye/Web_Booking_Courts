@@ -59,8 +59,17 @@ const centerSchema = new Schema(
       ],
       default: []
     },
+    price: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Price'
+        }
+      ]
+    },
     status: {
       type: String,
+      enum: ['pending', 'accepted', 'active', 'expired', 'rejected'],
       default: 'pending'
     }
   },
