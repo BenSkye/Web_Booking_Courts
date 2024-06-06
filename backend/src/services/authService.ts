@@ -48,7 +48,7 @@ class authService {
  
 
  static async googleLogin(userEmail: string, userName: string, avatar: string) {
-    let user = await userRepository.findByEmail(userEmail);
+    const user = await userRepository.findByEmail(userEmail);
 
     if (user) {
       const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET ?? '');
