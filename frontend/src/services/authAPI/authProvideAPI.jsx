@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { postData } from "../fetchAPI";
 import { jwtDecode } from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
-import { app } from "../../firebase";
+import { app } from "../../utils/firebase";
 import { signInSuccess } from "../../../redux/user/userSlice";
 const AuthContext = createContext();
 

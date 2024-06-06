@@ -1,4 +1,5 @@
-import CenterPackage from '~/models/CenterPackageModel'
+import CenterPackage from "~/models/centerPackageModel"
+
 
 class centerPackageRepository {
   static async addCenterPackage(centerPackage: any) {

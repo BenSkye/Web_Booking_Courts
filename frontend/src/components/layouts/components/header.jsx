@@ -8,7 +8,7 @@ import { FaUserPlus } from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsCalendarWeek } from "react-icons/bs";
 import { TiClipboard } from "react-icons/ti";
-
+import {useSelector} from 'react-redux';
 import logo from "@/assets/logonew.png";
 
 import AuthContext from "../../../services/authAPI/authProvideAPI";
@@ -17,6 +17,7 @@ export default function HeaderLayout() {
   const { user } = useContext(AuthContext);
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const {currentUser} = useSelector((state)=> state.user);
   const logouthander = () => {
     logout();
     navigate("/");
@@ -242,6 +243,7 @@ export default function HeaderLayout() {
             </Button>
           </Link>
           <Link to="/signup" style={{ margin: "0 20px" }}>
+            
             <Button
               style={{
                 display: "flex",
