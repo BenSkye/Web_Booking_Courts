@@ -17,7 +17,7 @@ export default function Home() {
     const getCenters = async () => {
       setLoading(true);
       const data = await getAllCenterAPI();
-      console.log('data', data)
+      console.log('data', data);
       setCenters(data);
       setLoading(false);
     };

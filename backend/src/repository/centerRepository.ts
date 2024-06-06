@@ -13,14 +13,7 @@ class centerRepository {
       throw new Error(`Could not fetch centers: ${(error as Error).message}`)
     }
   }
-  static async getCenterById(query: any) {
-    try {
-      const centers = await Center.findOne(query)
-      return centers
-    } catch (error) {
-      throw new Error(`Could not fetch centers: ${(error as Error).message}`)
-    }
-  }
+
   static async getListCenter(query: any) {
     return await Center.find(query)
   }
