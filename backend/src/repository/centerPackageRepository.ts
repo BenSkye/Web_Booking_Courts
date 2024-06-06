@@ -1,3 +1,4 @@
+
 import CenterPackage from '~/models/centerPackageModel'
 
 class centerPackageRepository {

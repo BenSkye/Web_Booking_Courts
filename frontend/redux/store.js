@@ -1,4 +1,3 @@
-// store.js
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './reducers/index';
 

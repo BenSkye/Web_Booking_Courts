@@ -1,7 +1,7 @@
 import authService from '~/services/authService'
 import AppError from '~/utils/appError'
 import catchAsync from '~/utils/catchAsync'
-
+import bcryptjs from 'bcryptjs';
 class authController {
   static registerUser = catchAsync(async (req: any, res: any, next: any) => {
     const newUser = await authService.registerUser(req.body)
@@ -65,5 +65,31 @@ class authController {
       next()
     }
   }
+ 
+
+  static googleLogin = catchAsync(async (req: any, res: any, next: any) => {
+    const { email, name, photo } = req.body;
+
+    if (!email) {
+      return next(new AppError('Vui lòng nhập email', 400));
+    }
+
+    const { user, token } = await authService.googleLogin(email, name, photo);
+
+    res
+      .cookie('access_token', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 3600000), // 1 hour
+      })
+      .status(200)
+      .json({
+        status: 'success',
+        data: {
+          user,
+          token,
+        },
+      });
+  });
+
 }
 export default authController
