@@ -35,6 +35,14 @@ class centerService {
       throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
     }
   }
+  static async getCenterById(centerId: String) {
+    try {
+      const centers = await centerRepository.getCenterById({ _id: centerId })
+      return centers
+    } catch (error) {
+      throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
+    }
+  }
   static async getPersonalCenters(userId: string) {
     const ListCenter = await centerRepository.getListCenter({ managerId: userId })
     // const ListCenterWithPrices = await Promise.all(

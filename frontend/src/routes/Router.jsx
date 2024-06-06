@@ -64,8 +64,8 @@ function Routing() {
       </Route>
 
       <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/signupPartner" element={<SignupPartner />} />
+      {/* <Route path="/signup" element={<SignUp />} />
+      <Route path="/signupPartner" element={<SignupPartner />} /> */}
     </Routes>
   );
 }
