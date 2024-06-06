@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png"; // Chỉnh lại đường dẫn cho phù hợp với cấu trúc thư mục của bạn
-import LoginByGoogle from "../loginGoogle/loginGoogle";
+import Oauth from "../../components/Oauth/Oauth";
 import AuthContext from "@/services/authAPI/authProvideAPI";
 
 const { Text } = Typography;
@@ -119,7 +119,7 @@ const Login = () => {
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <LoginByGoogle />
+            <Oauth />
           </Form.Item>
         </Form>
         <div style={{ textAlign: "center" }}>
