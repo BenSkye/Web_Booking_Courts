@@ -1,23 +1,40 @@
 import React, { useState, useEffect } from "react";
 import {
-  Form,
   Input,
-  TimePicker,
-  InputNumber,
   Upload,
   Button,
   Steps,
   message,
+  Form,
+  InputNumber,
+  TimePicker,
+  Checkbox,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import Cookies from "js-cookie";
-import { submitForm } from "../../../services/partnerAPI"; // Đảm bảo đường dẫn đúng
+import { submitForm } from "../../../services/partnerAPI";
 import { useNavigate } from "react-router-dom";
-
+import ServicesAndAmenities from "./components/ServicesAndAmenities";
 const { Step } = Steps;
 
 const CenterForm = () => {
+  const [showGoldenPrice, setShowGoldenPrice] = useState(false);
+  const [showByMonthPrice, setShowByMonthPrice] = useState(false);
+  const [showBuyPackage, setShowBuyPackage] = useState(false);
+
+  const handleCheckboxChange = (e) => {
+    setShowGoldenPrice(e.target.checked);
+  };
+
+  const handleByMonthPriceChange = (e) => {
+    setShowByMonthPrice(e.target.checked);
+  };
+
+  const handleBuyPackageChange = (e) => {
+    setShowBuyPackage(e.target.checked);
+  };
+
   const [current, setCurrent] = useState(0);
   const [form] = Form.useForm();
   const [formValues, setFormValues] = useState({
@@ -38,17 +55,10 @@ const CenterForm = () => {
         endTime: "",
         cheduleType: "",
       },
-      {
-        price: 0,
-        startTime: "",
-        endTime: "",
-        cheduleType: "",
-      },
     ],
   });
   const navigate = useNavigate();
   useEffect(() => {
-    // Lấy token từ cookie
     const token = Cookies.get("jwtToken");
     if (!token) {
       message.error("Token not found. Please log in.");
@@ -79,14 +89,30 @@ const CenterForm = () => {
             name="openTime"
             rules={[{ required: true, message: "Please select open time!" }]}
           >
-            <TimePicker format={"HH:mm"} />
+            <TimePicker
+              format={"HH:mm"}
+              disabledMinutes={() => [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
+                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+                52, 53, 54, 55, 56, 57, 58, 59,
+              ]}
+            />
           </Form.Item>
           <Form.Item
             label="Close Time"
             name="closeTime"
             rules={[{ required: true, message: "Please select close time!" }]}
           >
-            <TimePicker format={"HH:mm"} />
+            <TimePicker
+              format={"HH:mm"}
+              disabledMinutes={() => [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
+                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+                52, 53, 54, 55, 56, 57, 58, 59,
+              ]}
+            />
           </Form.Item>
           <Form.Item
             label="Court Count"
@@ -109,7 +135,7 @@ const CenterForm = () => {
             name="services"
             rules={[{ required: true, message: "Please input services!" }]}
           >
-            <Input />
+            <ServicesAndAmenities />
           </Form.Item>
           <Form.Item
             label="Rule"
@@ -137,36 +163,137 @@ const CenterForm = () => {
             name="startTimeNormal"
             rules={[{ required: true, message: "Please select start time!" }]}
           >
-            <TimePicker format={"HH:mm"} />
+            <TimePicker
+              format={"HH:mm"}
+              disabledMinutes={() => [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
+                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+                52, 53, 54, 55, 56, 57, 58, 59,
+              ]}
+            />
           </Form.Item>
           <Form.Item
             label="End Time (Normal)"
             name="endTimeNormal"
             rules={[{ required: true, message: "Please select end time!" }]}
           >
-            <TimePicker format={"HH:mm"} />
+            <TimePicker
+              format={"HH:mm"}
+              disabledMinutes={() => [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
+                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+                52, 53, 54, 55, 56, 57, 58, 59,
+              ]}
+            />
           </Form.Item>
-          <Form.Item
-            label="Golden Price"
-            name="goldenPrice"
-            rules={[{ required: true, message: "Please input golden price!" }]}
-          >
-            <InputNumber min={0} />
+
+          <Form.Item>
+            <Checkbox onChange={handleCheckboxChange}>
+              Include Golden Price
+            </Checkbox>
           </Form.Item>
-          <Form.Item
-            label="Start Time (Golden)"
-            name="startTimeGolden"
-            rules={[{ required: true, message: "Please select start time!" }]}
-          >
-            <TimePicker format={"HH:mm"} />
+          {showGoldenPrice && (
+            <Form.Item className="time_and_price">
+              <Form.Item
+                label="Golden Price"
+                name="goldenPrice"
+                rules={[
+                  {
+                    required: showGoldenPrice,
+                    message: "Please input golden price!",
+                  },
+                ]}
+              >
+                <InputNumber min={0} />
+              </Form.Item>
+              <Form.Item
+                label="Start Time (Golden)"
+                name="startTimeGolden"
+                rules={[
+                  {
+                    required: showGoldenPrice,
+                    message: "Please select start time!",
+                  },
+                ]}
+              >
+                <TimePicker
+                  format={"HH:mm"}
+                  disabledMinutes={() => [
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33,
+                    34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
+                    49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+                  ]}
+                />
+              </Form.Item>
+              <Form.Item
+                label="End Time (Golden)"
+                name="endTimeGolden"
+                rules={[
+                  {
+                    required: showGoldenPrice,
+                    message: "Please select end time!",
+                  },
+                ]}
+              >
+                <TimePicker
+                  format={"HH:mm"}
+                  disabledMinutes={() => [
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33,
+                    34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
+                    49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+                  ]}
+                />
+              </Form.Item>
+            </Form.Item>
+          )}
+
+          <Form.Item>
+            <Checkbox onChange={handleByMonthPriceChange}>
+              Include By Month Price
+            </Checkbox>
           </Form.Item>
-          <Form.Item
-            label="End Time (Golden)"
-            name="endTimeGolden"
-            rules={[{ required: true, message: "Please select end time!" }]}
-          >
-            <TimePicker format={"HH:mm"} />
+          {showByMonthPrice && (
+            <Form.Item className="time_and_price">
+              <Form.Item
+                label="By Month Price"
+                name="byMonthPrice"
+                rules={[
+                  {
+                    required: showByMonthPrice,
+                    message: "Please input by month price!",
+                  },
+                ]}
+              >
+                <InputNumber min={0} />
+              </Form.Item>
+            </Form.Item>
+          )}
+
+          <Form.Item>
+            <Checkbox onChange={handleBuyPackageChange}>
+              Include Buy Package
+            </Checkbox>
           </Form.Item>
+          {showBuyPackage && (
+            <Form.Item className="time_and_price">
+              <Form.Item
+                label="Buy Package Price"
+                name="buyPackagePrice"
+                rules={[
+                  {
+                    required: showBuyPackage,
+                    message: "Please input buy package price!",
+                  },
+                ]}
+              >
+                <InputNumber min={0} />
+              </Form.Item>
+            </Form.Item>
+          )}
         </Form>
       ),
     },
@@ -175,8 +302,6 @@ const CenterForm = () => {
       content: (
         <div>
           <h3>Review your details</h3>
-          {/* Hiển thị các giá trị đã nhập */}
-          {/* Bạn có thể tùy chỉnh phần này để hiển thị dữ liệu chi tiết hơn */}
           <pre>{JSON.stringify(formValues, null, 2)}</pre>
         </div>
       ),
@@ -196,7 +321,7 @@ const CenterForm = () => {
             closeTime: values.closeTime.format("HH:mm"),
             courtCount: values.courtCount,
             images: values.images.fileList.map((file) => file.name),
-            services: values.services.split(","),
+            services: values.services,
             rule: values.rule,
           };
         } else if (current === 1) {
@@ -207,13 +332,36 @@ const CenterForm = () => {
               endTime: values.endTimeNormal.format("HH:mm"),
               cheduleType: "normalPrice",
             },
-            {
+          ];
+
+          if (showGoldenPrice) {
+            newFormValues.price.push({
               price: values.goldenPrice,
               startTime: values.startTimeGolden.format("HH:mm"),
               endTime: values.endTimeGolden.format("HH:mm"),
               cheduleType: "GoldenPrice",
-            },
-          ];
+            });
+          }
+
+          const openTime = newFormValues.center.openTime;
+          const closeTime = newFormValues.center.closeTime;
+          if (showByMonthPrice) {
+            newFormValues.price.push({
+              price: values.byMonthPrice,
+              startTime: openTime,
+              endTime: closeTime,
+              cheduleType: "ByMonthPrice",
+            });
+          }
+
+          if (showBuyPackage) {
+            newFormValues.price.push({
+              price: values.buyPackagePrice,
+              startTime: openTime,
+              endTime: closeTime,
+              cheduleType: "BuyPackagePrice",
+            });
+          }
         }
         setFormValues(newFormValues);
         setCurrent(current + 1);
@@ -232,8 +380,9 @@ const CenterForm = () => {
       const token = Cookies.get("jwtToken");
       await submitForm(formValues, token);
       message.success("Form submitted successfully!");
-      navigate("/courtManage")
+      navigate("/courtManage");
     } catch (error) {
+      console.log(error);
       message.error("Failed to submit form!");
     }
   };
