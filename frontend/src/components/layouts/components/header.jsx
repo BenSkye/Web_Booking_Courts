@@ -155,7 +155,7 @@ export default function HeaderLayout() {
     },
     { key: "2", label: "Giới thiệu", path: "/aboutUs" },
     // { key: "3", label: "Đăng kí đối tác", path: "/partner" },
-    { key: "4", label: "Đăng kí giải", path: "/tournament" },
+    { key: "3", label: "Đăng kí giải", path: "/tournament" },
     // { key: "5", label: "Đăng kí gói", path: "/registerPackageCourt" },
   ];
   const menuItemsManager = [
@@ -183,13 +183,13 @@ export default function HeaderLayout() {
   return (
     <>
       <>
-        <img
+        {/* <img
           width={60}
           height={60}
           src={logo}
           className="demo-logo"
           style={{ margin: "4px 4px" }}
-        />
+        /> */}
         <Menu
           mode="horizontal"
           selectedKeys={[selectedKey]}
