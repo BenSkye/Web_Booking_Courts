@@ -20,6 +20,7 @@ export default function Home() {
       console.log('data', data);
       setCenters(data);
       setLoading(false);
+
     };
     getCenters();
   }, []);
@@ -102,7 +103,7 @@ export default function Home() {
                   gap: '8px',
                 }}
               >
-                <Link to={`/detail/${centers.id}`}>
+                <Link to={`/detail/${centers._id}`}>
                   <Button
                     style={{
                       height: '50px',

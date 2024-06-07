@@ -19,13 +19,17 @@ const pricingData = [
 
 function Detail() {
     const { id } = useParams();
-    const [center, setCenter] = useState({});
+    const [center, setCenter] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const fetchCenterData = async () => {
-            const data = await getCenterByIdAPI(id);
-            setCenter(data);
+            try {
+                const data = await getCenterByIdAPI(id);
+                setCenter(data);
+            } catch (error) {
+                console.error('Error fetching center data:', error);
+            }
         };
         fetchCenterData();
     }, [id]);
@@ -43,13 +47,17 @@ function Detail() {
         setShowModal(false);
     };
 
+    if (!center) {
+        return <Empty description="Loading..." />;
+    }
+
     return (
         <Content style={{ padding: '24px', marginTop: 16, backgroundColor: '#fff' }}>
             <Row gutter={[24, 24]}>
                 <Col span={12}>
                     <div style={{ textAlign: 'center', marginBottom: 24 }}>
                         <img
-                            src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Badminton_Semifinal_Pan_2007.jpg/640px-Badminton_Semifinal_Pan_2007.jpg' // Use the uploaded image path
+                            src={center.images && center.images.length > 0 ? center.images[0] : 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Badminton_Semifinal_Pan_2007.jpg/640px-Badminton_Semifinal_Pan_2007.jpg'}
                             alt='Stadium'
                             style={{ borderRadius: '10px', width: '100%' }}
                         />
@@ -62,7 +70,7 @@ function Detail() {
                         <Space direction="vertical" size="middle">
                             <Space direction="vertical">
                                 <Text strong>Chủ sân:</Text>
-                                <Text>Anh Linh</Text>
+                                <Text>{center.managerName || 'N/A'}</Text>
                             </Space>
                             <Space direction="vertical">
                                 <Text strong>Số điện thoại:</Text>
@@ -73,11 +81,11 @@ function Detail() {
                             </Space>
                             <Space direction="vertical">
                                 <Text strong>Email:</Text>
-                                <Text>phungvanlinh195@gmail.com</Text>
+                                <Text>{center.managerEmail || 'N/A'}</Text>
                             </Space>
                             <Space direction="vertical">
                                 <Text strong>Địa chỉ:</Text>
-                                <Text>{center.addressCenter || 'Loading...'}</Text>
+                                <Text>{center.location || 'Loading...'}</Text>
                             </Space>
                         </Space>
                     </Card>
@@ -112,25 +120,25 @@ function Detail() {
                         style={{ boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)' }}
                     >
                         <Text>
-                            {center.nameCenter && <strong>{center.nameCenter}</strong>}
+                            {center.centerName && <strong>{center.centerName}</strong>}
                             <a onClick={handleOpenModal}>
-                                {center.addressCenter && (
+                                {center.location && (
                                     <p>
-                                        {center.addressCenter} <FaMapMarkerAlt />
+                                        {center.location} <FaMapMarkerAlt />
                                     </p>
                                 )}
                             </a>
                         </Text>
                         <Carousel autoplay style={{ height: '10rem', width: '10rem' }}>
-                            {!center.imgCenter || center.imgCenter.length === 0 ? (
+                            {!center.images || center.images.length === 0 ? (
                                 <Empty />
                             ) : (
-                                center.imgCenter.map((image, index) => (
+                                center.images.map((image, index) => (
                                     <div key={index}>
                                         <img
                                             src={image}
                                             style={{ width: '100%' }}
-                                            alt={center.nameCenter}
+                                            alt={center.centerName}
                                         />
                                     </div>
                                 ))
@@ -144,7 +152,7 @@ function Detail() {
                             centered
                             style={{ height: '80vh' }} // Thiết lập chiều cao của modal
                         >
-                            <MyLocationMap address={center.addressCenter} />
+                            <MyLocationMap address={center.location} />
                         </Modal>
                     </Card>
                 </Col>
