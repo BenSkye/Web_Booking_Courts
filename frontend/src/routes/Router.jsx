@@ -65,6 +65,10 @@ function Routing() {
           path="/courtManage/RequestToOrganizeATournament"
           element={<RequestToOrganizeATournament />}
         />
+        <Route
+          path="/courtManage/ManagerCalendar"
+          element={<ManagerCalendar />}
+        />
         <Route path=""/>
       </Route>
 

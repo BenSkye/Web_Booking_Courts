@@ -30,6 +30,10 @@ const centerSchema = new Schema(
       type: [String],
       required: true
     },
+    imagesLicense: {
+      type: [String],
+      required: true
+    },
     services: {
       type: [String],
       default: []

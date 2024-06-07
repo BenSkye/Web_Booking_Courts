@@ -16,12 +16,91 @@ import Cookies from "js-cookie";
 import { submitForm } from "../../../services/partnerAPI";
 import { useNavigate } from "react-router-dom";
 import ServicesAndAmenities from "./components/ServicesAndAmenities";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { app } from "../../../utils/firebase";
 const { Step } = Steps;
 
+const storage = getStorage(app);
+
 const CenterForm = () => {
+  // const [fileList, setFileList] = useState([]);
+  const [fileListCourt, setFileListCourt] = useState([]);
+  const [fileListLicense, setFileListLicense] = useState([]);
   const [showGoldenPrice, setShowGoldenPrice] = useState(false);
   const [showByMonthPrice, setShowByMonthPrice] = useState(false);
   const [showBuyPackage, setShowBuyPackage] = useState(false);
+
+  const handleUploadCourt = async ({ file, onSuccess, onError }) => {
+    try {
+      const storageRef = ref(storage, `images/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          onError(error);
+          message.error("Upload failed");
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            onSuccess(null, file);
+            setFileListCourt((prevList) => [
+              ...prevList,
+              { ...file, url: downloadURL },
+            ]);
+            message.success("Upload successful");
+          });
+        }
+      );
+    } catch (error) {
+      onError(error);
+      message.error("Upload failed");
+    }
+  };
+  const handleUploadLicense = async ({ file, onSuccess, onError }) => {
+    try {
+      const storageRef = ref(storage, `images/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          onError(error);
+          message.error("Upload failed");
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            onSuccess(null, file);
+            setFileListLicense((prevList) => [
+              ...prevList,
+              { ...file, url: downloadURL },
+            ]);
+            message.success("Upload successful");
+          });
+        }
+      );
+    } catch (error) {
+      onError(error);
+      message.error("Upload failed");
+    }
+  };
 
   const handleCheckboxChange = (e) => {
     setShowGoldenPrice(e.target.checked);
@@ -45,6 +124,7 @@ const CenterForm = () => {
       closeTime: "",
       courtCount: 0,
       images: [],
+      imagesLicense: [],
       services: [],
       rule: "",
     },
@@ -67,27 +147,27 @@ const CenterForm = () => {
 
   const steps = [
     {
-      title: "Center Details",
+      title: "Thông tin chi tiết của trung tâm",
       content: (
         <Form form={form} layout="vertical">
           <Form.Item
-            label="Center Name"
+            label="Tên trung tâm"
             name="centerName"
-            rules={[{ required: true, message: "Please input center name!" }]}
+            rules={[{ required: true, message: "Hãy nhập tên trung tâm" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Location"
+            label="Địa chỉ"
             name="location"
-            rules={[{ required: true, message: "Please input location!" }]}
+            rules={[{ required: true, message: "Hãy nhập địa chỉ" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Open Time"
+            label="Giờ mở cửa"
             name="openTime"
-            rules={[{ required: true, message: "Please select open time!" }]}
+            rules={[{ required: true, message: "Hãy nhập giờ mở cửa" }]}
           >
             <TimePicker
               format={"HH:mm"}
@@ -100,9 +180,9 @@ const CenterForm = () => {
             />
           </Form.Item>
           <Form.Item
-            label="Close Time"
+            label="Giờ đóng cửa"
             name="closeTime"
-            rules={[{ required: true, message: "Please select close time!" }]}
+            rules={[{ required: true, message: "Hãy chọn giờ đóng cửa" }]}
           >
             <TimePicker
               format={"HH:mm"}
@@ -115,53 +195,102 @@ const CenterForm = () => {
             />
           </Form.Item>
           <Form.Item
-            label="Court Count"
+            label="Số lượng sân của trung tâm"
             name="courtCount"
-            rules={[{ required: true, message: "Please input court count!" }]}
+            rules={[{ required: true, message: "Hãy nhập số lượng sân" }]}
           >
             <InputNumber min={1} />
           </Form.Item>
           <Form.Item
-            label="Images"
+            label="Hình ảnh của sân"
             name="images"
-            rules={[{ required: true, message: "Please upload images!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Bạn chưa đăng hình ảnh của sân( từ 3 ảnh trở lên)",
+              },
+            ]}
           >
-            <Upload multiple>
+            <Upload
+              customRequest={handleUploadCourt}
+              fileList={fileListCourt}
+              onRemove={(file) => {
+                setFileListCourt((prevList) =>
+                  prevList.filter((item) => item.uid !== file.uid)
+                );
+              }}
+              accept="image/*"
+              multiple
+            >
               <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>
           </Form.Item>
           <Form.Item
-            label="Services"
+            label="Giấy phép kinh doanh hoặc giấy phép hoạt động"
+            name="imagesLicense"
+            rules={[
+              {
+                required: true,
+                message:
+                  "Bạn chưa đăng hình ảnh giấy phép kinh doanh hoặc giấy phép hoạt động",
+              },
+            ]}
+          >
+            <Upload
+              customRequest={handleUploadLicense}
+              fileList={fileListLicense}
+              onRemove={(file) => {
+                setFileListLicense((prevList) =>
+                  prevList.filter((item) => item.uid !== file.uid)
+                );
+              }}
+              accept="image/*"
+              multiple
+            >
+              <Button icon={<UploadOutlined />}>Upload</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item
+            label="Dịch vụ và tiện ích"
             name="services"
-            rules={[{ required: true, message: "Please input services!" }]}
+            rules={[
+              { required: true, message: "Hãy chọn các dịch vụ của bạn" },
+            ]}
           >
             <ServicesAndAmenities />
           </Form.Item>
           <Form.Item
-            label="Rule"
+            label="Quy định sử dụng sân"
             name="rule"
-            rules={[{ required: true, message: "Please input rule!" }]}
+            rules={[
+              { required: true, message: "Hãy nhập quy định sử dụng sân" },
+            ]}
           >
-            <Input.TextArea />
+            <Input.TextArea placeholder="Ví dụ: Phải có giày thể thao thì mới được chơi" />
           </Form.Item>
         </Form>
       ),
     },
     {
-      title: "Price Details",
+      title: "Thông tin chi tiết về giá tiền và giờ chơi",
       content: (
         <Form form={form} layout="vertical">
           <Form.Item
-            label="Normal Price"
+            label="Giá tiền giờ chơi bình thường"
             name="normalPrice"
-            rules={[{ required: true, message: "Please input normal price!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Hãy nhập giá tiền giờ chơi bình thường !",
+              },
+            ]}
           >
             <InputNumber min={0} />
           </Form.Item>
           <Form.Item
-            label="Start Time (Normal)"
+            label="Giờ bắt đầu (giờ chơi bình thường)"
             name="startTimeNormal"
-            rules={[{ required: true, message: "Please select start time!" }]}
+            rules={[{ required: true, message: "Hãy chọn giờ bắt đầu!" }]}
           >
             <TimePicker
               format={"HH:mm"}
@@ -174,9 +303,9 @@ const CenterForm = () => {
             />
           </Form.Item>
           <Form.Item
-            label="End Time (Normal)"
+            label="Giờ mở của (giờ chơi bình thường)"
             name="endTimeNormal"
-            rules={[{ required: true, message: "Please select end time!" }]}
+            rules={[{ required: true, message: "Hãy chọn giờ kết thúc!" }]}
           >
             <TimePicker
               format={"HH:mm"}
@@ -197,24 +326,24 @@ const CenterForm = () => {
           {showGoldenPrice && (
             <Form.Item className="time_and_price">
               <Form.Item
-                label="Golden Price"
+                label="Khung giờ vàng (giờ vàng có giá tiền khác biệt so với giờ chơi bình thường)"
                 name="goldenPrice"
                 rules={[
                   {
                     required: showGoldenPrice,
-                    message: "Please input golden price!",
+                    message: "Hạy nhập giá tiền giờ chơi khung giờ vàng!",
                   },
                 ]}
               >
                 <InputNumber min={0} />
               </Form.Item>
               <Form.Item
-                label="Start Time (Golden)"
+                label="Giờ bắt đầu (giờ vàng)"
                 name="startTimeGolden"
                 rules={[
                   {
                     required: showGoldenPrice,
-                    message: "Please select start time!",
+                    message: "Hãy chọn giờ bắt đầu",
                   },
                 ]}
               >
@@ -229,12 +358,12 @@ const CenterForm = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="End Time (Golden)"
+                label="Giờ kết thúc (giờ vàng)"
                 name="endTimeGolden"
                 rules={[
                   {
                     required: showGoldenPrice,
-                    message: "Please select end time!",
+                    message: "Hãy chọn giờ kết thúc!",
                   },
                 ]}
               >
@@ -259,12 +388,12 @@ const CenterForm = () => {
           {showByMonthPrice && (
             <Form.Item className="time_and_price">
               <Form.Item
-                label="By Month Price"
+                label="Đặt lịch cố định trong tháng (giá tiền cố định trong tháng, không quan trọng giờ)"
                 name="byMonthPrice"
                 rules={[
                   {
                     required: showByMonthPrice,
-                    message: "Please input by month price!",
+                    message: "Hãy nhập giá tiền cố định trong tháng!",
                   },
                 ]}
               >
@@ -281,12 +410,12 @@ const CenterForm = () => {
           {showBuyPackage && (
             <Form.Item className="time_and_price">
               <Form.Item
-                label="Buy Package Price"
+                label="Mua giờ chơi (giá tiền mua giờ chơi, không quan trọng giờ)"
                 name="buyPackagePrice"
                 rules={[
                   {
                     required: showBuyPackage,
-                    message: "Please input buy package price!",
+                    message: "Hãy nhập giá tiền mua giờ chơi!",
                   },
                 ]}
               >
@@ -298,7 +427,7 @@ const CenterForm = () => {
       ),
     },
     {
-      title: "Review & Submit",
+      title: "Xem lại và xác nhận thông tin",
       content: (
         <div>
           <h3>Review your details</h3>
@@ -320,7 +449,8 @@ const CenterForm = () => {
             openTime: values.openTime.format("HH:mm"),
             closeTime: values.closeTime.format("HH:mm"),
             courtCount: values.courtCount,
-            images: values.images.fileList.map((file) => file.name),
+            images: fileListCourt.map((file) => file.url),
+            imagesLicense: fileListLicense.map((file) => file.url),
             services: values.services,
             rule: values.rule,
           };
