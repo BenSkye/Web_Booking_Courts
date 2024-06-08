@@ -24,11 +24,11 @@ class timeSlotController {
   })
   static getCourtByFreeSlot = catchAsync(async (req: any, res: any, next: any) => {
     const { centerId, date, start, duration } = req.params
-    const courtFree = await timeSlotService.getCourtByFreeSlot(centerId, date, start, duration)
+    const availableCourt = await timeSlotService.getCourtByFreeSlot(centerId, date, start, duration)
     res.status(200).json({
       status: 'success',
       data: {
-        courtFree
+        courtFree: availableCourt
       }
     })
   })

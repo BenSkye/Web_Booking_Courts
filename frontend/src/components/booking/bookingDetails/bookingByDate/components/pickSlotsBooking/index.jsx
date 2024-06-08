@@ -94,9 +94,9 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
     getAvailableDuration(idCenter, selectedDate, startTime);
   }, [selectedDate, startTime]);
   useEffect(() => {
-    if (!duration) return;
+    if (!startTime || !selectedDate || !duration) return;
     getAvailableCourt(idCenter, selectedDate, startTime, duration);
-  }, [duration]);
+  }, [selectedDate, startTime, duration]);
 
   const handleOpenModal = () => {
     setShowModal(true);
