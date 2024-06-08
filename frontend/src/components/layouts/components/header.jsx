@@ -183,13 +183,13 @@ export default function HeaderLayout() {
   return (
     <>
       <>
-        {/* <img
+        <img
           width={60}
           height={60}
           src={logo}
           className="demo-logo"
           style={{ margin: "4px 4px" }}
-        /> */}
+        />
         <Menu
           mode="horizontal"
           selectedKeys={[selectedKey]}
@@ -228,7 +228,7 @@ export default function HeaderLayout() {
                   style={{ background: "white", height: "50px", width: "50px" }}
                 />
               )}
-              <div style={{ color: "white" }}>{user?.userName}</div>{" "}
+              {/* <div style={{ color: "white" }}>{user?.userName}</div>{" "} */}
               {/* Hiển thị tên người dùng */}
               <MdArrowDropDown
                 style={{ display: "flex", alignItems: "center" }}
