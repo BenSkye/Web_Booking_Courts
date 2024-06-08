@@ -155,7 +155,7 @@ export default function HeaderLayout() {
     },
     { key: "2", label: "Giới thiệu", path: "/aboutUs" },
     // { key: "3", label: "Đăng kí đối tác", path: "/partner" },
-    { key: "4", label: "Đăng kí giải", path: "/tournament" },
+    { key: "3", label: "Đăng kí giải", path: "/tournament" },
     // { key: "5", label: "Đăng kí gói", path: "/registerPackageCourt" },
   ];
   const menuItemsManager = [
@@ -228,7 +228,7 @@ export default function HeaderLayout() {
                   style={{ background: "white", height: "50px", width: "50px" }}
                 />
               )}
-              <div style={{ color: "white" }}>{user?.userName}</div>{" "}
+              {/* <div style={{ color: "white" }}>{user?.userName}</div>{" "} */}
               {/* Hiển thị tên người dùng */}
               <MdArrowDropDown
                 style={{ display: "flex", alignItems: "center" }}

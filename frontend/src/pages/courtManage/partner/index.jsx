@@ -11,17 +11,98 @@ import {
   Checkbox,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import moment from "moment";
 import Cookies from "js-cookie";
 import { submitForm } from "../../../services/partnerAPI";
 import { useNavigate } from "react-router-dom";
 import ServicesAndAmenities from "./components/ServicesAndAmenities";
+import CenterDetailsForm from "./components/CenterDetailsForm";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { app } from "../../../utils/firebase";
+import ReviewStep from "./components/ReviewStep";
+import PriceAndTime from "./components/PriceAndTime";
 const { Step } = Steps;
 
+const storage = getStorage(app);
+
 const CenterForm = () => {
+  // const [fileList, setFileList] = useState([]);
+  const [fileListCourt, setFileListCourt] = useState([]);
+  const [fileListLicense, setFileListLicense] = useState([]);
   const [showGoldenPrice, setShowGoldenPrice] = useState(false);
   const [showByMonthPrice, setShowByMonthPrice] = useState(false);
   const [showBuyPackage, setShowBuyPackage] = useState(false);
+
+  const handleUploadCourt = async ({ file, onSuccess, onError }) => {
+    try {
+      const storageRef = ref(storage, `images/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          onError(error);
+          message.error("Upload failed");
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            onSuccess(null, file);
+            setFileListCourt((prevList) => [
+              ...prevList,
+              { ...file, url: downloadURL },
+            ]);
+            message.success("Upload successful");
+          });
+        }
+      );
+    } catch (error) {
+      onError(error);
+      message.error("Upload failed");
+    }
+  };
+  const handleUploadLicense = async ({ file, onSuccess, onError }) => {
+    try {
+      const storageRef = ref(storage, `images/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          onError(error);
+          message.error("Upload failed");
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            onSuccess(null, file);
+            setFileListLicense((prevList) => [
+              ...prevList,
+              { ...file, url: downloadURL },
+            ]);
+            message.success("Upload successful");
+          });
+        }
+      );
+    } catch (error) {
+      onError(error);
+      message.error("Upload failed");
+    }
+  };
 
   const handleCheckboxChange = (e) => {
     setShowGoldenPrice(e.target.checked);
@@ -45,6 +126,7 @@ const CenterForm = () => {
       closeTime: "",
       courtCount: 0,
       images: [],
+      imagesLicense: [],
       services: [],
       rule: "",
     },
@@ -67,244 +149,36 @@ const CenterForm = () => {
 
   const steps = [
     {
-      title: "Center Details",
+      title: "Thông tin chi tiết của trung tâm",
       content: (
-        <Form form={form} layout="vertical">
-          <Form.Item
-            label="Center Name"
-            name="centerName"
-            rules={[{ required: true, message: "Please input center name!" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Location"
-            name="location"
-            rules={[{ required: true, message: "Please input location!" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Open Time"
-            name="openTime"
-            rules={[{ required: true, message: "Please select open time!" }]}
-          >
-            <TimePicker
-              format={"HH:mm"}
-              disabledMinutes={() => [
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
-                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-                52, 53, 54, 55, 56, 57, 58, 59,
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Close Time"
-            name="closeTime"
-            rules={[{ required: true, message: "Please select close time!" }]}
-          >
-            <TimePicker
-              format={"HH:mm"}
-              disabledMinutes={() => [
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
-                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-                52, 53, 54, 55, 56, 57, 58, 59,
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Court Count"
-            name="courtCount"
-            rules={[{ required: true, message: "Please input court count!" }]}
-          >
-            <InputNumber min={1} />
-          </Form.Item>
-          <Form.Item
-            label="Images"
-            name="images"
-            rules={[{ required: true, message: "Please upload images!" }]}
-          >
-            <Upload multiple>
-              <Button icon={<UploadOutlined />}>Upload</Button>
-            </Upload>
-          </Form.Item>
-          <Form.Item
-            label="Services"
-            name="services"
-            rules={[{ required: true, message: "Please input services!" }]}
-          >
-            <ServicesAndAmenities />
-          </Form.Item>
-          <Form.Item
-            label="Rule"
-            name="rule"
-            rules={[{ required: true, message: "Please input rule!" }]}
-          >
-            <Input.TextArea />
-          </Form.Item>
-        </Form>
+        <CenterDetailsForm
+          form={form}
+          handleUploadCourt={handleUploadCourt}
+          handleUploadLicense={handleUploadLicense}
+          fileListCourt={fileListCourt}
+          fileListLicense={fileListLicense}
+          setFileListCourt={setFileListCourt}
+          setFileListLicense={setFileListLicense}
+        />
       ),
     },
     {
-      title: "Price Details",
+      title: "Thông tin chi tiết về giá tiền và giờ chơi",
       content: (
-        <Form form={form} layout="vertical">
-          <Form.Item
-            label="Normal Price"
-            name="normalPrice"
-            rules={[{ required: true, message: "Please input normal price!" }]}
-          >
-            <InputNumber min={0} />
-          </Form.Item>
-          <Form.Item
-            label="Start Time (Normal)"
-            name="startTimeNormal"
-            rules={[{ required: true, message: "Please select start time!" }]}
-          >
-            <TimePicker
-              format={"HH:mm"}
-              disabledMinutes={() => [
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
-                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-                52, 53, 54, 55, 56, 57, 58, 59,
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
-            label="End Time (Normal)"
-            name="endTimeNormal"
-            rules={[{ required: true, message: "Please select end time!" }]}
-          >
-            <TimePicker
-              format={"HH:mm"}
-              disabledMinutes={() => [
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
-                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-                52, 53, 54, 55, 56, 57, 58, 59,
-              ]}
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <Checkbox onChange={handleCheckboxChange}>
-              Include Golden Price
-            </Checkbox>
-          </Form.Item>
-          {showGoldenPrice && (
-            <Form.Item className="time_and_price">
-              <Form.Item
-                label="Golden Price"
-                name="goldenPrice"
-                rules={[
-                  {
-                    required: showGoldenPrice,
-                    message: "Please input golden price!",
-                  },
-                ]}
-              >
-                <InputNumber min={0} />
-              </Form.Item>
-              <Form.Item
-                label="Start Time (Golden)"
-                name="startTimeGolden"
-                rules={[
-                  {
-                    required: showGoldenPrice,
-                    message: "Please select start time!",
-                  },
-                ]}
-              >
-                <TimePicker
-                  format={"HH:mm"}
-                  disabledMinutes={() => [
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33,
-                    34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-                    49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-                  ]}
-                />
-              </Form.Item>
-              <Form.Item
-                label="End Time (Golden)"
-                name="endTimeGolden"
-                rules={[
-                  {
-                    required: showGoldenPrice,
-                    message: "Please select end time!",
-                  },
-                ]}
-              >
-                <TimePicker
-                  format={"HH:mm"}
-                  disabledMinutes={() => [
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33,
-                    34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-                    49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-                  ]}
-                />
-              </Form.Item>
-            </Form.Item>
-          )}
-
-          <Form.Item>
-            <Checkbox onChange={handleByMonthPriceChange}>
-              Include By Month Price
-            </Checkbox>
-          </Form.Item>
-          {showByMonthPrice && (
-            <Form.Item className="time_and_price">
-              <Form.Item
-                label="By Month Price"
-                name="byMonthPrice"
-                rules={[
-                  {
-                    required: showByMonthPrice,
-                    message: "Please input by month price!",
-                  },
-                ]}
-              >
-                <InputNumber min={0} />
-              </Form.Item>
-            </Form.Item>
-          )}
-
-          <Form.Item>
-            <Checkbox onChange={handleBuyPackageChange}>
-              Include Buy Package
-            </Checkbox>
-          </Form.Item>
-          {showBuyPackage && (
-            <Form.Item className="time_and_price">
-              <Form.Item
-                label="Buy Package Price"
-                name="buyPackagePrice"
-                rules={[
-                  {
-                    required: showBuyPackage,
-                    message: "Please input buy package price!",
-                  },
-                ]}
-              >
-                <InputNumber min={0} />
-              </Form.Item>
-            </Form.Item>
-          )}
-        </Form>
+        <PriceAndTime
+          form={form}
+          handleCheckboxChange={handleCheckboxChange}
+          showGoldenPrice={showGoldenPrice}
+          handleByMonthPriceChange={handleByMonthPriceChange}
+          showByMonthPrice={showByMonthPrice}
+          handleBuyPackageChange={handleBuyPackageChange}
+          showBuyPackage={showBuyPackage}
+        />
       ),
     },
     {
-      title: "Review & Submit",
-      content: (
-        <div>
-          <h3>Review your details</h3>
-          <pre>{JSON.stringify(formValues, null, 2)}</pre>
-        </div>
-      ),
+      title: "Xem lại và xác nhận thông tin",
+      content: <ReviewStep formValues={formValues} />,
     },
   ];
 
@@ -320,7 +194,8 @@ const CenterForm = () => {
             openTime: values.openTime.format("HH:mm"),
             closeTime: values.closeTime.format("HH:mm"),
             courtCount: values.courtCount,
-            images: values.images.fileList.map((file) => file.name),
+            images: fileListCourt.map((file) => file.url),
+            imagesLicense: fileListLicense.map((file) => file.url),
             services: values.services,
             rule: values.rule,
           };

@@ -23,14 +23,12 @@ import SignupPartner from "../pages/login/signupPartner";
 import BookingCourtDirectly from "../pages/BookingCourtDirectly/BookingCourtDirectly";
 import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/RequestToOrganizeATournament";
 
-
 function Routing() {
   return (
     <Routes>
       <Route path="/" element={<LayoutMain />}>
         <Route index element={<Home />} />
         <Route path="/aboutUs" element={<AboutUs />} />
-        <Route path="/courtManage/partner" element={<Partner />} />
         <Route path="/detail/:id" element={<Detail />} />
         <Route path="/tournament" element={<Tournament />} />
         <Route path="/tournament/create" element={<TournamentCreate />} />
@@ -65,7 +63,12 @@ function Routing() {
           path="/courtManage/RequestToOrganizeATournament"
           element={<RequestToOrganizeATournament />}
         />
-        <Route path=""/>
+        <Route
+          path="/courtManage/ManagerCalendar"
+          element={<ManagerCalendar />}
+        />
+        <Route path="/courtManage/partner" element={<Partner />} />
+        <Route path="" />
       </Route>
 
       <Route path="/login" element={<Login />} />
