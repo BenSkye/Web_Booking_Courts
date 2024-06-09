@@ -1,8 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Descriptions, Image, List, Spin, Alert, Card, Badge } from 'antd';
-import { useParams } from 'react-router-dom';
-import { getFormDataByIdAPI } from '../../../services/partnerAPI';
-
+import React, { useEffect, useState } from "react";
+import {
+  Descriptions,
+  Image,
+  List,
+  Spin,
+  Alert,
+  Card,
+  Badge,
+  Row,
+  Col,
+} from "antd";
+import { useParams } from "react-router-dom";
+import { getCenterByIdAPI } from "../../../services/partnerAPI";
+import Cookies from "js-cookie";
 const CourtManageDetail = () => {
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -11,10 +21,11 @@ const CourtManageDetail = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const token = Cookies.get("jwtToken");
       try {
-        const result = await getFormDataByIdAPI(id);
-        console.log("API Data: ", result);
-        setData(result);
+        const result = await getCenterByIdAPI(id, token);
+        console.log("API Data: ", result.data.center);
+        setData(result.data.center);
       } catch (error) {
         console.error("API Error: ", error);
         setError(error);
@@ -31,64 +42,92 @@ const CourtManageDetail = () => {
   }
 
   if (error) {
-    return <Alert message="Error" description="Failed to fetch data." type="error" />;
+    return (
+      <Alert message="Error" description="Failed to fetch data." type="error" />
+    );
   }
 
   if (!data) {
-    return <Alert message="No Data" description="No data available for this ID." type="warning" />;
+    return (
+      <Alert
+        message="No Data"
+        description="No data available for this ID."
+        type="warning"
+      />
+    );
   }
 
   return (
-    <Card title="Court Detail" bordered={false} style={{ maxWidth: 800, margin: 'auto' }}>
+    // <Card
+    //   title="Court Detail"
+    //   bordered={false}
+    //   style={{ maxWidth: 800, margin: "auto" }}
+    // >
+    <div>
       <Descriptions bordered column={1}>
-        <Descriptions.Item label="Full Name">{data.fullName}</Descriptions.Item>
-        <Descriptions.Item label="Phone">{data.phone}</Descriptions.Item>
-        <Descriptions.Item label="Email">{data.email}</Descriptions.Item>
-        <Descriptions.Item label="Court Name">{data.courtName}</Descriptions.Item>
-        <Descriptions.Item label="Court Address">{data.courtAddress}</Descriptions.Item>
-        <Descriptions.Item label="Court Quantity">{data.courtQuantity}</Descriptions.Item>
+        <Descriptions.Item label="Court Name">
+          {data.centerName}
+        </Descriptions.Item>
+        <Descriptions.Item label="Court Address">
+          {data.location}
+        </Descriptions.Item>
+        <Descriptions.Item label="Court Quantity">
+          {data.courtCount}
+        </Descriptions.Item>
+        <Descriptions.Item label="Rules">{data.rule}</Descriptions.Item>
+        <Descriptions.Item label="Open Time">
+          {data.openTime}
+        </Descriptions.Item>
+        <Descriptions.Item label="Close Time">
+          {data.closeTime}
+        </Descriptions.Item>
         <Descriptions.Item label="Images">
           {data.images.map((image, index) => (
-            <Image key={index} width={200} src={image.thumbUrl} style={{ marginRight: 8 }} />
+            <Image
+              key={index}
+              width={200}
+              height={200}
+              src={image}
+              style={{ marginRight: 8 }}
+            />
           ))}
         </Descriptions.Item>
         <Descriptions.Item label="Services">
           <List
             dataSource={data.services}
-            renderItem={item => <List.Item>{item}</List.Item>}
+            renderItem={(item) => <List.Item>{item}</List.Item>}
           />
         </Descriptions.Item>
-        <Descriptions.Item label="Normal Hours">
-          <List
-            dataSource={data.nomalHours}
-            renderItem={item => <List.Item>{item}</List.Item>}
-          />
-        </Descriptions.Item>
-        <Descriptions.Item label="Normal Price">{data.nomalPrice}</Descriptions.Item>
-        <Descriptions.Item label="Golden Hours">
-          <List
-            dataSource={data.goldenHours}
-            renderItem={item => <List.Item>{item}</List.Item>}
-          />
-        </Descriptions.Item>
-        <Descriptions.Item label="Golden Price">{data.goldenPrice}</Descriptions.Item>
-        <Descriptions.Item label="Monthly Price">{data.monthPrice}</Descriptions.Item>
-        <Descriptions.Item label="Hourly Purchase Price">{data.buyHourPrice}</Descriptions.Item>
-        <Descriptions.Item label="Is Golden Hours">
-          <Badge status={data.isGoldenHours ? "success" : "error"} text={data.isGoldenHours ? "Yes" : "No"} />
-        </Descriptions.Item>
-        <Descriptions.Item label="Is Monthly Price">
-          <Badge status={data.isMonthPrice ? "success" : "error"} text={data.isMonthPrice ? "Yes" : "No"} />
-        </Descriptions.Item>
-        <Descriptions.Item label="Is Hourly Purchase Price">
-          <Badge status={data.isBuyHourPrice ? "success" : "error"} text={data.isBuyHourPrice ? "Yes" : "No"} />
-        </Descriptions.Item>
-        <Descriptions.Item label="Usage Policy">{data.usagePolicy}</Descriptions.Item>
-        <Descriptions.Item label="Court Intro">{data.courtIntro}</Descriptions.Item>
-        <Descriptions.Item label="Approval Status">{data.approvalStatus}</Descriptions.Item>
-        <Descriptions.Item label="Payment Status">{data.paymentStatus}</Descriptions.Item>
       </Descriptions>
-    </Card>
+      <Row gutter={16} style={{ marginTop: "20px" }}>
+        <Col span={24}>
+          <Card title="Pricing Details" bordered={false}>
+            <List
+              dataSource={data.price}
+              renderItem={(item) => (
+                <List.Item>
+                  <Descriptions column={1} bordered>
+                    <Descriptions.Item label="Price">
+                      {item.price}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Start Time">
+                      {item.startTime}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="End Time">
+                      {item.endTime}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Schedule Type">
+                      {item.cheduleType}
+                    </Descriptions.Item>
+                  </Descriptions>
+                </List.Item>
+              )}
+            />
+          </Card>
+        </Col>
+      </Row>
+    </div>
+    // </Card>
   );
 };
 
