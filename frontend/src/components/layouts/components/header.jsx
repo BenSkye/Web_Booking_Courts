@@ -17,7 +17,7 @@ export default function HeaderLayout() {
   const { user } = useContext(AuthContext);
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  console.log("user", user);
+  // console.log("user", user);
   const logouthander = () => {
     logout();
     navigate("/");
