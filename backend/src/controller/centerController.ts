@@ -16,27 +16,27 @@ class centerController {
     })
   })
   static getAllCenters = catchAsync(async (req: any, res: any, next: any) => {
-    const centers = await centerService.getAllCenters();
+    const centers = await centerService.getAllCenters()
     res.status(200).json({
       status: 'success',
       data: {
         centers
       }
     })
-  });
+  })
 
   static getCenterById = catchAsync(async (req: any, res: any, next: any) => {
-    const center = await centerService.getCenterById(req.params.id);
+    const center = await centerService.getCenterById(req.params.id)
     if (!center) {
-      return next(new AppError('No center found with that ID', 404));
+      return next(new AppError('No center found with that ID', 404))
     }
     res.status(200).json({
       status: 'success',
       data: {
         center
       }
-    });
-  });
+    })
+  })
 
   static getPersonalCenters = catchAsync(async (req: any, res: any, next: any) => {
     const center = await centerService.getPersonalCenters(req.user._id)
