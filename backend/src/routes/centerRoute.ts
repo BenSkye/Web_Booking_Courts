@@ -14,7 +14,6 @@ centerRoute
   .get(authController.protect, authController.restricTO('manager'), centerController.getPersonalCenters)
 
 centerRoute.route('/:id').get(centerController.getCenterById)
-
 centerRoute
   .route('/my-centers/:centerId')
   .get(authController.protect, authController.restricTO('manager'), centerController.getPersonalCenterDetail)
