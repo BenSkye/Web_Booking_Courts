@@ -50,7 +50,7 @@
 
 import { createContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { postData } from "../fetchAPI";
+import { postData,putData } from "../fetchAPI";
 import { jwtDecode } from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../../utils/firebase";
@@ -132,6 +132,31 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
+  const Updateuser = async (userName, userPhone, avatar) => {
+   
+    const token = Cookies.get("jwtToken");
+    const response = await putData(
+      "http://localhost:5050/api/v1/user/update",
+      {
+        userName: userName,
+        userPhone: userPhone,
+        avatar: avatar,
+      },
+      token
+    );
+    console.log("response", response);
+    if (response && response.data) {
+      const token = response.data.token;
+  
+      if (token) {
+        Cookies.set("jwtToken", token, { expires: 60 });
+        const decodedToken = jwtDecode(token);
+        setUser(decodedToken);
+        return decodedToken;
+      }
+    }
+    return null;
+  };
 
   const logout = () => {
     Cookies.remove("jwtToken");
@@ -140,7 +165,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <div>
-    <AuthContext.Provider value={{ user, login, logout, handleGoogleClick }}>
+    <AuthContext.Provider value={{ user, login, logout, handleGoogleClick,Updateuser }}>
       {children}
     </AuthContext.Provider>
 

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Button, Form, Input, message, Spin, Avatar, Row } from "antd";
 import moment from "moment";
-import updateAccountInformation from '../../../services/accountAPI/update_account-API'
+// import Updateuser from '../../../services/authAPI/authProvideAPI'
 import { useParams } from "react-router-dom";
 import AuthContext from "../../../services/authAPI/authProvideAPI";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { app } from "../../../utils/firebase";
+import { jwtDecode } from "jwt-decode";
 
 const storage = getStorage(app);
 
@@ -15,26 +16,29 @@ const AccountSettingsForm = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
   const fileRef = useRef(null);
-
+  const { Updateuser } = useContext(AuthContext);
   useEffect(() => {
     if (user) {
       form.setFieldsValue({
         userName: user.userName,
         userEmail: user.userEmail,
         userPhone: user.userPhone,
+        avatar: user.avatar
       });
       setLoading(false);
     }
   }, [form, user]);
 
   const onFinish = async (values) => {
-    try {
-      console.log('log ra ' ,user.id);
-      await updateAccountInformation(user.id, values);
-       // Gọi API cập nhật thông tin người dùng
-      message.success("Cập nhật tài khoản thành công!");
-    } catch (error) {
-      console.error("Failed to update account information:", error);
+    const userChange = await Updateuser(
+      values.userName,
+      values.userPhone,
+      values.avatar
+    );
+    console.log("userChange", userChange);
+    if (userChange) {
+      message.success("Cập nhật tài khoản!");
+    } else {
       message.error("Có lỗi xảy ra khi cập nhật tài khoản.");
     }
   };
@@ -132,7 +136,7 @@ const AccountSettingsForm = () => {
           accept="image/*"
         />
       </Row>
-      <Form.Item label="Họ và tên" name="userName">
+      <Form.Item    label="Họ và tên" name="userName">
         <Input />
       </Form.Item>
       <Form.Item label="Email" name="userEmail">

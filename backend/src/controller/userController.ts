@@ -15,7 +15,7 @@ class UserController {
       status: 'success',
       data: {
         user: newuser,
-        token: token,
+        // token: token,
       }
     });
   });

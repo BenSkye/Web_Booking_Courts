@@ -40,3 +40,58 @@ export const postData = async (url, data) => {
   }
   return null;
 };
+export const patchData = async (url, data, token) => {
+  try {
+    console.log("Data to patch:", data);
+    const response = await axios.patch(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("response", response);
+
+    // Kiểm tra trạng thái HTTP của phản hồi
+    if (response.status === 200) {
+      return response.data; // Trả về dữ liệu của phản hồi
+    } else {
+      console.error(
+        "Error patching data:",
+        response.status,
+        response.statusText
+      );
+      return null; // Trả về null nếu có lỗi nhưng không ném lỗi
+    }
+  } catch (error) {
+    console.error("Error patching data:", error.message);
+    return null; // Trả về null nếu có lỗi
+  }
+
+}
+  export const putData = async (url, data, token) => {
+    try {
+      console.log("Data to patch:", data);
+      const response = await axios.put(url, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("response", response);
+  
+      // Kiểm tra trạng thái HTTP của phản hồi
+      if (response.status === 200) {
+        return response.data; // Trả về dữ liệu của phản hồi
+      } else {
+        console.error(
+          "Error patching data:",
+          response.status,
+          response.statusText
+        );
+        return null; // Trả về null nếu có lỗi nhưng không ném lỗi
+      }
+    } catch (error) {
+      console.error("Error patching data:", error.message);
+      return null; // Trả về null nếu có lỗi
+    }
+};

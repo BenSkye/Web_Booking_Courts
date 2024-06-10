@@ -1,28 +1,32 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+
+import Cookies from "js-cookie";
+import {putData} from '../fetchAPI/index'
+import { jwtDecode } from "jwt-decode";
 
 
-
-const updateAccountInformation = async (id,values) => {
-    
-    try {
-      console.log("Updating user...");
-      
-      const res = await fetch(`/api/v1/user/update/:${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        console.log("Update failed:", data.error);
-        return;
+const Updateuser = async (userName, userPhone, avatar) => {
+    const [user, setUser] = useState(null);
+    const token = Cookies.get("jwtToken");
+    const response = await putData(
+      "http://localhost:5050/api/v1/user/update",
+      {
+        userName: userName,
+        userPhone: userPhone,
+        avatar: avatar,
+      },
+      token
+    );
+    console.log("response", response);
+    if (response && response.data) {
+      const token = response.data.token;
+  
+      if (token) {
+        Cookies.set("jwtToken", token, { expires: 60 });
+        const decodedToken = jwtDecode(token);
+        setUser(decodedToken);
+        return decodedToken;
       }
-      console.log("User updated successfully:", data.user);
-    
-    } catch (error) {
-      console.error("An error occurred while updating user:", error);
     }
+    return null;
   };
-  export default updateAccountInformation;
+  export default Updateuser;
