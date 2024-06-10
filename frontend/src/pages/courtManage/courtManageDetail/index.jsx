@@ -75,9 +75,7 @@ const CourtManageDetail = () => {
           {data.courtCount}
         </Descriptions.Item>
         <Descriptions.Item label="Rules">{data.rule}</Descriptions.Item>
-        <Descriptions.Item label="Open Time">
-          {data.openTime}
-        </Descriptions.Item>
+        <Descriptions.Item label="Open Time">{data.openTime}</Descriptions.Item>
         <Descriptions.Item label="Close Time">
           {data.closeTime}
         </Descriptions.Item>
@@ -117,7 +115,7 @@ const CourtManageDetail = () => {
                       {item.endTime}
                     </Descriptions.Item>
                     <Descriptions.Item label="Schedule Type">
-                      {item.cheduleType}
+                      {item.scheduleType}
                     </Descriptions.Item>
                   </Descriptions>
                 </List.Item>

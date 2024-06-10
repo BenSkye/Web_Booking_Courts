@@ -18,7 +18,7 @@ const priceSchema = new Schema(
       type: String,
       required: true
     },
-    cheduleType: {
+    scheduleType: {
       type: String,
       required: true
     }

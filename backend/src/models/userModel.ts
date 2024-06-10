@@ -14,8 +14,8 @@ const userSchema = new Schema(
       validate: [Validator.isEmail, 'Email không hợp lệ']
     },
     userPhone: {
-      type: Number
-      // required: true
+      type: Number,
+      default: ''
     },
     userAddress: {
       type: String,

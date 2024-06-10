@@ -4,21 +4,42 @@ import userRepository from '~/repository/userRepository'
 import jwt from 'jsonwebtoken'
 import bcryptjs from 'bcryptjs'
 import AppError from '~/utils/appError'
-class authService {
-  static async registerUser(user: any) {
+import { IUser } from '~/repository/userRepository'
+
+interface IAuthService {
+  registerUser(user: IUser): Promise<any>
+  registerPartner(user: IUser): Promise<any>
+  loginUser(userEmail: string, password: string): Promise<{ user: Omit<any, 'password'>; token: string }>
+  protect(token: string): Promise<any>
+  googleLogin(
+    userEmail: string,
+    userName: string,
+    avatar: string
+  ): Promise<{ user: Omit<any, 'password'>; token: string }>
+  changePassword(
+    userId: string,
+    passwordCurrent: string,
+    newPassword: string
+  ): Promise<{ userNewPass: Omit<any, 'password'>; token: string }>
+}
+class authService implements IAuthService {
+  async registerUser(user: IUser) {
     const password = bcrypt.hashSync(user.password, 12)
     user.password = password
-    const newUser = userRepository.addUser(user)
+    const userRepositoryInstance = new userRepository()
+    const newUser = await userRepositoryInstance.addUser(user)
     return newUser
   }
-  static async registerPartner(user: any) {
+  async registerPartner(user: any) {
     const password = bcrypt.hashSync(user.password, 12)
     user.password = password
-    const newUser = userRepository.addPartner(user)
+    const userRepositoryInstance = new userRepository()
+    const newUser = userRepositoryInstance.addPartner(user)
     return newUser
   }
-  static async loginUser(userEmail: string, password: string) {
-    const foundUser = await userRepository.findUser({ userEmail })
+  async loginUser(userEmail: string, password: string) {
+    const userRepositoryInstance = new userRepository()
+    const foundUser = await userRepositoryInstance.findUser({ userEmail })
     if (!foundUser) {
       throw new AppError('Email không tồn tại', 401)
     }
@@ -31,27 +52,29 @@ class authService {
       process.env.JWT_SECRET ?? ''
     )
     const { password: userPassword, ...user } = foundUser.toObject()
-    return { foundUser, token }
+    return { user, token }
   }
 
-  static async protect(token: string) {
+  async protect(token: string) {
+    const userRepositoryInstance = new userRepository()
     if (!token) {
       throw new AppError('bạn chưa đăng nhập', 401)
     }
     const decoded: jwt.JwtPayload = jwt.verify(token, process.env.JWT_SECRET ?? '') as jwt.JwtPayload
-    const currentUser = await userRepository.findUser({ _id: decoded.id })
+    const currentUser = await userRepositoryInstance.findUser({ _id: decoded.id })
     if (!currentUser) {
       throw new AppError('Người dùng không tồn tại', 401)
     }
-    const ifChangePass = await userRepository.changePasswordAfter(decoded.iat ?? 0, currentUser._id.toString())
+    const ifChangePass = await userRepositoryInstance.changePasswordAfter(decoded.iat ?? 0, currentUser._id.toString())
     if (ifChangePass) {
       throw new AppError('Người dùng đã đổi mật khẩu', 401)
     }
     return currentUser
   }
 
-  static async googleLogin(userEmail: string, userName: string, avatar: string) {
-    const user = await userRepository.findByEmail(userEmail)
+  async googleLogin(userEmail: string, userName: string, avatar: string) {
+    const userRepositoryInstance = new userRepository()
+    const user = await userRepositoryInstance.findByEmail(userEmail)
 
     if (user) {
       const token = jwt.sign(
@@ -65,7 +88,7 @@ class authService {
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
       const username = userName.split(' ').join('').toLowerCase() + Math.random().toString(36).slice(-8)
 
-      const newUser = await userRepository.create({
+      const newUser = await userRepositoryInstance.create({
         userName,
         userEmail,
         password: hashedPassword,
@@ -81,8 +104,9 @@ class authService {
     }
   }
 
-  static async changePassword(userId: string, passwordCurrent: string, newPassword: string) {
-    const user = await userRepository.findUser({ _id: userId })
+  async changePassword(userId: string, passwordCurrent: string, newPassword: string) {
+    const userRepositoryInstance = new userRepository()
+    const user = await userRepositoryInstance.findUser({ _id: userId })
     if (!user) {
       throw new AppError('Người dùng không tồn tại', 401)
     }
@@ -92,7 +116,7 @@ class authService {
       throw new AppError('Mật khẩu hiện tại không đúng', 401)
     }
     user.password = bcrypt.hashSync(newPassword, 12)
-    const userNewPass = await userRepository.updatePassword(userId, user.password)
+    const userNewPass = await userRepositoryInstance.updatePassword(userId, user.password)
     if (!userNewPass) {
       throw new AppError('Lỗi khi cập nhật mật khẩu', 401)
     }
