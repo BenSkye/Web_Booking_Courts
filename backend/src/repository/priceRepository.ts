@@ -8,5 +8,8 @@ class priceRepository {
   static async getPrices(query: any) {
     return await Price.find(query)
   }
+  static async getPrice(query: any) {
+    return await Price.findOne(query)
+  }
 }
 export default priceRepository

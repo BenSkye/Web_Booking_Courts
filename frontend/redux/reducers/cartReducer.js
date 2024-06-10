@@ -1,9 +1,10 @@
+//redux/reducers/cartReducer.js
 import {
   ADD_TO_CART,
   REMOVE_FROM_CART,
   SET_CENTER,
   UPDATE_TOTAL_PRICE,
-} from '../types/actionTypes';
+} from "../types/actionTypes";
 
 const initialState = {
   selectedCourts: [],
@@ -22,7 +23,7 @@ const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         selectedCourts: state.selectedCourts.filter(
-          (court) => court.id !== action.payload
+          (court) => court._id !== action.payload
         ),
       };
     case SET_CENTER:

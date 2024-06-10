@@ -15,16 +15,18 @@ class centerRepository {
   }
   static async getCenterById(id: any) {
     try {
-      const center = await Center.findOne(id);
+      const center = await Center.findOne(id)
       if (!center) {
-        throw new Error(`Center with id ${id} not found`);
+        throw new Error(`Center with id ${id} not found`)
       }
-      return center;
+      return center
     } catch (error) {
-      throw new Error(`Could not fetch center: ${(error as Error).message}`);
+      throw new Error(`Could not fetch center: ${(error as Error).message}`)
     }
   }
-
+  static async getCenterStartandEndTime(query: any) {
+    return await Center.findOne(query).select('openTime closeTime')
+  }
   static async getListCenter(query: any) {
     return await Center.find(query)
   }
