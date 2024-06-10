@@ -64,6 +64,7 @@ const CourtManageDetail = () => {
     //   style={{ maxWidth: 800, margin: "auto" }}
     // >
     <div>
+      <h1>Chi tiết về sân đấu của bạn</h1>
       <Descriptions bordered column={1}>
         <Descriptions.Item label="Court Name">
           {data.centerName}

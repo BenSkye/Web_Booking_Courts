@@ -9,6 +9,7 @@ import {
   InputNumber,
   TimePicker,
   Checkbox,
+  Progress,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import Cookies from "js-cookie";
@@ -30,12 +31,13 @@ const { Step } = Steps;
 const storage = getStorage(app);
 
 const CenterForm = () => {
-  // const [fileList, setFileList] = useState([]);
   const [fileListCourt, setFileListCourt] = useState([]);
   const [fileListLicense, setFileListLicense] = useState([]);
   const [showGoldenPrice, setShowGoldenPrice] = useState(false);
   const [showByMonthPrice, setShowByMonthPrice] = useState(false);
   const [showBuyPackage, setShowBuyPackage] = useState(false);
+  const [uploadProgressCourt, setUploadProgressCourt] = useState(0); // State for court upload progress
+  const [uploadProgressLicense, setUploadProgressLicense] = useState(0); // State for license upload progress
 
   const handleUploadCourt = async ({ file, onSuccess, onError }) => {
     try {
@@ -47,6 +49,7 @@ const CenterForm = () => {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgressCourt(progress); // Update progress
           console.log("Upload is " + progress + "% done");
         },
         (error) => {
@@ -61,7 +64,8 @@ const CenterForm = () => {
               ...prevList,
               { ...file, url: downloadURL },
             ]);
-            message.success("Upload successful");
+            setUploadProgressCourt(0); // Reset progress
+            message.success("Tải ảnh lên thành công");
           });
         }
       );
@@ -70,6 +74,7 @@ const CenterForm = () => {
       message.error("Upload failed");
     }
   };
+
   const handleUploadLicense = async ({ file, onSuccess, onError }) => {
     try {
       const storageRef = ref(storage, `images/${file.name}`);
@@ -80,6 +85,7 @@ const CenterForm = () => {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgressLicense(progress); // Update progress
           console.log("Upload is " + progress + "% done");
         },
         (error) => {
@@ -94,6 +100,7 @@ const CenterForm = () => {
               ...prevList,
               { ...file, url: downloadURL },
             ]);
+            setUploadProgressLicense(0); // Reset progress
             message.success("Upload successful");
           });
         }
@@ -159,6 +166,8 @@ const CenterForm = () => {
           fileListLicense={fileListLicense}
           setFileListCourt={setFileListCourt}
           setFileListLicense={setFileListLicense}
+          uploadProgressCourt={uploadProgressCourt}
+          uploadProgressLicense={uploadProgressLicense}
         />
       ),
     },
@@ -205,7 +214,7 @@ const CenterForm = () => {
               price: values.normalPrice,
               startTime: values.startTimeNormal.format("HH:mm"),
               endTime: values.endTimeNormal.format("HH:mm"),
-              cheduleType: "normalPrice",
+              cheduleType: "Giờ bình thường",
             },
           ];
 
@@ -214,7 +223,7 @@ const CenterForm = () => {
               price: values.goldenPrice,
               startTime: values.startTimeGolden.format("HH:mm"),
               endTime: values.endTimeGolden.format("HH:mm"),
-              cheduleType: "GoldenPrice",
+              cheduleType: "Giờ vàng",
             });
           }
 
@@ -225,7 +234,7 @@ const CenterForm = () => {
               price: values.byMonthPrice,
               startTime: openTime,
               endTime: closeTime,
-              cheduleType: "ByMonthPrice",
+              cheduleType: "Đặt lịch cố định theo tháng",
             });
           }
 
@@ -234,7 +243,7 @@ const CenterForm = () => {
               price: values.buyPackagePrice,
               startTime: openTime,
               endTime: closeTime,
-              cheduleType: "BuyPackagePrice",
+              cheduleType: "Mua gói giờ chơi",
             });
           }
         }

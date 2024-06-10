@@ -9,29 +9,29 @@ const ReviewStep = ({ formValues }) => {
       <h3>Review your details</h3>
       <Row gutter={16}>
         <Col span={12}>
-          <Card title="Center Details" bordered={false}>
+          <Card title="Thông tin bạn đã nhập" bordered={false}>
             <Descriptions column={1}>
-              <Descriptions.Item label="Center Name">
+              <Descriptions.Item label="Tên trung tâm">
                 {center.centerName}
               </Descriptions.Item>
-              <Descriptions.Item label="Location">
+              <Descriptions.Item label="Địa chỉ">
                 {center.location}
               </Descriptions.Item>
-              <Descriptions.Item label="Open Time">
+              <Descriptions.Item label="Giờ mở cửa">
                 {center.openTime}
               </Descriptions.Item>
-              <Descriptions.Item label="Close Time">
+              <Descriptions.Item label="Giờ đóng cửa">
                 {center.closeTime}
               </Descriptions.Item>
-              <Descriptions.Item label="Court Count">
+              <Descriptions.Item label="Số lượng sân đấu">
                 {center.courtCount}
               </Descriptions.Item>
-              <Descriptions.Item label="Rule">{center.rule}</Descriptions.Item>
+              <Descriptions.Item label="Quy định sử dụng sân">{center.rule}</Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
         <Col span={12}>
-          <Card title="Services" bordered={false}>
+          <Card title="Dịch vụ" bordered={false}>
             <List
               dataSource={center.services}
               renderItem={(item) => <List.Item>{item}</List.Item>}
@@ -41,7 +41,7 @@ const ReviewStep = ({ formValues }) => {
       </Row>
       <Row gutter={16} style={{ marginTop: "20px" }}>
         <Col span={12}>
-          <Card title="Images" bordered={false}>
+          <Card title="Hình ảnh của sân" bordered={false}>
             <Image.PreviewGroup>
               {center.images.map((image, index) => (
                 <Image key={index} width={100} height={100} src={image} />
@@ -50,7 +50,7 @@ const ReviewStep = ({ formValues }) => {
           </Card>
         </Col>
         <Col span={12}>
-          <Card title="Images License" bordered={false}>
+          <Card title="Giấy phép kinh doanh" bordered={false}>
             <Image.PreviewGroup>
               {center.imagesLicense.map((image, index) => (
                 <Image key={index} width={100} height={100} src={image} />
@@ -61,22 +61,22 @@ const ReviewStep = ({ formValues }) => {
       </Row>
       <Row gutter={16} style={{ marginTop: "20px" }}>
         <Col span={24}>
-          <Card title="Pricing Details" bordered={false}>
+          <Card title="Chi tiết về giá cả" bordered={false}>
             <List
               dataSource={price}
               renderItem={(item) => (
                 <List.Item>
                   <Descriptions column={1} bordered>
-                    <Descriptions.Item label="Price">
+                    <Descriptions.Item label="Giá tiền">
                       {item.price}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Start Time">
+                    <Descriptions.Item label="Giờ bắt đầu">
                       {item.startTime}
                     </Descriptions.Item>
-                    <Descriptions.Item label="End Time">
+                    <Descriptions.Item label="Giờ kết thúc">
                       {item.endTime}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Schedule Type">
+                    <Descriptions.Item label="Loại giờ">
                       {item.cheduleType}
                     </Descriptions.Item>
                   </Descriptions>

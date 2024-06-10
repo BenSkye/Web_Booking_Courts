@@ -37,10 +37,11 @@ const CustomForm = ({
             38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
             55, 56, 57, 58, 59,
           ]}
+          disabledHours={() => [0, 1, 2, 3, 4]}
         />
       </Form.Item>
       <Form.Item
-        label="Giờ mở của (giờ chơi bình thường)"
+        label="Giờ kết thúc (giờ chơi bình thường)"
         name="endTimeNormal"
         rules={[{ required: true, message: "Hãy chọn giờ kết thúc!" }]}
       >
@@ -52,13 +53,12 @@ const CustomForm = ({
             38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
             55, 56, 57, 58, 59,
           ]}
+          disabledHours={() => [0, 1, 2, 3, 4]}
         />
       </Form.Item>
 
       <Form.Item>
-        <Checkbox onChange={handleCheckboxChange}>
-          Include Golden Price
-        </Checkbox>
+        <Checkbox onChange={handleCheckboxChange}>Có giờ vàng</Checkbox>
       </Form.Item>
       {showGoldenPrice && (
         <Form.Item className="time_and_price">
@@ -92,6 +92,7 @@ const CustomForm = ({
                 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
                 52, 53, 54, 55, 56, 57, 58, 59,
               ]}
+              disabledHours={() => [0, 1, 2, 3, 4]}
             />
           </Form.Item>
           <Form.Item
@@ -112,6 +113,7 @@ const CustomForm = ({
                 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
                 52, 53, 54, 55, 56, 57, 58, 59,
               ]}
+              disabledHours={() => [0, 1, 2, 3, 4]}
             />
           </Form.Item>
         </Form.Item>
@@ -119,7 +121,7 @@ const CustomForm = ({
 
       <Form.Item>
         <Checkbox onChange={handleByMonthPriceChange}>
-          Include By Month Price
+          Có đặt lịch cố định trong tháng
         </Checkbox>
       </Form.Item>
       {showByMonthPrice && (
@@ -141,7 +143,7 @@ const CustomForm = ({
 
       <Form.Item>
         <Checkbox onChange={handleBuyPackageChange}>
-          Include Buy Package
+          Có mua gói giờ chơi
         </Checkbox>
       </Form.Item>
       {showBuyPackage && (
