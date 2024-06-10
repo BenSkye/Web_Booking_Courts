@@ -11,5 +11,9 @@ class priceRepository {
   static async getPrice(query: any) {
     return await Price.findOne(query)
   }
+  static async getPricesByScheduleType(cheduleType: any) {
+    return await Price.find({ cheduleType });
+  }
+
 }
 export default priceRepository

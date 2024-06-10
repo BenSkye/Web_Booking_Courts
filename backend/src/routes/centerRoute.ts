@@ -2,7 +2,7 @@ import { Router } from 'express'
 import authController from '~/controller/authController'
 import centerController from '~/controller/centerController'
 
-const centerRoute = Router()
+const centerRoute = Router();
 
 centerRoute
   .route('/')
