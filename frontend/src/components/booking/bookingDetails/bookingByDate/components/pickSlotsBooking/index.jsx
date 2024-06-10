@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import moment from "moment";
-import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from 'react';
+import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   DatePicker,
@@ -28,12 +28,12 @@ import {
   removeFromCart,
   updateTotalPrice,
   setCenter,
-} from "../../../../../../../redux/actions/cartActions";
+} from '../../../../../../../redux/actions/cartActions';
 import {
   getAvailableCourtAPI,
   getAvailableDurationAPI,
   getFreeTimeByDateAPI,
-} from "../../../../../../services/slotBookingAPI";
+} from '../../../../../../services/slotBookingAPI';
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -59,7 +59,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
       dateObject.getTime() - dateObject.getTimezoneOffset() * 60000
     );
     // Format the date to "YYYY-MM-DD"
-    const formattedDate = utcDateObject.toISOString().split("T")[0];
+    const formattedDate = utcDateObject.toISOString().split('T')[0];
     setSelectedDate(formattedDate);
   };
 
@@ -72,7 +72,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
     let maxDuration = data.maxDuration;
     let listduration = [];
     while (maxDuration > 0) {
-      console.log("maxDuration", maxDuration);
+      console.log('maxDuration', maxDuration);
       listduration = [...listduration, maxDuration];
       maxDuration -= 0.5;
     }
@@ -121,7 +121,13 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   }, [selectedDate, startTime, duration]);
 
   const handleAddToCart = (court) => {
-    dispatch(addToCart(court));
+    const courtWithDetails = {
+      ...court,
+      selectedDate,
+      startTime,
+      duration,
+    };
+    dispatch(addToCart(courtWithDetails));
   };
 
   const handleRemoveFromCart = (court) => {
@@ -150,59 +156,59 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
 
   return (
     <div>
-      <Row gutter={[16, 16]} justify="center">
+      <Row gutter={[16, 16]} justify='center'>
         <Col
           xs={30}
           md={12}
           style={{
-            boxShadow: "1px 1px 1px 1px rgba(0, 0, 0, 0.2)",
-            borderRadius: "10px",
+            boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)',
+            borderRadius: '10px',
           }}
         >
           <Steps
-            direction="vertical"
+            direction='vertical'
             current={currentStep}
-            style={{ height: "100%", padding: "10px" }}
+            style={{ height: '100%', padding: '10px' }}
           >
             <Step
-              title="Chọn ngày"
+              title='Chọn ngày'
               description={
                 <div>
                   <DatePicker
-                    placeholder="Chọn ngày"
+                    placeholder='Chọn ngày'
                     onChange={(date) => handleSelectedDay(date)}
                     disabledDate={(current) =>
                       current &&
-                      (current.isBefore(moment().startOf("day")) ||
-                        current.isAfter(moment().add(7, "days").startOf("day")))
+                      (current.isBefore(moment().startOf('day')) ||
+                        current.isAfter(moment().add(7, 'days').startOf('day')))
                     }
                     style={{
-                      width: "100%",
-                      height: "50px",
-                      margin: "16px 0",
+                      width: '100%',
+                      height: '50px',
+                      margin: '16px 0',
                     }}
                   />
                 </div>
               }
             />
             <Step
-              title="Chọn giờ bắt đầu và số giờ chơi"
+              title='Chọn giờ bắt đầu và số giờ chơi'
               description={
                 currentStep >= 1 && (
                   <div
                     style={{
                       marginTop: 16,
-                      display: "flex",
-                      flexWrap: "wrap",
+                      display: 'flex',
+                      flexWrap: 'wrap',
                       gap: 10,
                     }}
                   >
                     <Select
-                      placeholder="Giờ bắt đầu"
+                      placeholder='Giờ bắt đầu'
                       style={{
-                        width: "100%",
-                        height: "50px ",
-                        margin: "8px 0",
+                        width: '100%',
+                        height: '50px ',
+                        margin: '8px 0',
                       }}
                       onChange={(value) => setStartTime(value)}
                     >
@@ -213,11 +219,11 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                       ))}
                     </Select>
                     <Select
-                      placeholder="Số giờ chơi"
+                      placeholder='Số giờ chơi'
                       style={{
-                        width: "100%",
-                        height: "50px ",
-                        margin: "8px 0",
+                        width: '100%',
+                        height: '50px ',
+                        margin: '8px 0',
                       }}
                       onChange={(value) => setDuration(value)}
                     >
@@ -232,38 +238,38 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
               }
             />
             <Step
-              title="Chọn các sân"
+              title='Chọn các sân'
               description={
                 currentStep >= 2 && (
                   <div
                     style={{
                       marginTop: 16,
-                      borderRadius: "10px",
-                      padding: "10px",
-                      border: "1px solid rgba(0, 0, 0, 0.2)",
+                      borderRadius: '10px',
+                      padding: '10px',
+                      border: '1px solid rgba(0, 0, 0, 0.2)',
                     }}
                   >
                     <div
                       style={{
-                        maxHeight: "300px",
-                        overflowY: "scroll",
-                        paddingRight: "16px",
+                        maxHeight: '300px',
+                        overflowY: 'scroll',
+                        paddingRight: '16px',
                       }}
                     >
                       <List
                         grid={{
                           gutter: 16,
                           column: 1,
-                          width: "100%",
-                          height: "50px ",
-                          margin: "16px 0",
+                          width: '100%',
+                          height: '50px ',
+                          margin: '16px 0',
                         }}
                         dataSource={availableCourts}
                         renderItem={(court) => (
                           <List.Item key={court._id}>
                             <Card>
-                              <Row align="center" justify="space-between">
-                                <Col align="center" justify="center">
+                              <Row align='center' justify='space-between'>
+                                <Col align='center' justify='center'>
                                   <Row>
                                     <strong>Sân {court.courtNumber}</strong>
                                   </Row>
@@ -271,7 +277,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                                 </Col>
                                 <Col>
                                   <Button
-                                    type="primary"
+                                    type='primary'
                                     onClick={() => handleAddToCart(court)}
                                     disabled={selectedCourts.some(
                                       (selectedCourt) =>
@@ -295,22 +301,22 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
         </Col>
         <Col xs={24} md={8}>
           <Card
-            title="Giỏ hàng của bạn"
-            style={{ boxShadow: "1px 1px 1px 1px rgba(0, 0, 0, 0.2)" }}
+            title='Giỏ hàng của bạn'
+            style={{ boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)' }}
           >
             <Row
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                height: "150px",
-                width: "100%",
+                display: 'flex',
+                justifyContent: 'space-between',
+                height: '150px',
+                width: '100%',
               }}
             >
               <Col span={12}>
-                <div style={{ width: "100%" }}>
+                <div style={{ width: '100%' }}>
                   {center.nameCenter && <strong>{center.nameCenter}</strong>}
                 </div>
-                <a style={{ width: "100%" }} onClick={handleOpenModal}>
+                <a style={{ width: '100%' }} onClick={handleOpenModal}>
                   {center.addressCenter && (
                     <p>
                       {center.addressCenter} <FaMapMarkerAlt />
@@ -328,7 +334,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                         <img
                           src={image}
                           alt={center.nameCenter}
-                          style={{ width: "100%", height: "100%" }}
+                          style={{ width: '100%', height: '100%' }}
                         />
                       </div>
                     ))
@@ -350,15 +356,21 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                       actions={[
                         // eslint-disable-next-line react/jsx-key
                         <Button
-                          type="link"
+                          type='link'
                           onClick={() => handleRemoveFromCart(court._id)}
                         >
                           Xóa
                         </Button>,
                       ]}
                     >
-                      Sân {court.courtNumber}: <Space />{" "}
+                      Sân {court.courtNumber}: <Space />{' '}
                       {formatPrice(court.price)}đ
+                      <br />
+                      Ngày: {court.selectedDate}
+                      <br />
+                      Giờ bắt đầu: {court.startTime}
+                      <br />
+                      Thời lượng: {court.duration} giờ
                     </List.Item>
                   )}
                 />
@@ -366,17 +378,17 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
               </>
             )}
             <div>
-              <strong style={{ fontSize: "20px" }}>
+              <strong style={{ fontSize: '20px' }}>
                 Tổng tiền: {formatPrice(totalPrice)} đ
               </strong>
             </div>
             <Flex
               style={{ marginTop: 16, flexWrap: 'wrap' }}
-              align="center"
-              justify="space-between"
+              align='center'
+              justify='space-between'
             >
               <Button
-                type="primary"
+                type='primary'
                 onClick={checkOut}
                 disabled={selectedCourts.length === 0}
                 style={{ marginTop: 16 }}
@@ -396,11 +408,11 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
       </Row>
       <Modal
         visible={showModal}
-        title="Vị trí"
+        title='Vị trí'
         onCancel={handleCloseModal}
         footer={null}
         centered
-        style={{ height: "80vh" }} // Thiết lập chiều cao của modal
+        style={{ height: '80vh' }} // Thiết lập chiều cao của modal
       >
         <MyLocationMap address={center.addressCenter} />
       </Modal>
