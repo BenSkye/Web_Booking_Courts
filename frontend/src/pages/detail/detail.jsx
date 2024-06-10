@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Space, Row, Col, Card, Button, Divider, Modal, Carousel, Empty } from 'antd';
+import { Layout, Typography, Space, Row, Col, Card, Button, Divider, Modal, Carousel, Empty, Spin } from 'antd';
 import { PhoneOutlined } from '@ant-design/icons';
 import { Link, useParams } from 'react-router-dom';
 import MyLocationMap from '@/utils/map';
@@ -20,15 +20,20 @@ const pricingData = [
 function Detail() {
     const { id } = useParams();
     const [center, setCenter] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const fetchCenterData = async () => {
             try {
                 const data = await getCenterByIdAPI(id);
-                setCenter(data);
+                console.log('datafe', data)
+
+                setCenter(data.data.center);
             } catch (error) {
                 console.error('Error fetching center data:', error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchCenterData();
@@ -47,8 +52,16 @@ function Detail() {
         setShowModal(false);
     };
 
+    const handleImageError = (e) => {
+        e.target.src = 'https://via.placeholder.com/800x500'; // Placeholder image URL
+    };
+
+    if (loading) {
+        return <Spin tip="Loading..." style={{ display: 'block', margin: 'auto' }} />;
+    }
+
     if (!center) {
-        return <Empty description="Loading..." />;
+        return <Empty description="Không có dữ liệu" />;
     }
 
     return (
@@ -56,11 +69,36 @@ function Detail() {
             <Row gutter={[24, 24]}>
                 <Col span={12}>
                     <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                        <img
-                            src={center.images && center.images.length > 0 ? center.images[0] : 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Badminton_Semifinal_Pan_2007.jpg/640px-Badminton_Semifinal_Pan_2007.jpg'}
-                            alt='Stadium'
-                            style={{ borderRadius: '10px', width: '100%' }}
-                        />
+                        {center.images && center.images.length > 0 ? (
+                            <Carousel autoplay>
+                                {center.images && center.images.length > 0 ? (
+                                    center.images.map((image, index) => (
+                                        <div key={index} style={{ width: '100%', height: '500px', overflow: 'hidden' }}>
+                                            <img
+                                                src={image}
+                                                alt={`Image ${index}`}
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                onError={(e) => handleImageError(e)} // Enhanced error handling
+                                            />
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div style={{ width: '100%', height: '500px', overflow: 'hidden' }}>
+                                        <img
+                                            src='https://via.placeholder.com/800x500'
+                                            alt='No Image'
+                                            style={{ borderRadius: '10px', width: '100%', height: '100%', objectFit: 'cover' }}
+                                        />
+                                    </div>
+                                )}
+                            </Carousel>
+                        ) : (
+                            <img
+                                src='https://via.placeholder.com/800x500'
+                                alt='No Image'
+                                style={{ borderRadius: '10px', width: '100%', height: '500px', objectFit: 'cover' }}
+                            />
+                        )}
                     </div>
                 </Col>
                 <Col span={12}>
@@ -139,13 +177,14 @@ function Detail() {
                                             src={image}
                                             style={{ width: '100%' }}
                                             alt={center.centerName}
+                                            onError={handleImageError}
                                         />
                                     </div>
                                 ))
                             )}
                         </Carousel>
                         <Modal
-                            visible={showModal}
+                            open={showModal}
                             title='Vị trí'
                             onCancel={handleCloseModal}
                             footer={null}
@@ -157,7 +196,6 @@ function Detail() {
                     </Card>
                 </Col>
             </Row>
-
             <Divider />
 
             <div style={{ textAlign: 'center', marginTop: 24 }}>
@@ -168,5 +206,4 @@ function Detail() {
         </Content>
     );
 }
-
 export default Detail;
