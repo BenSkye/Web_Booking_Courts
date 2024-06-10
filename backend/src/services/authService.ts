@@ -26,7 +26,7 @@ class authService {
     if (!isMatch) {
       throw new Error('Mật khẩu không đúng')
     }
-    const token = jwt.sign({ id: foundUser._id, role: foundUser.role }, process.env.JWT_SECRET ?? '')
+    const token = jwt.sign({ id: foundUser._id, role: foundUser.role, userName: foundUser.userName }, process.env.JWT_SECRET ?? '')
     const { password: userPassword, ...user } = foundUser.toObject()
     return { foundUser, token }
   }
@@ -35,7 +35,7 @@ class authService {
       throw new Error('Token không tồn tại')
     }
     const decoded: jwt.JwtPayload = jwt.verify(token, process.env.JWT_SECRET ?? '') as jwt.JwtPayload
-    const currentUser = await userRepository.findUser({ _id: decoded.id })
+    const currentUser = await userRepository.findUser({ _id: decoded.id,   })
     if (!currentUser) {
       throw new Error('Người dùng không tồn tại')
     }
@@ -51,7 +51,7 @@ class authService {
     const user = await userRepository.findByEmail(userEmail);
 
     if (user) {
-      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET ?? '');
+      const token = jwt.sign({ id: user._id, role: user.role, avatar: user.avatar, userName: user.userName }, process.env.JWT_SECRET ?? '');
       const { password, ...rest } = user.toObject();
       return { user: rest, token };
     } else {
@@ -66,7 +66,7 @@ class authService {
         avatar: avatar,
       });
 
-      const token = jwt.sign({ id: newUser._id, role: newUser.role  },process.env.JWT_SECRET ?? '');
+      const token = jwt.sign({ id: newUser._id, role: newUser.role, avatar: newUser.avatar, userName: newUser.userName  },process.env.JWT_SECRET ?? '');
       const { password: hashedPassword2, ...rest } = newUser.toObject();
       return { user: rest, token };
     }

@@ -16,12 +16,12 @@ import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTour
 import CourtManage from "@/pages/courtManage";
 import TournamentDetail from "../pages/TournamentDetail";
 import CourtManageDetail from "../pages/courtManage/courtManageDetail";
-
-
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
-
+import SignupPartner from "../pages/login/signupPartner";
+import BookingCourtDirectly from "../pages/BookingCourtDirectly/BookingCourtDirectly";
+import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/RequestToOrganizeATournament";
 
 function Routing() {
   return (
@@ -29,7 +29,6 @@ function Routing() {
       <Route path="/" element={<LayoutMain />}>
         <Route index element={<Home />} />
         <Route path="/aboutUs" element={<AboutUs />} />
-        <Route path="/courtManage/partner" element={<Partner />} />
         <Route path="/detail/:id" element={<Detail />} />
         <Route path="/tournament" element={<Tournament />} />
         <Route path="/tournament/create" element={<TournamentCreate />} />
@@ -57,14 +56,24 @@ function Routing() {
         <Route path="/courtManage/detail/:id" element={<CourtManageDetail />} />
         <Route path="/courtManage/Dashboard" element={<ManagerDashboar />} />
         <Route
+          path="/courtManage/BookingCourtDirectly"
+          element={<BookingCourtDirectly />}
+        />
+        <Route
+          path="/courtManage/RequestToOrganizeATournament"
+          element={<RequestToOrganizeATournament />}
+        />
+        <Route
           path="/courtManage/ManagerCalendar"
           element={<ManagerCalendar />}
         />
+        <Route path="/courtManage/partner" element={<Partner />} />
+        <Route path="" />
       </Route>
 
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-      {/* <Route path="/signupPartner" element={<SignupPartner />} /> */}
+      <Route path="/signupPartner" element={<SignupPartner />} />
     </Routes>
   );
 }

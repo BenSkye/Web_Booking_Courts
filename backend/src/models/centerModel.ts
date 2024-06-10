@@ -29,7 +29,11 @@ const centerSchema = new Schema(
     },
     images: {
       type: [String],
-      default: []
+      required: true
+    },
+    imagesLicense: {
+      type: [String],
+      required: true
     },
     services: {
       type: [String],
@@ -37,7 +41,7 @@ const centerSchema = new Schema(
     },
     rule: {
       type: String,
-      default: ''
+      required: true
     },
     subscriptions: {
       type: [

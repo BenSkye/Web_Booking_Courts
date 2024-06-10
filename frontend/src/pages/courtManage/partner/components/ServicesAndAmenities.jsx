@@ -29,7 +29,7 @@ const services = [
 ];
 
 const ServicesAndAmenities = () => (
-  <Form.Item label="4. Dịch Vụ và Tiện Ích">
+  <Form.Item label="Dịch Vụ và Tiện Ích">
     <Form.Item name="services" label="Dịch Vụ">
       <Checkbox.Group>
         <Row gutter={[16, 16]}>
