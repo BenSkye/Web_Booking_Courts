@@ -18,6 +18,8 @@ import {
   Modal,
 } from 'antd';
 import { FaMapMarkerAlt } from 'react-icons/fa';
+import { IoMdTime } from 'react-icons/io';
+import MomoLogo from '../../../../../../assets/MoMo_Logo.png';
 import MyLocationMap from '@/utils/map';
 import { formatPrice } from '../../../../../../utils/priceFormatter';
 import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
@@ -320,7 +322,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
               </strong>
             </div>
             <Flex
-              style={{ marginTop: 16 }}
+              style={{ marginTop: 16, flexWrap: 'wrap' }}
               align='center'
               justify='space-between'
             >
@@ -329,8 +331,15 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                 onClick={checkOut}
                 disabled={selectedCourts.length === 0}
                 style={{ marginTop: 16 }}
+                icon={
+                  <img
+                    src={MomoLogo}
+                    style={{ width: 20, height: 20 }}
+                    alt='Momo Logo'
+                  />
+                }
               >
-                Thanh toán
+                Thanh toán bằng Momo
               </Button>
             </Flex>
           </Card>
