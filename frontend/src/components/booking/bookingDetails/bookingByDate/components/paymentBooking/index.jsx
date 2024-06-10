@@ -31,7 +31,7 @@ export default function PaymentBooking({ setCurrentStep }) {
           style={{ boxShadow: "1px 1px 1px 1px rgba(0, 0, 0, 0.2)" }}
         >
           <div>
-            <h3>Trung tâm:</h3> {center.nameCenter}
+            <h3>Trung tâm:</h3> {center.centerName}
           </div>
           <Divider />
           <List
