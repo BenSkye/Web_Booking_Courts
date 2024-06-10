@@ -26,6 +26,7 @@ export const fetchDataMockAPI = async (url) => {
 
 export const postData = async (url, data) => {
   try {
+    
     console.log("Data to post:", data);
     const response = await axios.post(url, data);
     console.log("response", response);

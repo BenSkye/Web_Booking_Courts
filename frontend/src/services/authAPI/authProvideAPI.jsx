@@ -123,7 +123,8 @@ export const AuthProvider = ({ children }) => {
         id: data.data.user?._id,
         role: data.data.user?.role,
         avatar: data.data.user?.avatar,
-        name: data.data.user?.userName
+        name: data.data.user?.userName,
+        mail: data.data.user?.userEmail,
       });
       return data;
     } catch (error) {

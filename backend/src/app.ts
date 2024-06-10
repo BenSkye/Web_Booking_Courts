@@ -9,7 +9,8 @@ import centerRoute from './routes/centerRoute'
 import centerPackageRoute from './routes/centerPackageRoute'
 import bookingRoute from './routes/bookingRoute'
 import timeslotRoute from './routes/timeslotRoute'
-
+import cookieParser from 'cookie-parser';
+import userRoute from './routes/userRoute';
 dotenv.config()
 
 const app = express()
@@ -21,6 +22,8 @@ app.use('/api/v1/center', centerRoute)
 app.use('/api/v1/centerpackage', centerPackageRoute)
 app.use('/api/v1/booking', bookingRoute)
 app.use('/api/v1/timeSlot', timeslotRoute)
+app.use('/api/v1/user',userRoute)
+app.use(cookieParser());
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })

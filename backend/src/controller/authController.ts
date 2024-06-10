@@ -68,13 +68,13 @@ class authController {
  
 
   static googleLogin = catchAsync(async (req: any, res: any, next: any) => {
-    const { email, name, photo } = req.body;
+    const { email, name, photo, phone } = req.body;
 
     if (!email) {
       return next(new AppError('Vui lòng nhập email', 400));
     }
 
-    const { user, token } = await authService.googleLogin(email, name, photo);
+    const { user, token } = await authService.googleLogin(email, name, photo,phone);
 
     res
       .cookie('access_token', token, {
@@ -89,7 +89,9 @@ class authController {
           token,
         },
       });
-  });
+  }
+ 
+);
 
-}
-export default authController
+};
+export default authController;
