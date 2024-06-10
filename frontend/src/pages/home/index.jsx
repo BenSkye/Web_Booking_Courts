@@ -77,7 +77,7 @@ export default function Home() {
                           onError={handleImageError}
                           style={{
                             width: "100%",
-                            height: "100%",
+                            height: "250px",
                             objectFit: "cover",
                           }}
                         />
