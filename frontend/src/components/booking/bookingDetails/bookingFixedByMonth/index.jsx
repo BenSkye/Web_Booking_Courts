@@ -65,7 +65,7 @@ const BookingFixedByMonth = ({ id }) => {
   useEffect(() => {
     const getCenters = async (id) => {
       const data = await getCenterByIdAPI(id);
-      setCenter(data);
+      setCenter(data.data.center);
     };
     getCenters(id);
   }, [id]);
@@ -177,6 +177,22 @@ const BookingFixedByMonth = ({ id }) => {
 
           <Space style={{ margin: '10px' }} />
           <Form form={form} onFinish={onFinish} layout='vertical'>
+            <Form.Item
+              name='pickCourt'
+              label='Chọn sân'
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng chọn sân',
+                },
+              ]}
+            >
+              <Select placeholder='Chọn sân'>
+                <Option value='1'>Sân 1</Option>
+                <Option value='2'>Sân 2</Option>
+                <Option value='3'>Sân 3</Option>
+              </Select>
+            </Form.Item>
             <Form.Item
               name='startDate'
               label='Ngày bắt đầu'
@@ -377,20 +393,20 @@ const BookingFixedByMonth = ({ id }) => {
           style={{ boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)' }}
         >
           <Text>
-            {center.nameCenter && <strong>{center.nameCenter}</strong>}
+            {center.centerName && <strong>{center.centerName}</strong>}
             <a onClick={handleOpenModal}>
-              {center.addressCenter && (
+              {center.location && (
                 <p>
-                  {center.addressCenter} <FaMapMarkerAlt />
+                  {center.location} <FaMapMarkerAlt />
                 </p>
               )}
             </a>
           </Text>
           <Carousel autoplay style={{ height: '10rem', width: '10rem' }}>
-            {!center.imgCenter || center.imgCenter.length === 0 ? (
+            {!center.images || center.images.length === 0 ? (
               <Empty />
             ) : (
-              center.imgCenter.map((image, index) => (
+              center.images.map((image, index) => (
                 <div key={index}>
                   <img
                     src={image}
