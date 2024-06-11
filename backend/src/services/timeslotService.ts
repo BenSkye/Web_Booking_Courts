@@ -126,11 +126,11 @@ class timeSlotService {
     let totalprice = 0
     const nomalPrice = await priceRepository.getPrice({
       centerId: centerId,
-      cheduleType: 'nomalPrice'
+      scheduleType: 'nomalPrice'
     })
     const GoldenPrice = await priceRepository.getPrice({
       centerId: centerId,
-      cheduleType: 'GoldenPrice'
+      scheduleType: 'GoldenPrice'
     })
     if (!nomalPrice) {
       return null

@@ -135,7 +135,7 @@ const CenterForm = () => {
         price: 0,
         startTime: "",
         endTime: "",
-        cheduleType: "",
+        scheduleType: "",
       },
     ],
   });
@@ -205,7 +205,7 @@ const CenterForm = () => {
               price: values.normalPrice,
               startTime: values.startTimeNormal.format("HH:mm"),
               endTime: values.endTimeNormal.format("HH:mm"),
-              cheduleType: "normalPrice",
+              scheduleType: "normalPrice",
             },
           ];
 
@@ -214,7 +214,7 @@ const CenterForm = () => {
               price: values.goldenPrice,
               startTime: values.startTimeGolden.format("HH:mm"),
               endTime: values.endTimeGolden.format("HH:mm"),
-              cheduleType: "GoldenPrice",
+              scheduleType: "GoldenPrice",
             });
           }
 
@@ -225,7 +225,7 @@ const CenterForm = () => {
               price: values.byMonthPrice,
               startTime: openTime,
               endTime: closeTime,
-              cheduleType: "ByMonthPrice",
+              scheduleType: "ByMonthPrice",
             });
           }
 
@@ -234,7 +234,7 @@ const CenterForm = () => {
               price: values.buyPackagePrice,
               startTime: openTime,
               endTime: closeTime,
-              cheduleType: "BuyPackagePrice",
+              scheduleType: "BuyPackagePrice",
             });
           }
         }

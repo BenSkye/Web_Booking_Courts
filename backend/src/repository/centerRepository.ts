@@ -7,7 +7,7 @@ class centerRepository {
   }
   static async getAllCenters() {
     try {
-      const centers = await Center.find()
+      const centers = await Center.find().populate('price');
       return centers
     } catch (error) {
       throw new Error(`Could not fetch centers: ${(error as Error).message}`)
