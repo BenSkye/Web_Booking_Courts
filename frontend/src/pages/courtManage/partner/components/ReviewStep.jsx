@@ -77,7 +77,7 @@ const ReviewStep = ({ formValues }) => {
                       {item.endTime}
                     </Descriptions.Item>
                     <Descriptions.Item label="Schedule Type">
-                      {item.cheduleType}
+                      {item.scheduleType}
                     </Descriptions.Item>
                   </Descriptions>
                 </List.Item>

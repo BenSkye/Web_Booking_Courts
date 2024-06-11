@@ -39,9 +39,10 @@ const GetAllLocationCenter = ({ locations }) => {
                 id: location.id,
                 longitude,
                 latitude,
-                address: match.place_name,
-                name: location.nameCenter,
-                price: location.pricePerHour,
+                address: match.location,
+                // name: location.nameCenter, 
+                name: location.centerName,
+                price: location.pricePerHour.price,
               };
             }
           })
