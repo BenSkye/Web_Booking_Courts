@@ -10,8 +10,9 @@ class timeSlotService {
     const isoDate = new Date(`${date}T00:00:00.000Z`)
     const listcourtId = await courtRepository.getListCourtId({ centerId: centerId })
     const startTimes = new Set()
+    const timeSlotRepositoryInstance = new timeSlotRepository()
     for (const courtId of listcourtId) {
-      const timeSlots = await timeSlotRepository.getTimeslot({ courtId, date: isoDate })
+      const timeSlots = await timeSlotRepositoryInstance.getTimeslot({ courtId, date: isoDate })
       if (timeSlots) {
         const freeSlots = timeSlots.slot.filter((slot) => slot.status !== 'booked')
         for (const slot of freeSlots) {
@@ -30,8 +31,9 @@ class timeSlotService {
     }
     const listMinStartTime = []
     const datePrefix = '1970-01-01T'
+    const timeSlotRepositoryInstance = new timeSlotRepository()
     for (const courtId of listcourtId) {
-      const timeSlots = await timeSlotRepository.getTimeslot({ courtId, date: isoDate })
+      const timeSlots = await timeSlotRepositoryInstance.getTimeslot({ courtId, date: isoDate })
       if (timeSlots) {
         const bookedSlots = timeSlots.slot.filter((slot) => slot.status == 'booked' && slot.start >= startTime)
         if (bookedSlots.length > 1) {
@@ -89,8 +91,9 @@ class timeSlotService {
       const formattedEndTime = `${endHours}:${endMinutes}`
       const totalPrice = await this.getPriceFormStartoEnd(centerid, start, formattedEndTime)
       const availableCourt = []
+      const timeSlotRepositoryInstance = new timeSlotRepository()
       for (const courtId of listcourtId) {
-        const timeSlots = await timeSlotRepository.getTimeslot({ courtId, date: isoDate })
+        const timeSlots = await timeSlotRepositoryInstance.getTimeslot({ courtId, date: isoDate })
         let isAvailable = true
         if (timeSlots) {
           const bookedSlots = (timeSlots.slot as Array<any>).filter((slot) => slot.status == 'booked')

@@ -140,7 +140,8 @@ class centerService {
         startDay.setDate(startDay.getDate() + 1)
       }
     })
-    await timeSlotRepository.addManyTimeSlots(ListTimeslot)
+    const timeSlotRepositoryInstance = new timeSlotRepository()
+    await timeSlotRepositoryInstance.addManyTimeSlots(ListTimeslot)
     return modifeCenter
   }
 

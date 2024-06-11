@@ -15,7 +15,7 @@ const userSchema = new Schema(
     },
     userPhone: {
       type: Number,
-      // required: true
+      default: ''
     },
     userAddress: {
       type: String,
@@ -33,7 +33,8 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true
-    }
+    },
+    passwordChangeAt: Date
   },
   { timestamps: true } // Change 'timeStamp' to 'timestamps'
 )

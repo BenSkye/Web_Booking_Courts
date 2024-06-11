@@ -1,26 +1,60 @@
 import User from '~/models/userModel'
-
-class userRepository {
-  static async addUser(user: any) {
+export interface IUser {
+  userName: string
+  userEmail: string
+  userPhone?: number
+  userAddress?: string
+  avatar?: string
+  role?: 'customer' | 'manager' | 'admin'
+  password: string
+  passwordChangeAt?: Date
+}
+interface IUserRepository {
+  addUser(user: IUser): Promise<any>
+  addPartner(user: IUser): Promise<any>
+  findUser(query: any): Promise<any>
+  findByEmail(userEmail: string): Promise<any>
+  create(userDetails: any): Promise<any>
+  updatePassword(userId: string, password: string): Promise<any>
+  changePasswordAfter(JWTTimestamp: number, userId: string): Promise<boolean>
+}
+class userRepository implements IUserRepository {
+  async addUser(user: IUser) {
+    const newUser = new User(user)
+    const userSaved = await newUser.save()
+    return userSaved
+  }
+  async addPartner(user: IUser) {
+    user.role = 'manager' // Set the role to 'manager'
     const newUser = new User(user)
     return newUser.save()
   }
-  static async addPartner(user: any) {
-    user.role = 'manager'; // Set the role to 'manager'
-    const newUser = new User(user);
-    return newUser.save();
-  }
-  static async findUser(query: any) {
+  async findUser(query: any) {
     const user = User.findOne(query)
     return user
   }
-  static async findByEmail(userEmail: string) {
+  async findByEmail(userEmail: string) {
     return await User.findOne({ userEmail })
   }
 
-  static async create(userDetails: { userName: string; userEmail: string; password: string; avatar: string }) {
+  async create(userDetails: { userName: string; userEmail: string; password: string; avatar: string }) {
     const user = new User(userDetails)
     return await user.save()
+  }
+
+  async updatePassword(userId: string, password: string) {
+    const passwordChangeAt = Date.now() - 5000 ///để tránh trường hợp token được tạo trước khi password được thay đổi
+    return await User.findByIdAndUpdate(userId, { password, passwordChangeAt }, { new: true })
+  }
+  async changePasswordAfter(JWTTimestamp: number, userId: string) {
+    const user = await User.findById({ _id: userId })
+    if (user) {
+      if (user.passwordChangeAt) {
+        const changedTimestamp = Math.floor(user.passwordChangeAt.getTime() / 1000)
+        return JWTTimestamp < changedTimestamp
+      }
+    }
+    return false
   }
 }
 export default userRepository

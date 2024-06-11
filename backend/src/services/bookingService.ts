@@ -20,8 +20,8 @@ class bookingService {
       if (minute === '30') {
         slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
       }
-
-      const avilable = await timeSlotRepository.checkTimeSlotAvilable(slot)
+      const timeSlotRepositoryInstance = new timeSlotRepository()
+      const avilable = await timeSlotRepositoryInstance.checkTimeSlotAvilable(slot)
       if (!avilable) {
         allSlotsAvailable = false
         throw new AppError('Slot not available', 400)
