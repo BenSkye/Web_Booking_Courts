@@ -17,6 +17,7 @@ import { submitForm } from "../../../services/partnerAPI";
 import { useNavigate } from "react-router-dom";
 import ServicesAndAmenities from "./components/ServicesAndAmenities";
 import CenterDetailsForm from "./components/CenterDetailsForm";
+
 import {
   getStorage,
   ref,
@@ -209,11 +210,13 @@ const CenterForm = () => {
             rule: values.rule,
           };
         } else if (current === 1) {
+          const openTime = newFormValues.center.openTime;
+          const closeTime = newFormValues.center.closeTime;
           newFormValues.price = [
             {
               price: values.normalPrice,
-              startTime: values.startTimeNormal.format("HH:mm"),
-              endTime: values.endTimeNormal.format("HH:mm"),
+              startTime: openTime,
+              endTime: closeTime,
               cheduleType: "Giờ bình thường",
             },
           ];
@@ -227,8 +230,6 @@ const CenterForm = () => {
             });
           }
 
-          const openTime = newFormValues.center.openTime;
-          const closeTime = newFormValues.center.closeTime;
           if (showByMonthPrice) {
             newFormValues.price.push({
               price: values.byMonthPrice,
