@@ -10,9 +10,10 @@ class centerService {
     const center = { ...data.center, managerId: data.user }
     const newcenter = await centerRepository.addCenter(center)
     const priceArray = data.price
+    const priceRepositoryInstance = new priceRepository()
     const promises = priceArray.map(async (price: any) => {
       price.centerId = newcenter._id
-      return priceRepository.addPrice(price)
+      return priceRepositoryInstance.addPrice(price)
     })
     const newPrices = await Promise.all(promises)
     const priceIds = newPrices.map((price) => price._id)
@@ -66,7 +67,8 @@ class centerService {
   static async getPersonalCenterById(centerId: string, userId: string) {
     const center: any = await centerRepository.getCenter({ _id: centerId, managerId: userId })
     console.log(center)
-    const prices = await priceRepository.getPrices({ centerId: center._id })
+    const priceRepositoryInstance = new priceRepository()
+    const prices = await priceRepositoryInstance.getPrices({ centerId: center._id })
     return { center, prices }
   }
 

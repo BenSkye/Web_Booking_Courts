@@ -127,11 +127,12 @@ class timeSlotService {
       startSlot += 30
     }
     let totalprice = 0
-    const nomalPrice = await priceRepository.getPrice({
+    const priceRepositoryInstance = new priceRepository()
+    const nomalPrice = await priceRepositoryInstance.getPrice({
       centerId: centerId,
       scheduleType: 'nomalPrice'
     })
-    const GoldenPrice = await priceRepository.getPrice({
+    const GoldenPrice = await priceRepositoryInstance.getPrice({
       centerId: centerId,
       scheduleType: 'GoldenPrice'
     })

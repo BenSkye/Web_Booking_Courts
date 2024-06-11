@@ -1,14 +1,27 @@
+import { Schema } from 'mongoose'
 import Price from '~/models/priceModel'
+interface IPrice {
+  centerId: Schema.Types.ObjectId
+  price: number
+  startTime: string
+  endTime: string
+  scheduleType: string
+}
 
-class priceRepository {
-  static async addPrice(price: any) {
+interface IPriceRepository {
+  addPrice(price: IPrice): Promise<any>
+  getPrices(query: object): Promise<any[]>
+  getPrice(query: object): Promise<any | null>
+}
+class priceRepository implements IPriceRepository {
+  async addPrice(price: IPrice) {
     const newPrice = new Price(price)
     return newPrice.save()
   }
-  static async getPrices(query: any) {
+  async getPrices(query: object) {
     return await Price.find(query)
   }
-  static async getPrice(query: any) {
+  async getPrice(query: object) {
     return await Price.findOne(query)
   }
   static async getPricesByScheduleType(cheduleType: any) {
