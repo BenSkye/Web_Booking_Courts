@@ -24,10 +24,15 @@ export const fetchDataMockAPI = async (url) => {
   return [];
 };
 
-export const postData = async (url, data) => {
+export const postData = async (url, data, token) => {
   try {
     console.log("Data to post:", data);
-    const response = await axios.post(url, data);
+    const response = await axios.post(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("response", response);
     if (response.status === 201) {
       return response;

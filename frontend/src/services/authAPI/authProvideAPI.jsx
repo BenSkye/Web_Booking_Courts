@@ -68,10 +68,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await postData("http://localhost:5050/api/v1/auth/login", {
-      userEmail: email,
-      password: password,
-    });
+    const response = await postData(
+      "http://localhost:5050/api/v1/auth/login",
+      {
+        userEmail: email,
+        password: password,
+      },
+      null
+    );
 
     if (response && response.data) {
       const token = response.data.data.token;
