@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import { start } from 'repl'
 const { Schema } = mongoose
 const bookingSchema = new Schema(
   {

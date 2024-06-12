@@ -4,7 +4,8 @@ import catchAsync from '~/utils/catchAsync'
 class timeSlotController {
   static getFreeStrartTimeByCenterAndDate = catchAsync(async (req: any, res: any, next: any) => {
     const { centerId, date } = req.params
-    const freeStartTime = await timeSlotService.getFreeStartTimeByCenterAndDate(centerId, date)
+    const timeSlotServiceInstance = new timeSlotService()
+    const freeStartTime = await timeSlotServiceInstance.getFreeStartTimeByCenterAndDate(centerId, date)
     res.status(200).json({
       status: 'success',
       data: {
@@ -14,7 +15,8 @@ class timeSlotController {
   })
   static getMaxTimeAviableFromStartTime = catchAsync(async (req: any, res: any, next: any) => {
     const { centerId, date, start } = req.params
-    const maxDuration = await timeSlotService.getMaxTimeAviableFromStartTime(centerId, date, start)
+    const timeSlotServiceInstance = new timeSlotService()
+    const maxDuration = await timeSlotServiceInstance.getMaxTimeAviableFromStartTime(centerId, date, start)
     res.status(200).json({
       status: 'success',
       data: {
@@ -24,7 +26,8 @@ class timeSlotController {
   })
   static getCourtByFreeSlot = catchAsync(async (req: any, res: any, next: any) => {
     const { centerId, date, start, duration } = req.params
-    const availableCourt = await timeSlotService.getCourtByFreeSlot(centerId, date, start, duration)
+    const timeSlotServiceInstance = new timeSlotService()
+    const availableCourt = await timeSlotServiceInstance.getCourtByFreeSlot(centerId, date, start, duration)
     res.status(200).json({
       status: 'success',
       data: {
