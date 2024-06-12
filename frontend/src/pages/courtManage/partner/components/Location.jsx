@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react';
-import moment from 'moment';
-import { Space, Select, DatePicker, Button, Tooltip } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import {
-  fetchDistricts,
-  fetchWards,
-} from '@/services/District_ward-API/districtWardAPI';
+import { Space, Select, Input } from 'antd';
+import { fetchDistricts, fetchWards } from '@/services/District_ward-API/districtWardAPI';
 import { HCM_ID } from '@/utils/constants';
 
 const { Option } = Select;
 
-export default function Location() {
+export default function Location({ onChange }) {
   const [districtOptions, setDistrictOptions] = useState([]);
   const [wardOptions, setWardOptions] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedWard, setSelectedWard] = useState(null);
+  const [streetAddress, setStreetAddress] = useState('');
 
   useEffect(() => {
     const getDistricts = async () => {
@@ -24,8 +22,26 @@ export default function Location() {
   }, []);
 
   const handleDistrictChange = async (value) => {
+    const selectedDistrict = districtOptions.find(option => option.id === value);
+    setSelectedDistrict(selectedDistrict);
+    setSelectedWard(null); // reset ward selection when district changes
     const data = await fetchWards(value);
     setWardOptions(data);
+    const fullAddress = `${streetAddress}, ${selectedDistrict.full_name}`;
+    onChange(fullAddress);
+  };
+
+  const handleWardChange = (value) => {
+    const selectedWard = wardOptions.find(option => option.id === value);
+    setSelectedWard(selectedWard);
+    const fullAddress = `${streetAddress}, ${selectedWard.full_name}, ${selectedDistrict.full_name}`;
+    onChange(fullAddress);
+  };
+
+  const handleStreetChange = (e) => {
+    setStreetAddress(e.target.value);
+    const fullAddress = `${e.target.value}, ${selectedWard ? selectedWard.full_name : ''}, ${selectedDistrict ? selectedDistrict.full_name : ''}`;
+    onChange(fullAddress);
   };
 
   const renderOptions = (options) =>
@@ -36,13 +52,20 @@ export default function Location() {
     ));
 
   return (
-    <Space.Compact block>
+    <Space direction="vertical">
+      <Input
+        placeholder="Số nhà và tên đường"
+        value={streetAddress}
+        onChange={handleStreetChange}
+        style={{ width: '300px' }}
+      />
       <Select
         showSearch
-        placeholder='Quận/huyện'
-        style={{ width: '150px', height: '50px' }}
-        optionFilterProp='children'
+        placeholder="Quận/huyện"
+        style={{ width: '150px' }}
+        optionFilterProp="children"
         onChange={handleDistrictChange}
+        value={selectedDistrict ? selectedDistrict.id : null}
         filterOption={(input, option) =>
           option.children.toLowerCase().includes(input.toLowerCase())
         }
@@ -51,57 +74,18 @@ export default function Location() {
       </Select>
       <Select
         showSearch
-        placeholder='Phường/xã'
-        style={{ width: '150px', height: '50px' }}
-        optionFilterProp='children'
+        placeholder="Phường/xã"
+        style={{ width: '150px' }}
+        optionFilterProp="children"
+        onChange={handleWardChange}
+        value={selectedWard ? selectedWard.id : null}
         filterOption={(input, option) =>
           option.children.toLowerCase().includes(input.toLowerCase())
         }
+        disabled={!selectedDistrict} // disable ward select if no district is selected
       >
         {renderOptions(wardOptions)}
       </Select>
-      <Select
-        showSearch
-        style={{ width: '150px', height: '50px' }}
-        placeholder='Tên sân'
-      />
-      <DatePicker
-        placeholder='Ngày'
-        disabledDate={(current) =>
-          current &&
-          (current.isBefore(moment().startOf('day')) ||
-            current.isAfter(moment().add(7, 'days').startOf('day')))
-        }
-      />
-      <Select
-        defaultValue='Khung giờ'
-        style={{ width: '150px', height: '50px' }}
-      >
-        <Option value='6'>6:00</Option>
-        <Option value='7'>7:00</Option>
-        <Option value='7'>9:00</Option>
-        <Option value='17'>13:00</Option>
-        <Option value='17'>15:00</Option>
-        <Option value='17'>17:00</Option>
-      </Select>
-      <Select
-        defaultValue='Số giờ chơi'
-        style={{ width: '150px', height: '50px' }}
-      >
-        <Option value='1'>1 giờ</Option>
-        <Option value='1.5'>1.5 giờ</Option>
-        <Option value='2'>2 giờ</Option>
-        <Option value='2.5'>2.5 giờ</Option>
-        <Option value='3'>3 giờ</Option>
-      </Select>
-      <Tooltip title='search'>
-        <Button
-          type='primary'
-          shape='circle'
-          icon={<SearchOutlined />}
-          style={{ width: '50px', height: '50px' }}
-        />
-      </Tooltip>
-    </Space.Compact>
+    </Space>
   );
 }

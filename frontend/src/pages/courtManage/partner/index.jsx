@@ -17,7 +17,6 @@ import { submitForm } from "../../../services/partnerAPI";
 import { useNavigate } from "react-router-dom";
 import ServicesAndAmenities from "./components/ServicesAndAmenities";
 import CenterDetailsForm from "./components/CenterDetailsForm";
-
 import {
   getStorage,
   ref,
@@ -283,17 +282,17 @@ const CenterForm = () => {
       <div className="steps-action">
         {current < steps.length - 1 && (
           <Button type="primary" onClick={() => next()}>
-            Next
+            Tiếp theo
           </Button>
         )}
         {current === steps.length - 1 && (
           <Button type="primary" onClick={handleSubmit}>
-            Submit
+            Xác nhận thông tin và tạo sân
           </Button>
         )}
         {current > 0 && (
           <Button style={{ margin: "0 8px" }} onClick={() => prev()}>
-            Previous
+            Trở về
           </Button>
         )}
       </div>

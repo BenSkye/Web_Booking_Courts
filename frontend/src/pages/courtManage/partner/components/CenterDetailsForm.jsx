@@ -11,9 +11,10 @@ import {
   Col,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import ServicesAndAmenities from "./ServicesAndAmenities"; // Đảm bảo đường dẫn đến ServicesAndAmenities đúng
-import MyLocationMap from "../../../../utils/map/index";
+import ServicesAndAmenities from "./ServicesAndAmenities";
+import MyLocationMap2 from "../../../../utils/map/MapForAddCourt";
 import Location from "./Location";
+
 const CenterDetailsForm = ({
   form,
   handleUploadCourt,
@@ -22,19 +23,11 @@ const CenterDetailsForm = ({
   fileListLicense,
   setFileListCourt,
   setFileListLicense,
-  uploadProgressCourt, // Add this prop
-  uploadProgressLicense, // Add this prop
+  uploadProgressCourt,
+  uploadProgressLicense,
 }) => {
-  const [address, setAddress] = useState(form.getFieldValue("location") || "");
-
-  const handleAddressChange = (e) => {
-    const newAddress = e.target.value;
-    form.setFieldsValue({ location: newAddress });
-    setAddress(newAddress);
-  };
-
   const [openTime, setOpenTime] = useState(null);
-
+  const [address, setAddress] = useState(form.getFieldValue("location") || "");
   const disabledHours = () => {
     if (!openTime) return [];
     const hours = [];
@@ -44,6 +37,11 @@ const CenterDetailsForm = ({
       }
     }
     return hours;
+  };
+
+  const handleLocationChange = (value) => {
+    setAddress(value);
+    form.setFieldsValue({ location: value });
   };
 
   return (
@@ -60,10 +58,10 @@ const CenterDetailsForm = ({
         name="location"
         rules={[{ required: true, message: "Hãy nhập địa chỉ" }]}
       >
-        <Input onChange={handleAddressChange} />
+        <Location onChange={handleLocationChange} />
       </Form.Item>
       <Form.Item>
-        <MyLocationMap address={address} />
+        <MyLocationMap2 address={address} />
       </Form.Item>
       <Form.Item
         label="Giờ mở cửa"
@@ -197,7 +195,7 @@ const CenterDetailsForm = ({
       </Row>
 
       <Form.Item
-        label="Dịch vụ và tiện ích"
+        label="Dịch vụ và tiện ích"
         name="services"
         rules={[{ required: true, message: "Hãy chọn các dịch vụ của bạn" }]}
       >
