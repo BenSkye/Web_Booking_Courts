@@ -22,6 +22,7 @@ import { FaMapMarkerAlt } from 'react-icons/fa';
 import MyLocationMap from '@/utils/map';
 import { formatPrice } from '../../../../utils/priceFormatter';
 import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
+import { getListCourtsByCenterId_API } from '../../../../services/courtAPI/getCourtsAPI';
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -32,6 +33,7 @@ const BookingFixedByMonth = ({ id }) => {
   const [form] = Form.useForm();
   const [selectedDays, setSelectedDays] = useState([]);
   const [center, setCenter] = useState({});
+  const [courts, setCourts] = useState([]); //
   const [endDate, setEndDate] = useState(null);
   const [totalPriceAll, setTotalPriceAll] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -63,11 +65,21 @@ const BookingFixedByMonth = ({ id }) => {
   };
 
   useEffect(() => {
-    const getCenters = async (id) => {
+    const getCenter = async (id) => {
       const data = await getCenterByIdAPI(id);
+      console.log('center: ', data.data.center);
       setCenter(data.data.center);
     };
-    getCenters(id);
+    getCenter(id);
+  }, [id]);
+
+  useEffect(() => {
+    const getListCourts = async (id) => {
+      const data = await getListCourtsByCenterId_API(id);
+      console.log('list courts: ', data);
+      setCourts(data);
+    };
+    getListCourts(id);
   }, [id]);
 
   const getDaysOfWeekBetweenDates = (start, end, dayOfWeek) => {
@@ -188,9 +200,11 @@ const BookingFixedByMonth = ({ id }) => {
               ]}
             >
               <Select placeholder='Chọn sân'>
-                <Option value='1'>Sân 1</Option>
-                <Option value='2'>Sân 2</Option>
-                <Option value='3'>Sân 3</Option>
+                {courts.map((court) => (
+                  <Option key={court._id} value={court._id}>
+                    {court.courtNumber}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
             <Form.Item
