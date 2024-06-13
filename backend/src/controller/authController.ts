@@ -81,7 +81,7 @@ class authController {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1]
     }
-    console.log('token', token)
+    // console.log('token', token)
     if (!token) {
       return next(new AppError('Vui lòng đăng nhập để truy cập', 401))
     }
