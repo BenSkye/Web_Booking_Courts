@@ -24,10 +24,15 @@ export const fetchDataMockAPI = async (url) => {
   return [];
 };
 
-export const postData = async (url, data) => {
+export const postData = async (url, data, token) => {
   try {
     console.log("Data to post:", data);
-    const response = await axios.post(url, data);
+    const response = await axios.post(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("response", response);
     if (response.status === 201) {
       return response;
@@ -38,4 +43,32 @@ export const postData = async (url, data) => {
     console.error("Error posting data:", error.message);
   }
   return null;
+};
+
+export const patchData = async (url, data, token) => {
+  try {
+    console.log("Data to patch:", data);
+    const response = await axios.patch(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("response", response);
+
+    // Kiểm tra trạng thái HTTP của phản hồi
+    if (response.status === 200) {
+      return response.data; // Trả về dữ liệu của phản hồi
+    } else {
+      console.error(
+        "Error patching data:",
+        response.status,
+        response.statusText
+      );
+      return null; // Trả về null nếu có lỗi nhưng không ném lỗi
+    }
+  } catch (error) {
+    console.error("Error patching data:", error.message);
+    return null; // Trả về null nếu có lỗi
+  }
 };

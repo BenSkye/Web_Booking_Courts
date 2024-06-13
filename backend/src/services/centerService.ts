@@ -5,44 +5,59 @@ import priceRepository from '~/repository/priceRepository'
 import timeSlotRepository from '~/repository/timeslotRepository'
 import AppError from '~/utils/appError'
 
-class centerService {
-  static async addCenter(data: any) {
+interface ICenterService {
+  addCenter(data: any): Promise<any>
+  getAllCenters(): Promise<any>
+  getCenterById(id: string): Promise<any>
+  getPersonalCenters(userId: string): Promise<any>
+  getPersonalCenterById(centerId: string, userId: string): Promise<any>
+  selectPackage(centerId: string, packageId: string, userId: string): Promise<any>
+  changeCenterStatusAccept(centerId: string): Promise<any>
+}
+
+class centerService implements ICenterService {
+  async addCenter(data: any) {
     const center = { ...data.center, managerId: data.user }
-    const newcenter = await centerRepository.addCenter(center)
+    const centerRepositoryInstance = new centerRepository()
+    const newcenter = await centerRepositoryInstance.addCenter(center)
     const priceArray = data.price
+    const priceRepositoryInstance = new priceRepository()
     const promises = priceArray.map(async (price: any) => {
       price.centerId = newcenter._id
-      return priceRepository.addPrice(price)
+      return priceRepositoryInstance.addPrice(price)
     })
     const newPrices = await Promise.all(promises)
     const priceIds = newPrices.map((price) => price._id)
-
     newcenter.price = priceIds
-    await centerRepository.updateCenter(newcenter._id, newcenter)
+    await centerRepositoryInstance.updateCenter(newcenter._id, newcenter)
+    //Tạo court ngay khi tạo Center
     const newCourts = []
     for (let i = 0; i < newcenter.courtCount; i++) {
       const court = {
         courtNumber: i + 1,
         centerId: newcenter._id
       }
-      const newCourt = await courtRepository.addCourt(court)
+      const courtRepositoryInstance = new courtRepository()
+      const newCourt = await courtRepositoryInstance.addCourt(court)
       newCourts.push(newCourt)
     }
     return { newcenter, newPrices, newCourts }
   }
 
-  static async getAllCenters() {
+  async getAllCenters() {
     try {
-      const centers = await centerRepository.getAllCenters()
+      const centerRepositoryInstance = new centerRepository()
+      const centers = await centerRepositoryInstance.getAllCenters()
       return centers
     } catch (error) {
       throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
     }
   }
 
-  static async getCenterById(id: string) {
+  async getCenterById(id: string) {
     try {
-      const center = await centerRepository.getCenter({ _id: id })
+      const centerRepositoryInstance = new centerRepository()
+      const center = await centerRepositoryInstance.getCenter({ _id: id })
       if (!center) {
         throw new Error(`Center with id ${id} not found`)
       }
@@ -52,8 +67,9 @@ class centerService {
     }
   }
 
-  static async getPersonalCenters(userId: string) {
-    const ListCenter = await centerRepository.getListCenter({ managerId: userId })
+  async getPersonalCenters(userId: string) {
+    const centerRepositoryInstance = new centerRepository()
+    const ListCenter = await centerRepositoryInstance.getListCenter({ managerId: userId })
     // const ListCenterWithPrices = await Promise.all(
     //   ListCenter.map(async (center: any) => {
     //     const prices = await priceRepository.getPricesByCenterId(center._id)
@@ -63,15 +79,19 @@ class centerService {
     return ListCenter
   }
 
-  static async getPersonalCenterById(centerId: string, userId: string) {
-    const center: any = await centerRepository.getCenter({ _id: centerId, managerId: userId })
+  async getPersonalCenterById(centerId: string, userId: string) {
+    const centerRepositoryInstance = new centerRepository()
+
+    const center: any = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId })
     console.log(center)
-    const prices = await priceRepository.getPrices({ centerId: center._id })
+    const priceRepositoryInstance = new priceRepository()
+    const prices = await priceRepositoryInstance.getPrices({ centerId: center._id })
     return { center, prices }
   }
 
-  static async selectPackage(centerId: string, packageid: string, userId: string) {
-    const center = await centerRepository.getCenter({ _id: centerId, managerId: userId })
+  async selectPackage(centerId: string, packageid: string, userId: string) {
+    const centerRepositoryInstance = new centerRepository()
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId })
     if (!center) {
       throw new AppError('Can not found center', 404)
     }
@@ -88,14 +108,12 @@ class centerService {
         return latest.expiryDate > subscription.expiryDate ? latest : subscription
       })
     }
-    console.log('latestSubscription', latestSubscription)
     let activationDate = new Date()
     activationDate.setUTCHours(0, 0, 0, 0)
     if (latestSubscription && latestSubscription.expiryDate > activationDate) {
       const newDate = new Date(latestSubscription.expiryDate.getTime()) //lấy ngày kết thúc gần nhất
       newDate.setDate(newDate.getDate() + 1) //cộng thêm 1 ngày
       activationDate = newDate
-      console.log('activationDate', activationDate)
     }
     const expiryDate = new Date(activationDate)
     expiryDate.setMonth(activationDate.getMonth() + centerPackage.durationMonths)
@@ -108,9 +126,9 @@ class centerService {
     if (center.status.includes('accepted') || center.status.includes('expired')) {
       center.status = 'active'
     }
-
-    const modifeCenter = await centerRepository.updateCenter({ _id: centerId }, center)
-    const listCourt = await courtRepository.getListCourt({ centerId })
+    const modifeCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
+    const courtRepositoryInstance = new courtRepository()
+    const listCourt = await courtRepositoryInstance.getListCourt({ centerId })
     const slotsAray: { start: string; end: string }[] = []
     const slot = {
       start: center.openTime,
@@ -140,20 +158,20 @@ class centerService {
         startDay.setDate(startDay.getDate() + 1)
       }
     })
-    await timeSlotRepository.addManyTimeSlots(ListTimeslot)
+    const timeSlotRepositoryInstance = new timeSlotRepository()
+    await timeSlotRepositoryInstance.addManyTimeSlots(ListTimeslot)
     return modifeCenter
   }
 
-  static async changeCenterStatus(
-    centerId: string,
-    status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected'
-  ) {
-    const center = await centerRepository.getCenter({ _id: centerId })
+  async changeCenterStatusAccept(centerId: string) {
+    const centerRepositoryInstance = new centerRepository()
+
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId })
     if (!center) {
       throw new AppError('Can not found center', 404)
     }
-    center.status = status
-    return centerRepository.updateCenter({ _id: centerId }, center)
+    center.status = 'accepted'
+    return centerRepositoryInstance.updateCenter({ _id: centerId }, center)
   }
 }
 export default centerService

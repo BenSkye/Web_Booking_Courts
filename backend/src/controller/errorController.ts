@@ -14,7 +14,8 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
   // render the error page
   res.status(err.statusCode).json({
     status: err.status,
-    message: err.message
+    message: err.message,
+    stack: err.stack
   })
 }
 

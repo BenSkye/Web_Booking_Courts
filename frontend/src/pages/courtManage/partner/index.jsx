@@ -23,7 +23,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { app } from "../../../utils/firebase";
+import { app } from "../../../utils/firebase/firebase";
 import ReviewStep from "./components/ReviewStep";
 import PriceAndTime from "./components/PriceAndTime";
 const { Step } = Steps;
@@ -36,8 +36,9 @@ const CenterForm = () => {
   const [showGoldenPrice, setShowGoldenPrice] = useState(false);
   const [showByMonthPrice, setShowByMonthPrice] = useState(false);
   const [showBuyPackage, setShowBuyPackage] = useState(false);
-  const [uploadProgressCourt, setUploadProgressCourt] = useState(0); // State for court upload progress
-  const [uploadProgressLicense, setUploadProgressLicense] = useState(0); // State for license upload progress
+  const [uploadProgressCourt, setUploadProgressCourt] = useState(0);
+  const [uploadProgressLicense, setUploadProgressLicense] = useState(0);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const handleUploadCourt = async ({ file, onSuccess, onError }) => {
     try {
@@ -54,7 +55,7 @@ const CenterForm = () => {
         },
         (error) => {
           onError(error);
-          message.error("Upload failed");
+          message.error("Đăng tải ảnh không thành công, hãy kiểm tra lại tệp");
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -142,7 +143,7 @@ const CenterForm = () => {
         price: 0,
         startTime: "",
         endTime: "",
-        cheduleType: "",
+        scheduleType: "",
       },
     ],
   });
@@ -216,7 +217,7 @@ const CenterForm = () => {
               price: values.normalPrice,
               startTime: openTime,
               endTime: closeTime,
-              cheduleType: "Giờ bình thường",
+              scheduleType: "Giờ bình thường",
             },
           ];
 
@@ -225,7 +226,7 @@ const CenterForm = () => {
               price: values.goldenPrice,
               startTime: values.startTimeGolden.format("HH:mm"),
               endTime: values.endTimeGolden.format("HH:mm"),
-              cheduleType: "Giờ vàng",
+              scheduleType: "Giờ vàng",
             });
           }
 
@@ -234,7 +235,7 @@ const CenterForm = () => {
               price: values.byMonthPrice,
               startTime: openTime,
               endTime: closeTime,
-              cheduleType: "Đặt lịch cố định theo tháng",
+              scheduleType: "Đặt lịch cố định theo tháng",
             });
           }
 
@@ -243,7 +244,7 @@ const CenterForm = () => {
               price: values.buyPackagePrice,
               startTime: openTime,
               endTime: closeTime,
-              cheduleType: "Mua gói giờ chơi",
+              scheduleType: "Mua gói giờ chơi",
             });
           }
         }
@@ -260,6 +261,7 @@ const CenterForm = () => {
   };
 
   const handleSubmit = async () => {
+    setIsSubmitDisabled(true); // Disable the submit button
     try {
       const token = Cookies.get("jwtToken");
       await submitForm(formValues, token);
@@ -268,6 +270,7 @@ const CenterForm = () => {
     } catch (error) {
       console.log(error);
       message.error("Failed to submit form!");
+      setIsSubmitDisabled(false); // Re-enable the button if submission fails
     }
   };
 
@@ -286,7 +289,7 @@ const CenterForm = () => {
           </Button>
         )}
         {current === steps.length - 1 && (
-          <Button type="primary" onClick={handleSubmit}>
+          <Button type="primary" onClick={handleSubmit} disabled={isSubmitDisabled}>
             Xác nhận thông tin và tạo sân
           </Button>
         )}

@@ -18,28 +18,26 @@ import {
   Modal,
 } from "antd";
 import { FaMapMarkerAlt } from "react-icons/fa";
-import { IoMdTime } from "react-icons/io";
-import MomoLogo from "../../../../../../assets/MoMo_Logo.png";
 import MyLocationMap from "@/utils/map";
-import { formatPrice } from "../../../../../../utils/priceFormatter";
-import { getCenterByIdAPI } from "@/services/centersAPI/getCenters";
-import {
-  addToCart,
-  removeFromCart,
-  updateTotalPrice,
-  setCenter,
-} from "../../../../../../../redux/actions/cartActions";
+import { formatPrice } from "../../../utils/priceFormatter";
 import {
   getAvailableCourtAPI,
   getAvailableDurationAPI,
   getFreeTimeByDateAPI,
-} from "../../../../../../services/slotBookingAPI";
+} from "../../../services/slotBookingAPI";
+import {
+  addToCart,
+  removeFromCart,
+  setCenter,
+  updateTotalPrice,
+} from "../../../../redux/actions/cartActions";
+import { getCenterByIdAPI } from "@/services/centersAPI/getCenters";
 
 const { Step } = Steps;
 const { Option } = Select;
 
 // eslint-disable-next-line react/prop-types
-export default function PickTimeBooking({ checkOut, idCenter }) {
+export default function PickTimeBooking({ idCenter }) {
   const dispatch = useDispatch();
   const { selectedCourts, center, totalPrice } = useSelector(
     (state) => state.cart
@@ -53,9 +51,6 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   const [duration, setDuration] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    console.log("availableCourts", availableCourts);
-  }, [availableCourts]);
   const handleSelectedDay = (date) => {
     const dateObject = new Date(date);
     const utcDateObject = new Date(
@@ -67,10 +62,10 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   };
 
   const getFreeStartTime = async (id, selectedDate) => {
+    console.log("id", id, "selectedDate", selectedDate);
     const data = await getFreeTimeByDateAPI(id, selectedDate);
     setTimeOptions(data.freeStartTime);
   };
-
   const getAvailableDuration = async (centerId, date, startTime) => {
     const data = await getAvailableDurationAPI(centerId, date, startTime);
     let maxDuration = data.maxDuration;
@@ -82,7 +77,6 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
     }
     setDurationOptions(listduration);
   };
-
   const getAvailableCourt = async (centerId, date, startTime, duration) => {
     const data = await getAvailableCourtAPI(
       centerId,
@@ -92,17 +86,14 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
     );
     setAvailableCourts(data.courtFree);
   };
-
   useEffect(() => {
     if (!selectedDate) return;
     getFreeStartTime(idCenter, selectedDate);
   }, [selectedDate]);
-
   useEffect(() => {
     if (!startTime || !selectedDate) return;
     getAvailableDuration(idCenter, selectedDate, startTime);
   }, [selectedDate, startTime]);
-
   useEffect(() => {
     if (!startTime || !selectedDate || !duration) return;
     getAvailableCourt(idCenter, selectedDate, startTime, duration);
@@ -129,13 +120,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   }, [selectedDate, startTime, duration]);
 
   const handleAddToCart = (court) => {
-    const courtWithDetails = {
-      ...court,
-      selectedDate,
-      startTime,
-      duration,
-    };
-    dispatch(addToCart(courtWithDetails));
+    dispatch(addToCart(court));
   };
 
   const handleRemoveFromCart = (court) => {
@@ -145,10 +130,9 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   useEffect(() => {
     const getCenters = async (id) => {
       const data = await getCenterByIdAPI(id);
-      dispatch(setCenter(data.data.center));
+      dispatch(setCenter(data));
     };
     getCenters(idCenter);
-    console.log(idCenter);
   }, [idCenter, dispatch]);
 
   const calculateTotalPrice = () => {
@@ -310,10 +294,10 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
         </Col>
         <Col xs={24} md={8}>
           <Card
-            title="Giỏ hàng của bạn"
+            title="Sân được chọn"
             style={{ boxShadow: "1px 1px 1px 1px rgba(0, 0, 0, 0.2)" }}
           >
-            <Row
+            {/* <Row
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -323,22 +307,22 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
             >
               <Col span={12}>
                 <div style={{ width: "100%" }}>
-                  {center.centerName && <strong>{center.centerName}</strong>}
+                  {center.nameCenter && <strong>{center.nameCenter}</strong>}
                 </div>
                 <a style={{ width: "100%" }} onClick={handleOpenModal}>
-                  {center.location && (
+                  {center.addressCenter && (
                     <p>
-                      {center.location} <FaMapMarkerAlt />
+                      {center.addressCenter} <FaMapMarkerAlt />
                     </p>
                   )}
                 </a>
               </Col>
               <Col span={12}>
                 <Carousel autoplay>
-                  {!center.images || center.images.length === 0 ? (
+                  {!center.imgCenter || center.imgCenter.length === 0 ? (
                     <Empty />
                   ) : (
-                    center.images.map((image, index) => (
+                    center.imgCenter.map((image, index) => (
                       <div key={index}>
                         <img
                           src={image}
@@ -350,7 +334,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                   )}
                 </Carousel>
               </Col>
-            </Row>
+            </Row> */}
 
             {selectedCourts.length === 0 ? (
               <></>
@@ -374,12 +358,6 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                     >
                       Sân {court.courtNumber}: <Space />{" "}
                       {formatPrice(court.price)}đ
-                      <br />
-                      Ngày: {court.selectedDate}
-                      <br />
-                      Giờ bắt đầu: {court.startTime}
-                      <br />
-                      Thời lượng: {court.duration} giờ
                     </List.Item>
                   )}
                 />
@@ -392,24 +370,16 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
               </strong>
             </div>
             <Flex
-              style={{ marginTop: 16, flexWrap: "wrap" }}
+              style={{ marginTop: 16 }}
               align="center"
               justify="space-between"
             >
               <Button
                 type="primary"
-                onClick={checkOut}
                 disabled={selectedCourts.length === 0}
                 style={{ marginTop: 16 }}
-                icon={
-                  <img
-                    src={MomoLogo}
-                    style={{ width: 20, height: 20 }}
-                    alt="Momo Logo"
-                  />
-                }
               >
-                Thanh toán bằng Momo
+                Xác nhận đặt sân cho khách hàng
               </Button>
             </Flex>
           </Card>
@@ -423,7 +393,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
         centered
         style={{ height: "80vh" }} // Thiết lập chiều cao của modal
       >
-        <MyLocationMap address={center.location} />
+        <MyLocationMap address={center.addressCenter} />
       </Modal>
     </div>
   );

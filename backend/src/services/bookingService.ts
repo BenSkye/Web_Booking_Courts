@@ -4,7 +4,7 @@ import timeSlotRepository from '~/repository/timeslotRepository'
 import AppError from '~/utils/appError'
 
 class bookingService {
-  static async createBooking(data: any, userId: string) {
+  static async createBookingbyDay(data: any, userId: string) {
     const slot = {
       courtId: data.courtId,
       date: data.date,
@@ -12,6 +12,8 @@ class bookingService {
       end: data.start
     }
     let allSlotsAvailable = true
+    const slotAvilable = []
+    const timeSlotRepositoryInstance = new timeSlotRepository()
     while (allSlotsAvailable && new Date(`1970-01-01T${slot.end}:00`) < new Date(`1970-01-01T${data.end}:00`)) {
       const [hour, minute] = slot.start.split(':')
       if (minute === '00') {
@@ -20,17 +22,22 @@ class bookingService {
       if (minute === '30') {
         slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
       }
-
-      const avilable = await timeSlotRepository.checkTimeSlotAvilable(slot)
+      //check slot trong khoảng booking có available không
+      const avilable = await timeSlotRepositoryInstance.checkTimeSlotAvilable(slot)
       if (!avilable) {
         allSlotsAvailable = false
         throw new AppError('Slot not available', 400)
       }
+      slotAvilable.push(slot)
       slot.start = slot.end
     }
     if (allSlotsAvailable) {
-      const booking = { ...data, userId: userId }
+      const booking = { ...data, userId: userId, status: 'pending' }
       const newBooking = await bookingRepository.createBooking(booking)
+      //thanh toán rồi mới update status của slot
+      // slotAvilable.forEach(async (slot) => {
+      //   timeSlotRepositoryInstance.updateSlotStatus(slot, 'booked')
+      // })
       return newBooking
     }
   }

@@ -4,14 +4,21 @@ import AppError from '~/utils/appError'
 import centerService from './centerService'
 import centerRepository from '~/repository/centerRepository'
 import priceRepository from '~/repository/priceRepository'
-
-class timeSlotService {
-  static async getFreeStartTimeByCenterAndDate(centerId: string, date: string) {
+interface ITimeSlotService {
+  getFreeStartTimeByCenterAndDate(centerId: string, date: string): Promise<any[]>
+  getMaxTimeAviableFromStartTime(centerId: string, date: string, startTime: string): Promise<number | null>
+  getCourtByFreeSlot(centerId: string, date: string, start: string, duration: number): Promise<any[] | null>
+  getPriceFormStartoEnd(centerId: string, start: string, end: string): Promise<number | null>
+}
+class timeSlotService implements ITimeSlotService {
+  async getFreeStartTimeByCenterAndDate(centerId: string, date: string) {
     const isoDate = new Date(`${date}T00:00:00.000Z`)
-    const listcourtId = await courtRepository.getListCourtId({ centerId: centerId })
+    const courtRepositoryInstance = new courtRepository()
+    const listcourtId = await courtRepositoryInstance.getListCourtId({ centerId: centerId })
     const startTimes = new Set()
+    const timeSlotRepositoryInstance = new timeSlotRepository()
     for (const courtId of listcourtId) {
-      const timeSlots = await timeSlotRepository.getTimeslot({ courtId, date: isoDate })
+      const timeSlots = await timeSlotRepositoryInstance.getTimeslot({ courtId, date: isoDate })
       if (timeSlots) {
         const freeSlots = timeSlots.slot.filter((slot) => slot.status !== 'booked')
         for (const slot of freeSlots) {
@@ -22,16 +29,18 @@ class timeSlotService {
     return Array.from(startTimes)
   }
 
-  static async getMaxTimeAviableFromStartTime(centerId: string, date: string, startTime: string) {
+  async getMaxTimeAviableFromStartTime(centerId: string, date: string, startTime: string) {
     const isoDate = new Date(`${date}T00:00:00.000Z`)
-    const listcourtId = await courtRepository.getListCourtId({ centerId })
+    const courtRepositoryInstance = new courtRepository()
+    const listcourtId = await courtRepositoryInstance.getListCourtId({ centerId })
     if (listcourtId.length === 0) {
       return null
     }
     const listMinStartTime = []
     const datePrefix = '1970-01-01T'
+    const timeSlotRepositoryInstance = new timeSlotRepository()
     for (const courtId of listcourtId) {
-      const timeSlots = await timeSlotRepository.getTimeslot({ courtId, date: isoDate })
+      const timeSlots = await timeSlotRepositoryInstance.getTimeslot({ courtId, date: isoDate })
       if (timeSlots) {
         const bookedSlots = timeSlots.slot.filter((slot) => slot.status == 'booked' && slot.start >= startTime)
         if (bookedSlots.length > 1) {
@@ -66,10 +75,12 @@ class timeSlotService {
     return maxAvailableTime
   }
 
-  static async getCourtByFreeSlot(centerid: string, date: string, start: string, duration: number) {
+  async getCourtByFreeSlot(centerid: string, date: string, start: string, duration: number) {
     const isoDate = new Date(`${date}T00:00:00.000Z`)
-    const listcourtId = await courtRepository.getListCourtId({ centerId: centerid })
-    const CenterTime = await centerRepository.getCenterStartandEndTime({ _id: centerid })
+    const courtRepositoryInstance = new courtRepository()
+    const listcourtId = await courtRepositoryInstance.getListCourtId({ centerId: centerid })
+    const centerRepositoryInstance = new centerRepository()
+    const CenterTime = await centerRepositoryInstance.getCenterStartandEndTime({ _id: centerid })
     if (CenterTime) {
       const [centerClosehours, centerCloseminutes] = CenterTime.closeTime.split(':').map(Number)
       const centerClose = centerClosehours * 60 + centerCloseminutes
@@ -89,8 +100,9 @@ class timeSlotService {
       const formattedEndTime = `${endHours}:${endMinutes}`
       const totalPrice = await this.getPriceFormStartoEnd(centerid, start, formattedEndTime)
       const availableCourt = []
+      const timeSlotRepositoryInstance = new timeSlotRepository()
       for (const courtId of listcourtId) {
-        const timeSlots = await timeSlotRepository.getTimeslot({ courtId, date: isoDate })
+        const timeSlots = await timeSlotRepositoryInstance.getTimeslot({ courtId, date: isoDate })
         let isAvailable = true
         if (timeSlots) {
           const bookedSlots = (timeSlots.slot as Array<any>).filter((slot) => slot.status == 'booked')
@@ -103,7 +115,8 @@ class timeSlotService {
           }
         }
         if (isAvailable) {
-          let court: any = await courtRepository.getCourt({ _id: courtId })
+          const courtRepositoryInstance = new courtRepository()
+          let court: any = await courtRepositoryInstance.getCourt({ _id: courtId })
           court.price = totalPrice
           court = { ...court._doc, price: totalPrice }
           availableCourt.push(court)
@@ -111,9 +124,10 @@ class timeSlotService {
       }
       return availableCourt
     }
+    return null
   }
 
-  static async getPriceFormStartoEnd(centerId: string, start: string, end: string) {
+  async getPriceFormStartoEnd(centerId: string, start: string, end: string) {
     const [startHours, startMinutes] = start.split(':').map(Number)
     let startSlot = startHours * 60 + startMinutes
     const [endHours, endMinutes] = end.split(':').map(Number)
@@ -124,13 +138,14 @@ class timeSlotService {
       startSlot += 30
     }
     let totalprice = 0
-    const nomalPrice = await priceRepository.getPrice({
+    const priceRepositoryInstance = new priceRepository()
+    const nomalPrice = await priceRepositoryInstance.getPrice({
       centerId: centerId,
-      cheduleType: 'nomalPrice'
+      scheduleType: 'nomalPrice'
     })
-    const GoldenPrice = await priceRepository.getPrice({
+    const GoldenPrice = await priceRepositoryInstance.getPrice({
       centerId: centerId,
-      cheduleType: 'GoldenPrice'
+      scheduleType: 'GoldenPrice'
     })
     if (!nomalPrice) {
       return null
