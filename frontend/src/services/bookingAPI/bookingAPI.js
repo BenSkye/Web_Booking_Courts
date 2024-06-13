@@ -13,16 +13,16 @@ export const getBookingIndayCenterAPI = async (day, centerId) => {
   }
 };
 
-export const createBookingbyDayAPI = async (data) => {
-  const token = Cookies.get("jwtToken");
-  if (!token) return { statusCode: 401 };
+export const checkBookingAvailablebyDayAPI = async (data) => {
   const response = await postData(
     "http://localhost:5050/api/v1/booking/create-booking-byday",
-    data,
-    token
+    data
   );
   console.log("Response:", response);
-  if (response.status === "success") {
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === 201) {
     return response.data;
   }
 };

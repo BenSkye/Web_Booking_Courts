@@ -26,7 +26,8 @@ class timeSlotService implements ITimeSlotService {
         }
       }
     }
-    return Array.from(startTimes)
+    const sortedStartTimes = Array.from(startTimes).sort()
+    return sortedStartTimes
   }
 
   async getMaxTimeAviableFromStartTime(centerId: string, date: string, startTime: string) {

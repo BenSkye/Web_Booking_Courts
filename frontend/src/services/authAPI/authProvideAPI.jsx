@@ -68,14 +68,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await postData(
-      "http://localhost:5050/api/v1/auth/login",
-      {
-        userEmail: email,
-        password: password,
-      },
-      null
-    );
+    const response = await postData("http://localhost:5050/api/v1/auth/login", {
+      userEmail: email,
+      password: password,
+    });
 
     if (response && response.data) {
       const token = response.data.data.token;
@@ -92,17 +88,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   const changePass = async (oldPassword, newPassword, confirmPassword) => {
-    const token = Cookies.get("jwtToken");
     const response = await patchData(
       "http://localhost:5050/api/v1/auth/change-password",
       {
         oldPassword: oldPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword,
-      },
-      token
+      }
     );
-    console.log("response", response);
+    if (response.data.status === "fail") {
+      return response.data;
+    }
     if (response && response.data) {
       const token = response.data.token;
       console.log(token);

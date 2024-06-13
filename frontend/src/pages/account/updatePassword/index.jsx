@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Button, Form, Input, message, Spin } from "antd";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AuthContext from "../../../services/authAPI/authProvideAPI";
 
 const UpdatePassword = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
   const { id } = useParams();
   const { changePass } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
@@ -23,13 +24,16 @@ const UpdatePassword = () => {
   }, [form]);
 
   const onFinish = async (values) => {
-    const userChagedPassword = await changePass(
+    const result = await changePass(
       values.oldPassword,
       values.newPassword,
       values.confirmPassword
     );
-    console.log("userChagedPassword", userChagedPassword);
-    if (userChagedPassword) {
+    if (result && result.status === "fail") {
+      message.error(result.message);
+      navigate("/login");
+    } else if (result) {
+      console.log("userChagedPassword", result);
       message.success("Cập nhật mật khẩu thành công!");
     } else {
       message.error("Có lỗi xảy ra khi cập nhật mật khẩu.");
