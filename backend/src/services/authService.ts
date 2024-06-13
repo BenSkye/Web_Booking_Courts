@@ -77,5 +77,6 @@ class authService {
       return { user: rest, token };
     }
   }
+  
 }
 export default authService

@@ -7,7 +7,7 @@ class UserController {
     const userId = req.user.id;
     const { userName, avatar, userPhone } = req.body;
 
-    const  {  newuser, token } = await UserService.updateUser(userId, { userName, avatar, userPhone });
+    const  {  newuser } = await UserService.updateUser(userId, { userName, avatar, userPhone });
     
     
 
@@ -18,6 +18,14 @@ class UserController {
         // token: token,
       }
     });
+  });
+  static  getAllUser = catchAsync(async (req: any, res: any, next: any) => {
+    try {
+      const users = await UserService.getAllUser();
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching users', error });
+    }
   });
 }
 

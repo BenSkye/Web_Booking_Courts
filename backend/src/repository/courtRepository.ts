@@ -15,5 +15,9 @@ class courtRepository {
   static async getListCourtId(query: any) {
     return await Court.find(query).select('_id')
   }
+  static async getAllCourt() {
+    return await Court.find().exec();
+  }
+
 }
 export default courtRepository

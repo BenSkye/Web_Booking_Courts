@@ -5,6 +5,7 @@ class userRepository {
     throw new Error('Method not implemented.');
   }
   static async addUser(user: any) {
+    user.status = 'active';
     const newUser = new User(user)
     return newUser.save()
   }
@@ -28,6 +29,9 @@ class userRepository {
   static async updateUser(userId: string, updates: { userName?: string; avatar?: string, userPhone?: number;  }) {
     const user = await User.findByIdAndUpdate(userId, updates, { new: true });
     return user;
+  }
+  static async getAllUser() {
+    return await User.find().exec();
   }
 }
 export default userRepository;

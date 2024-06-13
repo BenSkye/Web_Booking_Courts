@@ -3,6 +3,7 @@ import userRepository from '~/repository/userRepository';
 import AppError from '~/utils/appError';
 import jwt from 'jsonwebtoken'
 class UserService {
+ 
     static async updateUser(userId: string, infor: Object ) {
     const user = await userRepository.findUser({ _id: userId })
     if (!user) {
@@ -24,6 +25,9 @@ class UserService {
 
     const {  password:userPassword, ...newuser } = updatedUser.toObject()
     return {  newuser, token }
+}
+static async getAllUser() {
+  return await userRepository.getAllUser();
 }
 
 }
