@@ -1,5 +1,6 @@
 import axios from "axios";
-
+import Cookies from "js-cookie";
+let token = Cookies.get("jwtToken");
 export const fetchDataEsgoo = async (url) => {
   try {
     const response = await axios.get(url);
@@ -24,29 +25,37 @@ export const fetchDataMockAPI = async (url) => {
   return [];
 };
 
-export const postData = async (url, data, token) => {
+export const postData = async (url, data) => {
   try {
+    if (!token) {
+      token = "";
+    }
     console.log("Data to post:", data);
+    console.log("token:", token);
+
     const response = await axios.post(url, data, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("response", response);
     if (response.status === 201) {
       return response;
     } else {
       console.error("Error posting data:", response.status);
     }
   } catch (error) {
-    console.error("Error posting data:", error.message);
+    return error.response;
   }
   return null;
 };
 
-export const patchData = async (url, data, token) => {
+export const patchData = async (url, data) => {
   try {
+    console.log(token);
+    if (!token) {
+      token = "";
+    }
     console.log("Data to patch:", data);
     const response = await axios.patch(url, data, {
       headers: {
@@ -54,21 +63,13 @@ export const patchData = async (url, data, token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("response", response);
-
-    // Kiểm tra trạng thái HTTP của phản hồi
     if (response.status === 200) {
-      return response.data; // Trả về dữ liệu của phản hồi
+      return response;
     } else {
-      console.error(
-        "Error patching data:",
-        response.status,
-        response.statusText
-      );
-      return null; // Trả về null nếu có lỗi nhưng không ném lỗi
+      console.error("Error patching data:", response.status);
     }
   } catch (error) {
-    console.error("Error patching data:", error.message);
-    return null; // Trả về null nếu có lỗi
+    return error.response;
   }
+  return null;
 };

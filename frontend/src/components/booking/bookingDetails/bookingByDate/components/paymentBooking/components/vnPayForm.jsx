@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Form, Input, Button } from "antd";
-import { createBookingbyDayAPI } from "../../../../../../../services/bookingAPI/getBooking";
+import { Form, Input, Button, message } from "antd";
+import { checkBookingAvailablebyDayAPI } from "../../../../../../../services/bookingAPI/bookingAPI";
 import { useNavigate } from "react-router-dom";
 const VNPayPaymentForm = ({ listBooking, totalPrice, setCurrentStep }) => {
   const [form] = Form.useForm();
@@ -15,16 +15,38 @@ const VNPayPaymentForm = ({ listBooking, totalPrice, setCurrentStep }) => {
     try {
       // Gửi thông tin thanh toán đến VNPay API ở đây
       console.log("Received values:", values);
-      const result = await createBookingbyDayAPI({ listBooking, totalPrice });
+      const result = await checkBookingAvailablebyDayAPI({
+        listBooking,
+        totalPrice,
+      });
+      if (result && result.status === "fail") {
+        if (
+          result.message === "Vui lòng đăng nhập để truy cập" ||
+          result.message === "Người dùng đã đổi mật khẩu"
+        ) {
+          message.error(result.message);
+          navigate("/login");
+        }
+        if (
+          result.message ===
+          "Xin lỗi slot đã được đặt hoặc đang được đặt, kiểm tra lại booking"
+        ) {
+          message.error(result.message);
+        }
+      }
       console.log("Result:", result);
-      if (result.statusCode === 401) {
-        navigate("/login");
+      if (result && result?.data?.paymentResult?.payUrl) {
+        console.log(
+          "Resultresult.data.paymentResult.payUrl",
+          result.data.paymentResult.payUrl
+        );
+        window.location.href = result.data.paymentResult.payUrl;
       }
       // Giả sử thanh toán thành công
       setLoading(false);
 
       // Chuyển sang bước hoàn thành
-      setCurrentStep(2);
+      //setCurrentStep(2);
     } catch (error) {
       // Xử lý lỗi khi thanh toán thất bại
       console.error("Payment failed:", error);

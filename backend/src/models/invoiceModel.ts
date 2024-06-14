@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 const { Schema } = mongoose
 const invoiceSchema = new Schema(
   {
+    invoiceID: { type: String, required: true },
     price: { type: Number, required: true },
     userId: { type: Schema.Types.ObjectId, required: true },
     status: { type: String, enum: ['pending', 'paid', 'cancelled'], default: 'pending', required: true },
