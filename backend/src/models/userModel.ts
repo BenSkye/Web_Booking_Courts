@@ -14,7 +14,8 @@ const userSchema = new Schema(
       validate: [Validator.isEmail, 'Email không hợp lệ']
     },
     userPhone: {
-      type: Number
+      type: Number,
+      default: ''
       // required: true
     },
     userAddress: {
@@ -39,6 +40,7 @@ const userSchema = new Schema(
       enum: ['active', 'inactive'],
       default: 'active'
     },
+    passwordChangeAt: Date
   },
   { timestamps: true } // Change 'timeStamp' to 'timestamps'
 )

@@ -1,18 +1,23 @@
 import Court from '~/models/courtModel'
-
-class courtRepository {
-  static async addCourt(court: any) {
+interface ICourtRepository {
+  addCourt(court: any): Promise<any>
+  getListCourt(query: any): Promise<any>
+  getCourt(query: any): Promise<any>
+  getListCourtId(query: any): Promise<any>
+}
+class courtRepository implements ICourtRepository {
+  async addCourt(court: any) {
     const newCourt = new Court(court)
     return newCourt.save()
   }
-  static async getListCourt(query: any) {
+  async getListCourt(query: any) {
     return await Court.find(query)
   }
-  static async getCourt(query: any) {
+  async getCourt(query: any) {
     return await Court.findOne(query)
   }
 
-  static async getListCourtId(query: any) {
+  async getListCourtId(query: any) {
     return await Court.find(query).select('_id')
   }
   static async getAllCourt() {

@@ -15,17 +15,17 @@ import {
 } from "react-icons/fa";
 
 const services = [
-  { value: "parking", label: "Bãi đỗ xe", icon: <FaCar /> },
-  { value: "changingRoom", label: "Phòng thay đồ", icon: <FaHome /> },
-  { value: "freeWifi", label: "Wifi miễn phí", icon: <FaWifi /> },
-  { value: "sportsShop", label: "Quầy bán/thuê đồ thể thao", icon: <FaStore /> },
-  { value: "toilet", label: "Nhà vệ sinh", icon: <FaRestroom /> },
-  { value: "refreshments", label: "Quầy bán đồ ăn nhẹ và nước uống", icon: <FaCoffee /> },
-  { value: "equipmentRental", label: "Dịch vụ cho thuê dụng cụ", icon: <FaTools /> },
-  { value: "coaching", label: "Dịch vụ huấn luyện", icon: <FaUser /> },
-  { value: "firstAid", label: "Dịch vụ sơ cứu, massage", icon: <FaFirstAid /> },
-  { value: "showerFacilities", label: "Phòng tắm", icon: <FaShower /> },
-  { value: "lockers", label: "Tủ đựng đồ cá nhân", icon: <FaLock /> },
+  { value: "Bãi đỗ xe", label: "Bãi đỗ xe", icon: <FaCar /> },
+  { value: "Phòng thay đồ", label: "Phòng thay đồ", icon: <FaHome /> },
+  { value: "Wifi miễn phí", label: "Wifi miễn phí", icon: <FaWifi /> },
+  { value: "Quầy bán/thuê đồ thể thao", label: "Quầy bán/thuê đồ thể thao", icon: <FaStore /> },
+  { value: "Nhà vệ sinh", label: "Nhà vệ sinh", icon: <FaRestroom /> },
+  { value: "Quầy bán đồ ăn nhẹ và nước uống", label: "Quầy bán đồ ăn nhẹ và nước uống", icon: <FaCoffee /> },
+  { value: "Dịch vụ cho thuê dụng cụ", label: "Dịch vụ cho thuê dụng cụ", icon: <FaTools /> },
+  { value: "Dịch vụ huấn luyện", label: "Dịch vụ huấn luyện", icon: <FaUser /> },
+  { value: "Dịch vụ sơ cứu, massage", label: "Dịch vụ sơ cứu, massage", icon: <FaFirstAid /> },
+  { value: "Phòng tắm", label: "Phòng tắm", icon: <FaShower /> },
+  { value: "Tủ đựng đồ cá nhân", label: "Tủ đựng đồ cá nhân", icon: <FaLock /> },
 ];
 
 const ServicesAndAmenities = () => (

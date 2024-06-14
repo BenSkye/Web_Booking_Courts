@@ -64,24 +64,23 @@ const CourtManageDetail = () => {
     //   style={{ maxWidth: 800, margin: "auto" }}
     // >
     <div>
+      <h1>Chi tiết về sân đấu của bạn</h1>
       <Descriptions bordered column={1}>
-        <Descriptions.Item label="Court Name">
+        <Descriptions.Item label="Tên trung tâm">
           {data.centerName}
         </Descriptions.Item>
-        <Descriptions.Item label="Court Address">
+        <Descriptions.Item label="Địa chỉ trung tâm">
           {data.location}
         </Descriptions.Item>
-        <Descriptions.Item label="Court Quantity">
+        <Descriptions.Item label="Số lượng sân dấu">
           {data.courtCount}
         </Descriptions.Item>
-        <Descriptions.Item label="Rules">{data.rule}</Descriptions.Item>
-        <Descriptions.Item label="Open Time">
-          {data.openTime}
-        </Descriptions.Item>
-        <Descriptions.Item label="Close Time">
+        <Descriptions.Item label="Quy định sử dụng sân">{data.rule}</Descriptions.Item>
+        <Descriptions.Item label="Giờ mở cửa">{data.openTime}</Descriptions.Item>
+        <Descriptions.Item label="Giờ đóng cửa">
           {data.closeTime}
         </Descriptions.Item>
-        <Descriptions.Item label="Images">
+        <Descriptions.Item label="Hình ảnh sân">
           {data.images.map((image, index) => (
             <Image
               key={index}
@@ -92,7 +91,7 @@ const CourtManageDetail = () => {
             />
           ))}
         </Descriptions.Item>
-        <Descriptions.Item label="Services">
+        <Descriptions.Item label="Dịch vụ">
           <List
             dataSource={data.services}
             renderItem={(item) => <List.Item>{item}</List.Item>}
@@ -101,23 +100,23 @@ const CourtManageDetail = () => {
       </Descriptions>
       <Row gutter={16} style={{ marginTop: "20px" }}>
         <Col span={24}>
-          <Card title="Pricing Details" bordered={false}>
+          <Card title="Chi tiết về giá" bordered={false}>
             <List
               dataSource={data.price}
               renderItem={(item) => (
                 <List.Item>
                   <Descriptions column={1} bordered>
-                    <Descriptions.Item label="Price">
+                    <Descriptions.Item label="Giá tiền">
                       {item.price}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Start Time">
+                    <Descriptions.Item label="Giờ bắt đầu">
                       {item.startTime}
                     </Descriptions.Item>
-                    <Descriptions.Item label="End Time">
+                    <Descriptions.Item label="Giờ kết thúc">
                       {item.endTime}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Schedule Type">
-                      {item.cheduleType}
+                    <Descriptions.Item label="Loại giờ">
+                      {item.scheduleType}
                     </Descriptions.Item>
                   </Descriptions>
                 </List.Item>
@@ -127,7 +126,6 @@ const CourtManageDetail = () => {
         </Col>
       </Row>
     </div>
-    // </Card>
   );
 };
 
