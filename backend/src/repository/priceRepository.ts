@@ -27,5 +27,7 @@ class priceRepository implements IPriceRepository {
   static async getPricesByScheduleType(cheduleType: any) {
     return await Price.find({ cheduleType })
   }
-}
+  async getPriceByCenterIdAndScheduleType(centerId: any, scheduleType: any) {
+    return await Price.findOne({ centerId, scheduleType })
+}}
 export default priceRepository
