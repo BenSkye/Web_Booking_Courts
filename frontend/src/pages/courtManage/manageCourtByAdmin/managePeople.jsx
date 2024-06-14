@@ -12,6 +12,7 @@ const UserManagement = () => {
     const fetchUsers = async () => {
       try {
         const data = await getAllUsersAPI();
+        console.log('Fetched users:', data); // Log dữ liệu từ API
         setUsers(data);
       } catch (error) {
         console.error('Failed to fetch users:', error);
@@ -33,14 +34,12 @@ const UserManagement = () => {
   const columns = [
     {
       title: 'Hình ảnh người dùng',
-      dataIndex: 'avatar',
       key: 'avatar',
       render: (avatar) => {
         const defaultAvatar = 'https://api.dicebear.com/7.x/miniavs/svg?seed=1';
         return <Avatar src={avatar || defaultAvatar} />;
       },
     },
-   
     {
       title: 'Tên người dùng',
       dataIndex: 'userName',
@@ -63,10 +62,10 @@ const UserManagement = () => {
       render: (role) => {
         let color;
         switch (role) {
-          case 'Manager':
+          case 'manager':
             color = 'geekblue';
             break;
-          case 'Admin':
+          case 'admin':
             color = 'red';
             break;
           default:

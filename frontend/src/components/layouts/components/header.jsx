@@ -226,7 +226,7 @@ const menuItemsManager = [
 ];
 const menuItemsAdmin = [
   { key: "1", label: "Tổng quan", path: "/admin/Dashboard" },
-  { key: "2", label: "Quản lý sân", path: "/admin/manageCourt" },
+  { key: "2", label: "Quản lý sân", path: "/admin/manageCenter" },
   { key: "3", label: "Quản lý người dùng", path: "/admin/UserManagement" },
 
 ];

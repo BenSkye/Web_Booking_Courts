@@ -22,7 +22,7 @@ import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
 import SignupPartner from "../pages/login/signupPartner";
 import BookingCourtDirectly from "../pages/BookingCourtDirectly/BookingCourtDirectly";
 import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/RequestToOrganizeATournament";
-import ManageCourt from  "../pages/courtManage/manageCourtByAdmin/manageCourt";
+import ManageCenter from  "../pages/courtManage/manageCourtByAdmin/manageCenter";
 import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage"
 import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople"
 function Routing() {
@@ -71,8 +71,8 @@ function Routing() {
         />
         <Route path="/courtManage/partner" element={<Partner />} />
         <Route
-          path="/admin/manageCourt"
-          element={<ManageCourt />}
+          path="/admin/manageCenter"
+          element={<ManageCenter />}
         />
           <Route path="/admin/Dashboard" element={<AdminDashboard />} />
           <Route path="/admin/UserManagement" element={<UserManagement />} />
