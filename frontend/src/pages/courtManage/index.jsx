@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, Col, Row, Button } from "antd";
+import { Card, Col, Row, Button, Spin } from "antd";
 import { getFormDataAPI } from "../../services/partnerAPI/index.js";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -37,7 +37,7 @@ export default function CourtManage() {
   }, []);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Spin size="large" />;
   }
 
   if (formData.length === 0) {
@@ -76,7 +76,7 @@ export default function CourtManage() {
                       fontSize: "16px",
                     }}
                   >
-                    Trạng thái duyệt bài: {data.status}
+                    Trạng thái: {data.status}
                   </p>
                   {/* <p style={{
                     margin: "8px 0",
@@ -88,20 +88,41 @@ export default function CourtManage() {
                   </p> */}
                 </div>
                 <Meta title={data.centerName} description={data.location} />
-                <Link to={`/courtManage/detail/${data._id}`}>
-                  <Button
-                    style={{
-                      height: "50px",
-                      width: "150px",
-                      fontSize: "18px",
-                      margin: "auto", // Center the button
-                      marginTop: "20px", // Add space at the top
-                      display: "block", // Ensure the button is displayed as a block to center it
-                    }}
-                  >
-                    Xem chi tiết
-                  </Button>
-                </Link>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Link to={`/courtManage/detail/${data._id}`}>
+                    <Button
+                      style={{
+                        height: "50px",
+                        width: "150px",
+                        fontSize: "18px",
+                        margin: "auto",
+                        marginTop: "20px",
+                        display: "block",
+                      }}
+                    >
+                      Xem chi tiết
+                    </Button>
+                  </Link>
+                  {data.status === "accepted" && (
+                    <Link to={`/courtManage/registerPackageCourt`}>
+                      <Button
+                        style={{
+                          height: "50px",
+                          width: "150px",
+                          fontSize: "18px",
+                          margin: "auto",
+                          marginTop: "20px",
+                          display: "block",
+                          backgroundColor: "Orange",
+                        }}
+                      >
+                        Mua gói cho sân
+                      </Button>
+                    </Link>
+                  )}
+                </div>
               </Card>
             </Col>
           );

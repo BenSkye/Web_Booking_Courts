@@ -10,10 +10,20 @@ const CustomForm = ({
   handleBuyPackageChange,
   showBuyPackage,
 }) => {
+  const getDisabledHours = (openTime, closeTime) => {
+    const hours = [];
+    for (let i = 0; i < 24; i++) {
+      if (i < openTime.hour() || i > closeTime.hour()) {
+        hours.push(i);
+      }
+    }
+    return hours;
+  };
+
   return (
     <Form form={form} layout="vertical">
       <Form.Item
-        label="Giá tiền giờ chơi bình thường"
+        label="Giá tiền giờ chơi bình thường (ngàn/giờ), giờ chơi bình thường là thời gian mở cửa và đóng cửa của sân"
         name="normalPrice"
         rules={[
           {
@@ -22,48 +32,60 @@ const CustomForm = ({
           },
         ]}
       >
-        <InputNumber min={0} />
+        <InputNumber min={10000} />
       </Form.Item>
-      <Form.Item
+      {/* <Form.Item
         label="Giờ bắt đầu (giờ chơi bình thường)"
         name="startTimeNormal"
         rules={[{ required: true, message: "Hãy chọn giờ bắt đầu!" }]}
       >
         <TimePicker
           format={"HH:mm"}
-          disabledMinutes={() => [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-            20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37,
-            38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
-            55, 56, 57, 58, 59,
-          ]}
+          disabledHours={() =>
+            getDisabledHours(
+              form.getFieldValue("openTime"),
+              form.getFieldValue("closeTime")
+            )
+          }
+          disabledMinutes={(selectedHour) =>
+            getDisabledMinutes(
+              selectedHour,
+              form.getFieldValue("openTime"),
+              form.getFieldValue("closeTime")
+            )
+          }
         />
-      </Form.Item>
-      <Form.Item
-        label="Giờ mở của (giờ chơi bình thường)"
+      </Form.Item> */}
+      {/* <Form.Item
+        label="Giờ kết thúc (giờ chơi bình thường)"
         name="endTimeNormal"
         rules={[{ required: true, message: "Hãy chọn giờ kết thúc!" }]}
       >
         <TimePicker
           format={"HH:mm"}
-          disabledMinutes={() => [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-            20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37,
-            38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
-            55, 56, 57, 58, 59,
-          ]}
+          disabledHours={() =>
+            getDisabledHours(
+              form.getFieldValue("openTime"),
+              form.getFieldValue("closeTime")
+            )
+          }
+          disabledMinutes={(selectedHour) =>
+            getDisabledMinutes(
+              selectedHour,
+              form.getFieldValue("openTime"),
+              form.getFieldValue("closeTime")
+            )
+          }
         />
-      </Form.Item>
+      </Form.Item> */}
 
       <Form.Item>
-        <Checkbox onChange={handleCheckboxChange}>
-          Include Golden Price
-        </Checkbox>
+        <Checkbox onChange={handleCheckboxChange}>Có giờ vàng</Checkbox>
       </Form.Item>
       {showGoldenPrice && (
         <Form.Item className="time_and_price">
           <Form.Item
-            label="Khung giờ vàng (giờ vàng có giá tiền khác biệt so với giờ chơi bình thường)"
+            label="Giá giờ vàng (ngàn/giờ) (giờ vàng có giá tiền khác biệt so với giờ chơi bình thường)"
             name="goldenPrice"
             rules={[
               {
@@ -72,7 +94,7 @@ const CustomForm = ({
               },
             ]}
           >
-            <InputNumber min={0} />
+            <InputNumber min={10000} />
           </Form.Item>
           <Form.Item
             label="Giờ bắt đầu (giờ vàng)"
@@ -92,6 +114,12 @@ const CustomForm = ({
                 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
                 52, 53, 54, 55, 56, 57, 58, 59,
               ]}
+              disabledHours={() =>
+                getDisabledHours(
+                  form.getFieldValue("openTime"),
+                  form.getFieldValue("closeTime")
+                )
+              }
             />
           </Form.Item>
           <Form.Item
@@ -112,6 +140,12 @@ const CustomForm = ({
                 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
                 52, 53, 54, 55, 56, 57, 58, 59,
               ]}
+              disabledHours={() =>
+                getDisabledHours(
+                  form.getFieldValue("openTime"),
+                  form.getFieldValue("closeTime")
+                )
+              }
             />
           </Form.Item>
         </Form.Item>
@@ -119,13 +153,13 @@ const CustomForm = ({
 
       <Form.Item>
         <Checkbox onChange={handleByMonthPriceChange}>
-          Include By Month Price
+          Có đặt lịch cố định trong tháng
         </Checkbox>
       </Form.Item>
       {showByMonthPrice && (
         <Form.Item className="time_and_price">
           <Form.Item
-            label="Đặt lịch cố định trong tháng (giá tiền cố định trong tháng, không quan trọng giờ)"
+            label="Đặt lịch cố định trong tháng (ngàn/giờ) (giá tiền cố định trong tháng, không quan trọng giờ)"
             name="byMonthPrice"
             rules={[
               {
@@ -134,14 +168,14 @@ const CustomForm = ({
               },
             ]}
           >
-            <InputNumber min={0} />
+            <InputNumber min={10000} />
           </Form.Item>
         </Form.Item>
       )}
 
       <Form.Item>
         <Checkbox onChange={handleBuyPackageChange}>
-          Include Buy Package
+          Có mua gói giờ chơi
         </Checkbox>
       </Form.Item>
       {showBuyPackage && (
@@ -156,7 +190,7 @@ const CustomForm = ({
               },
             ]}
           >
-            <InputNumber min={0} />
+            <InputNumber min={10000} />
           </Form.Item>
         </Form.Item>
       )}

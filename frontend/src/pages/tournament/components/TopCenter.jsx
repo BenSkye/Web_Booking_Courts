@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { getAllCenterAPI } from "@/services/courtAPI/getCourtsAPI";
-import ListCenter from "../../tournamentCreate/components/ListCenter";
-import { Col, Row } from "antd";
+import { useEffect, useState } from 'react';
+import { getListCourtsByCenterId_API } from '@/services/courtAPI/getCourtsAPI';
+import ListCenter from '../../tournamentCreate/components/ListCenter';
+import { Col, Row } from 'antd';
 export default function TopCenter() {
   const [centerID, setCenterID] = useState(null);
   useState(() => {
@@ -13,8 +13,8 @@ export default function TopCenter() {
   useEffect(() => {
     const getCourts = async () => {
       setLoading(true);
-      const data = await getAllCenterAPI();
-      console.log("top 4", data);
+      const data = await getListCourtsByCenterId_API();
+      console.log('top 4', data);
       setCourts(data);
       setLoading(false);
     };

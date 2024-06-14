@@ -9,6 +9,7 @@ import {
   InputNumber,
   TimePicker,
   Checkbox,
+  Progress,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import Cookies from "js-cookie";
@@ -22,7 +23,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { app } from "../../../utils/firebase";
+import { app } from "../../../utils/firebase/firebase";
 import ReviewStep from "./components/ReviewStep";
 import PriceAndTime from "./components/PriceAndTime";
 const { Step } = Steps;
@@ -30,12 +31,14 @@ const { Step } = Steps;
 const storage = getStorage(app);
 
 const CenterForm = () => {
-  // const [fileList, setFileList] = useState([]);
   const [fileListCourt, setFileListCourt] = useState([]);
   const [fileListLicense, setFileListLicense] = useState([]);
   const [showGoldenPrice, setShowGoldenPrice] = useState(false);
   const [showByMonthPrice, setShowByMonthPrice] = useState(false);
   const [showBuyPackage, setShowBuyPackage] = useState(false);
+  const [uploadProgressCourt, setUploadProgressCourt] = useState(0);
+  const [uploadProgressLicense, setUploadProgressLicense] = useState(0);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const handleUploadCourt = async ({ file, onSuccess, onError }) => {
     try {
@@ -47,11 +50,12 @@ const CenterForm = () => {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgressCourt(progress); // Update progress
           console.log("Upload is " + progress + "% done");
         },
         (error) => {
           onError(error);
-          message.error("Upload failed");
+          message.error("Đăng tải ảnh không thành công, hãy kiểm tra lại tệp");
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -61,7 +65,8 @@ const CenterForm = () => {
               ...prevList,
               { ...file, url: downloadURL },
             ]);
-            message.success("Upload successful");
+            setUploadProgressCourt(0); // Reset progress
+            message.success("Tải ảnh lên thành công");
           });
         }
       );
@@ -70,6 +75,7 @@ const CenterForm = () => {
       message.error("Upload failed");
     }
   };
+
   const handleUploadLicense = async ({ file, onSuccess, onError }) => {
     try {
       const storageRef = ref(storage, `images/${file.name}`);
@@ -80,6 +86,7 @@ const CenterForm = () => {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgressLicense(progress); // Update progress
           console.log("Upload is " + progress + "% done");
         },
         (error) => {
@@ -94,6 +101,7 @@ const CenterForm = () => {
               ...prevList,
               { ...file, url: downloadURL },
             ]);
+            setUploadProgressLicense(0); // Reset progress
             message.success("Upload successful");
           });
         }
@@ -159,6 +167,8 @@ const CenterForm = () => {
           fileListLicense={fileListLicense}
           setFileListCourt={setFileListCourt}
           setFileListLicense={setFileListLicense}
+          uploadProgressCourt={uploadProgressCourt}
+          uploadProgressLicense={uploadProgressLicense}
         />
       ),
     },
@@ -200,12 +210,14 @@ const CenterForm = () => {
             rule: values.rule,
           };
         } else if (current === 1) {
+          const openTime = newFormValues.center.openTime;
+          const closeTime = newFormValues.center.closeTime;
           newFormValues.price = [
             {
               price: values.normalPrice,
-              startTime: values.startTimeNormal.format("HH:mm"),
-              endTime: values.endTimeNormal.format("HH:mm"),
-              scheduleType: "normalPrice",
+              startTime: openTime,
+              endTime: closeTime,
+              scheduleType: "Giờ bình thường",
             },
           ];
 
@@ -214,18 +226,16 @@ const CenterForm = () => {
               price: values.goldenPrice,
               startTime: values.startTimeGolden.format("HH:mm"),
               endTime: values.endTimeGolden.format("HH:mm"),
-              scheduleType: "GoldenPrice",
+              scheduleType: "Giờ vàng",
             });
           }
 
-          const openTime = newFormValues.center.openTime;
-          const closeTime = newFormValues.center.closeTime;
           if (showByMonthPrice) {
             newFormValues.price.push({
               price: values.byMonthPrice,
               startTime: openTime,
               endTime: closeTime,
-              scheduleType: "ByMonthPrice",
+              scheduleType: "Đặt lịch cố định theo tháng",
             });
           }
 
@@ -234,7 +244,7 @@ const CenterForm = () => {
               price: values.buyPackagePrice,
               startTime: openTime,
               endTime: closeTime,
-              scheduleType: "BuyPackagePrice",
+              scheduleType: "Mua gói giờ chơi",
             });
           }
         }
@@ -251,6 +261,7 @@ const CenterForm = () => {
   };
 
   const handleSubmit = async () => {
+    setIsSubmitDisabled(true); // Disable the submit button
     try {
       const token = Cookies.get("jwtToken");
       await submitForm(formValues, token);
@@ -259,6 +270,7 @@ const CenterForm = () => {
     } catch (error) {
       console.log(error);
       message.error("Failed to submit form!");
+      setIsSubmitDisabled(false); // Re-enable the button if submission fails
     }
   };
 
@@ -273,17 +285,17 @@ const CenterForm = () => {
       <div className="steps-action">
         {current < steps.length - 1 && (
           <Button type="primary" onClick={() => next()}>
-            Next
+            Tiếp theo
           </Button>
         )}
         {current === steps.length - 1 && (
-          <Button type="primary" onClick={handleSubmit}>
-            Submit
+          <Button type="primary" onClick={handleSubmit} disabled={isSubmitDisabled}>
+            Xác nhận thông tin và tạo sân
           </Button>
         )}
         {current > 0 && (
           <Button style={{ margin: "0 8px" }} onClick={() => prev()}>
-            Previous
+            Trở về
           </Button>
         )}
       </div>

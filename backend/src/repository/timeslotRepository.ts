@@ -1,26 +1,51 @@
 import TimeSlot from '~/models/timeslotModel'
+interface ITimeSlot {
+  courtId: string
+  date: Date
+  slot: {
+    start: string
+    end: string
+    status?: string
+  }[]
+}
 
-class timeSlotRepository {
-  static async addTimeSlot(timeslot: any) {
+interface ITimeSlotRepository {
+  addTimeSlot(timeslot: ITimeSlot): Promise<any>
+  addManyTimeSlots(timeslots: ITimeSlot[]): Promise<any[]>
+  getListTimeslot(query: object): Promise<any[]>
+  getTimeslot(query: object): Promise<any | null>
+  updateSlotStatus(param: object, status: string): Promise<any | null>
+  checkTimeSlotAvailable(param: object): Promise<boolean>
+}
+class timeSlotRepository implements ITimeSlotRepository {
+  async addTimeSlot(timeslot: ITimeSlot) {
     const newtimeslot = new TimeSlot(timeslot)
     return newtimeslot.save()
   }
-  static async addManyTimeSlots(timeslots: any) {
+  async addManyTimeSlots(timeslots: ITimeSlot[]) {
     return TimeSlot.insertMany(timeslots)
   }
-  static async getListTimeslot(query: any) {
+  async getListTimeslot(query: object) {
     return await TimeSlot.find(query)
   }
-  static async getTimeslot(query: any) {
+  async getTimeslot(query: object) {
     return await TimeSlot.findOne(query)
   }
-  static async updateSlotStatus(param: any, status: string) {
+  async updateSlotStatus(
+    param: {
+      courtId: string
+      date: Date
+      start: string
+      end: string
+    },
+    status: string
+  ) {
     const query = { courtId: param.courtId, date: param.date, 'slot.start': param.start, 'slot.end': param.end }
     const data = { $set: { 'slot.$.status': status } }
     const result = await TimeSlot.findOneAndUpdate(query, data, { new: true })
     return result
   }
-  static async checkTimeSlotAvilable(param: any) {
+  async checkTimeSlotAvailable(param: { courtId: string; date: Date; start: string; end: string }) {
     const query = {
       courtId: param.courtId,
       date: param.date
@@ -28,7 +53,10 @@ class timeSlotRepository {
     const result = await TimeSlot.findOne(query)
     if (result !== null) {
       const isBooked = result.slot.some(
-        (slot: any) => slot.status === 'booked' && slot.start === param.start && slot.end === param.end
+        (slot: any) =>
+          (slot.status === 'booked' || slot.status === 'booking') &&
+          slot.start === param.start &&
+          slot.end === param.end
       )
       return !isBooked
     }

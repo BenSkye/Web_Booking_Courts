@@ -1,28 +1,55 @@
-import { useState } from 'react';
-import { Form, Input, Button } from 'antd';
-
-const VNPayPaymentForm = ({ totalPrice, setCurrentStep }) => {
+import { useState } from "react";
+import { Form, Input, Button, message } from "antd";
+import { checkBookingAvailablebyDayAPI } from "../../../../../../../services/bookingAPI/bookingAPI";
+import { useNavigate } from "react-router-dom";
+const VNPayPaymentForm = ({ listBooking, totalPrice, setCurrentStep }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   const formatPrice = (price) => {
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
   const onFinish = async (values) => {
     setLoading(true);
     try {
       // Gửi thông tin thanh toán đến VNPay API ở đây
-      console.log('Received values:', values);
-
+      console.log("Received values:", values);
+      const result = await checkBookingAvailablebyDayAPI({
+        listBooking,
+        totalPrice,
+      });
+      if (result && result.status === "fail") {
+        if (
+          result.message === "Vui lòng đăng nhập để truy cập" ||
+          result.message === "Người dùng đã đổi mật khẩu"
+        ) {
+          message.error(result.message);
+          navigate("/login");
+        }
+        if (
+          result.message ===
+          "Xin lỗi slot đã được đặt hoặc đang được đặt, kiểm tra lại booking"
+        ) {
+          message.error(result.message);
+        }
+      }
+      console.log("Result:", result);
+      if (result && result?.data?.paymentResult?.payUrl) {
+        console.log(
+          "Resultresult.data.paymentResult.payUrl",
+          result.data.paymentResult.payUrl
+        );
+        window.location.href = result.data.paymentResult.payUrl;
+      }
       // Giả sử thanh toán thành công
       setLoading(false);
 
       // Chuyển sang bước hoàn thành
-      setCurrentStep(2);
+      //setCurrentStep(2);
     } catch (error) {
       // Xử lý lỗi khi thanh toán thất bại
-      console.error('Payment failed:', error);
+      console.error("Payment failed:", error);
       setLoading(false);
     }
   };
@@ -30,45 +57,45 @@ const VNPayPaymentForm = ({ totalPrice, setCurrentStep }) => {
   return (
     <Form
       form={form}
-      layout='vertical'
+      layout="vertical"
       onFinish={onFinish}
       initialValues={{
         amount: 0,
       }}
     >
       <Form.Item
-        name='fullName'
-        label='Họ và tên'
-        rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
+        name="fullName"
+        label="Họ và tên"
+        rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
       >
         <Input />
       </Form.Item>
       <Form.Item
-        name='email'
-        label='Email'
-        rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
+        name="email"
+        label="Email"
+        rules={[{ required: true, message: "Vui lòng nhập email!" }]}
       >
-        <Input type='email' />
+        <Input type="email" />
       </Form.Item>
       <Form.Item
-        name='phoneNumber'
-        label='Số điện thoại'
-        rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
+        name="phoneNumber"
+        label="Số điện thoại"
+        rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
       >
-        <Input type='tel' />
+        <Input type="tel" />
       </Form.Item>
       <Form.Item
-        style={{ margin: '10px', display: 'flex', justifyContent: 'end' }}
+        style={{ margin: "10px", display: "flex", justifyContent: "end" }}
       >
         <h2>
           Tổng tiền:
-          <span style={{ color: 'red' }}> {formatPrice(totalPrice)}đ</span>
+          <span style={{ color: "red" }}> {formatPrice(totalPrice)}đ</span>
         </h2>
       </Form.Item>
       <Form.Item
-        style={{ margin: '10px', display: 'flex', justifyContent: 'end' }}
+        style={{ margin: "10px", display: "flex", justifyContent: "end" }}
       >
-        <Button size='large' type='primary' htmlType='submit' loading={loading}>
+        <Button size="large" type="primary" htmlType="submit" loading={loading}>
           Thanh toán
         </Button>
       </Form.Item>

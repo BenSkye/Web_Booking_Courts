@@ -2,7 +2,7 @@ import { Router } from 'express'
 import authController from '~/controller/authController'
 import centerController from '~/controller/centerController'
 
-const centerRoute = Router();
+const centerRoute = Router()
 
 centerRoute
   .route('/')
@@ -21,6 +21,6 @@ centerRoute
   .route('/my-centers/:centerId/select-package/:packageId')
   .patch(authController.protect, authController.restricTO('manager'), centerController.selectPackage)
 centerRoute
-  .route('/my-centers/:centerId/change-status')
-  .patch(authController.protect, authController.restricTO('admin'), centerController.changeCenterStatus)
+  .route('/centers/:centerId/change-status-accepted')
+  .get(authController.protect, authController.restricTO('admin'), centerController.changeCenterStatusAccept)
 export default centerRoute
