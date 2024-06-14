@@ -2,7 +2,7 @@ import courtRepository from '~/repository/courtRepository'
 import timeSlotRepository from '~/repository/timeslotRepository'
 
 interface ICourtService {
-    getCourtByCenterId(centerId: string): Promise<any>
+    getCourtByCenterId(centerId: string): Promise<any>,
 }
 class courtService implements ICourtService {
     async getCourtByCenterId(centerId: string) {
