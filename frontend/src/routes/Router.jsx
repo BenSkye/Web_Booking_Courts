@@ -95,7 +95,7 @@ function Routing() {
         <Route
           path="/user"
           element={
-            <ProtectedRoute roles={["customer", "manager"]}>
+            <ProtectedRoute roles={["customer", "manager", "admin"]}>
               <ProfileAccount />
             </ProtectedRoute>
           }
@@ -103,7 +103,7 @@ function Routing() {
         <Route
           path="/user/my-account"
           element={
-            <ProtectedRoute roles={["customer", "manager"]}>
+            <ProtectedRoute roles={["customer", "manager", "admin"]}>
               <ProfileAccount />
             </ProtectedRoute>
           }
@@ -111,7 +111,7 @@ function Routing() {
         <Route
           path="/user/update-password"
           element={
-            <ProtectedRoute roles={["customer", "manager"]}>
+            <ProtectedRoute roles={["customer", "manager", "admin"]}>
               <ProfileAccount />
             </ProtectedRoute>
           }
@@ -199,10 +199,30 @@ function Routing() {
             </ProtectedRoute>
           }
         />
-        <Route path="/courtManage/partner" element={<Partner />} />
-        <Route path="/admin/manageCenter" element={<ManageCenter />} />
-        <Route path="/admin/Dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/UserManagement" element={<UserManagement />} />
+        <Route
+          path="/admin/manageCenter"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <ManageCenter />{" "}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/Dashboard"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/UserManagement"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <UserManagement />
+            </ProtectedRoute>
+          }
+        />
         <Route path="" />
       </Route>
 

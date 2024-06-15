@@ -1,18 +1,18 @@
-import { fetchData } from "@/services/fetchAPI";
+import Cookies from "js-cookie";
+import { putData } from "../fetchAPI/index";
+import { jwtDecode } from "jwt-decode";
+import { useState } from "react";
 
-const BASE_URL = "https://65e2a25ca8583365b3185a86.mockapi.io";
-
-const AccountInformation = async (id) => {
-  const url = `${BASE_URL}/account_Information/${id}`;
-  return await fetchData(url);
-};
-
-const updateAccountInformation = async (id, newData) => {
-  const url = `${BASE_URL}/account_Information/${id}`;
-  return await fetchData(url, {
-    method: "PUT",
-    data: newData,
+const Updateuser = async (userName, userPhone, avatar) => {
+  const response = await putData("http://localhost:5050/api/v1/user/update", {
+    userName: userName,
+    userPhone: userPhone,
+    avatar: avatar,
   });
+  console.log("response", response);
+  if (response && response.data) {
+    return response.data;
+  }
+  return null;
 };
-
-export { AccountInformation, updateAccountInformation };
+export default Updateuser;

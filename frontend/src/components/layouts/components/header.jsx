@@ -251,9 +251,9 @@ export default function HeaderLayout() {
   const menuItems =
     user?.role === "manager"
       ? menuItemsManager
-      : user?.role === "customer"
-      ? menuItemsUser
-      : menuItemsAdmin;
+      : user?.role === "admin"
+      ? menuItemsAdmin
+      : menuItemsUser;
 
   const [selectedKey, setSelectedKey] = useState("");
   const location = useLocation();
