@@ -10,5 +10,8 @@ class courtService implements ICourtService {
         const courts = await courtRepositoryInstance.getListCourt({ centerId })
         return courts
     }
+    static async getAllCourt() {
+        return await courtRepository.getAllCourt();
+      }
 }
 export default courtService

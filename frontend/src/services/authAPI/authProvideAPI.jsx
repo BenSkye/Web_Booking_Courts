@@ -49,7 +49,7 @@
 
 import { createContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { patchData, postData } from "../fetchAPI";
+import { postData,patchData,putData } from "../fetchAPI";
 import { jwtDecode } from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../../utils/firebase/firebase";
@@ -151,6 +151,7 @@ export const AuthProvider = ({ children }) => {
         role: data.data.user?.role,
         avatar: data.data.user?.avatar,
         name: data.data.user?.userName,
+        mail: data.data.user?.userEmail,
       });
       return data;
     } catch (error) {
@@ -191,11 +192,11 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <div>
-      <AuthContext.Provider
-        value={{ user, login, logout, handleGoogleClick, changePass }}
-      >
-        {children}
-      </AuthContext.Provider>
+    <AuthContext.Provider value={{ user, login, logout, handleGoogleClick,changePass }}>
+      {children}
+    </AuthContext.Provider>
+
+    
     </div>
   );
 };

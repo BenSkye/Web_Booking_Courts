@@ -25,6 +25,9 @@ import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/
 import NoAccess from "../components/noAccess/noAccess";
 import ProtectedRoute from "../utils/authRoute/authRoute";
 
+import ManageCenter from "../pages/courtManage/manageCourtByAdmin/manageCenter";
+import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage";
+import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople";
 function Routing() {
   return (
     <Routes>
@@ -196,6 +199,10 @@ function Routing() {
             </ProtectedRoute>
           }
         />
+        <Route path="/courtManage/partner" element={<Partner />} />
+        <Route path="/admin/manageCenter" element={<ManageCenter />} />
+        <Route path="/admin/Dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/UserManagement" element={<UserManagement />} />
         <Route path="" />
       </Route>
 

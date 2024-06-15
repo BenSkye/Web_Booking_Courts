@@ -8,6 +8,8 @@ import { FaUserPlus } from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsCalendarWeek } from "react-icons/bs";
 import { TiClipboard } from "react-icons/ti";
+import { MdCheckCircle } from "react-icons/md";
+
 import { useSelector } from "react-redux";
 import logo from "@/assets/logonew.png";
 
@@ -44,9 +46,62 @@ export default function HeaderLayout() {
       ),
       key: "0",
     },
+    {
+      label: (
+        <Link to="/courtManage/accept_court_from_customer">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "start",
+            }}
+          >
+            <MdCheckCircle size="20px" />
+            <>Quản lý lịch đặt sân</>
+          </div>
+        </Link>
+      ),
+      key: "1",
+    },
+    {
+      label: (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "start",
+          }}
+          onClick={logouthander}
+        >
+          <CiLogout size="20px" />
+          <>Đăng xuất</>
+        </div>
+      ),
+      key: "2",
+    },
+  ];
+  const itemsAdmin = [
+    //Items for the dropdown Profile
+    {
+      label: (
+        <Link to="/user">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "start",
+            }}
+          >
+            <GiTennisCourt size="20px" />
+            <>Thông tin cá nhân</>
+          </div>
+        </Link>
+      ),
+      key: "0",
+    },
     // {
     //   label: (
-    //     <Link to="/courtManage">
+    //     <Link to="/courtManage/accept_court_from_customer">
     //       <div
     //         style={{
     //           display: "flex",
@@ -54,8 +109,8 @@ export default function HeaderLayout() {
     //           justifyContent: "start",
     //         }}
     //       >
-    //         <GiTennisCourt size="20px" />
-    //         <>Sân của bạn</>
+    //         <MdCheckCircle size="20px" />
+    //         <>Quản lý lịch đặt sân</>
     //       </div>
     //     </Link>
     //   ),
@@ -149,7 +204,13 @@ export default function HeaderLayout() {
     },
   ];
 
-  const items = user?.role === "manager" ? itemsManager : itemsCustomer;
+  const items =
+    user?.role === "manager"
+      ? itemsManager
+      : user?.role === "customer"
+      ? itemsCustomer
+      : itemsAdmin;
+
   const menuItemsUser = [
     {
       key: "1",
@@ -182,7 +243,17 @@ export default function HeaderLayout() {
     },
     { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
   ];
-  const menuItems = user?.role === "manager" ? menuItemsManager : menuItemsUser;
+  const menuItemsAdmin = [
+    { key: "1", label: "Tổng quan", path: "/admin/Dashboard" },
+    { key: "2", label: "Quản lý sân", path: "/admin/manageCenter" },
+    { key: "3", label: "Quản lý người dùng", path: "/admin/UserManagement" },
+  ];
+  const menuItems =
+    user?.role === "manager"
+      ? menuItemsManager
+      : user?.role === "customer"
+      ? menuItemsUser
+      : menuItemsAdmin;
 
   const [selectedKey, setSelectedKey] = useState("");
   const location = useLocation();

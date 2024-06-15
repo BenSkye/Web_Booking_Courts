@@ -32,6 +32,7 @@ class authController {
       return next(new AppError('Vui lòng nhập email và mật khẩu', 400))
     }
     const { user, token } = await authServiceInstance.loginUser(userEmail, password)
+    console.log('token', token)
     res
       .cookie('access_token', token, {
         httpOnly: true,

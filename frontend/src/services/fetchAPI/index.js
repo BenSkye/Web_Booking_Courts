@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+
 export const fetchDataEsgoo = async (url) => {
   try {
     const response = await axios.get(url);
@@ -60,7 +61,6 @@ export const postData = async (url, data) => {
 export const patchData = async (url, data) => {
   try {
     let token = Cookies.get("jwtToken");
-    console.log(token);
     if (!token) {
       token = "";
     }
@@ -80,4 +80,35 @@ export const patchData = async (url, data) => {
     return error.response;
   }
   return null;
+};
+export const putData = async (url, data) => {
+  try {
+    let token = Cookies.get("jwtToken");
+    if (!token) {
+      token = "";
+    }
+    console.log("Data to patch:", data);
+    const response = await axios.put(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("response", response);
+
+    // Kiểm tra trạng thái HTTP của phản hồi
+    if (response.status === 200) {
+      return response.data; // Trả về dữ liệu của phản hồi
+    } else {
+      console.error(
+        "Error patching data:",
+        response.status,
+        response.statusText
+      );
+      return null; // Trả về null nếu có lỗi nhưng không ném lỗi
+    }
+  } catch (error) {
+    console.error("Error patching data:", error.message);
+    return null; // Trả về null nếu có lỗi
+  }
 };
