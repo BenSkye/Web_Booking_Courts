@@ -6,6 +6,7 @@ import InvoiceService from './invoiceService'
 import centerService from './centerService'
 import momoService from './momoService'
 import InvoiceRepository from '~/repository/invoiceReposotory'
+import courtRepository from '~/repository/courtRepository'
 interface IbookingService {
   createBookingbyDay(listBooking: [any], totalprice: number, userId: string): Promise<any>
   checkAllSlotsAvailability(listBooking: [any]): Promise<boolean>
@@ -201,6 +202,23 @@ class bookingService implements IbookingService {
       })
     )
     return { status: 'success' }
+  }
+  async getBookingByDayAndCenter(centerId: string, date: string) {
+    const courtRepositoryInstance = new courtRepository()
+    const listCourt = await courtRepositoryInstance.getListCourt({ centerId })
+    console.log('date', date)
+    const bookingIncourt: any[] = await Promise.all(
+      listCourt.map(async (court: any) => {
+        const bookings = await bookingRepository.getListBooking({
+          courtId: court._id,
+          date: date
+        })
+        return { courtid: court._id, courtnumber: court.courtNumber, bookings }
+      })
+    )
+
+    console.log('bookingIncourt', bookingIncourt)
+    return bookingIncourt
   }
 }
 export default bookingService

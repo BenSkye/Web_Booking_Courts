@@ -7,6 +7,7 @@ class bookingRepository {
     return await Booking.findOne({ _id: id })
   }
   static async getListBooking(query: object) {
+    console.log('query', query)
     return await Booking.find(query)
   }
   static async getBooking(query: object) {

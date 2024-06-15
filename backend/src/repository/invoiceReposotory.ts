@@ -17,7 +17,7 @@ class InvoiceRepository implements IinvoiceRepository {
     return Invoice.findOneAndUpdate(query, update, { new: true })
   }
   async getListInvoices(query: any): Promise<any[]> {
-    throw new Error('Method not implemented.')
+    return Invoice.find(query)
   }
   async getInvoice(query: object): Promise<any> {
     return Invoice.findOne(query)

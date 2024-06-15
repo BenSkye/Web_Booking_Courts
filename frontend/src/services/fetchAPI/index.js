@@ -14,10 +14,19 @@ export const fetchDataEsgoo = async (url) => {
   return [];
 };
 
-export const fetchDataMockAPI = async (url) => {
+export const fetchData = async (url) => {
   try {
-    const response = await axios.get(url);
-    return response.data; // Trả về dữ liệu trực tiếp từ MockAPI
+    let token = Cookies.get("jwtToken");
+    if (!token) {
+      token = "";
+    }
+    const response = await axios.get(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
   } catch (error) {
     console.error("Error fetching data:", error.message);
   }
@@ -30,8 +39,6 @@ export const postData = async (url, data) => {
     if (!token) {
       token = "";
     }
-    console.log("Data to post:", data);
-    console.log("token:", token);
 
     const response = await axios.post(url, data, {
       headers: {

@@ -12,6 +12,7 @@ import timeslotRoute from './routes/timeslotRoute'
 import priceRoute from './routes/priceRoute'
 import momoRoute from './routes/momoRoute'
 import courtRoute from './routes/courtRoute'
+import invoiceRoute from './routes/invoiceRoutes'
 dotenv.config()
 
 const app = express()
@@ -25,7 +26,8 @@ app.use('/api/v1/booking', bookingRoute)
 app.use('/api/v1/timeSlot', timeslotRoute)
 app.use('/api/v1/price', priceRoute)
 app.use('/api/v1/payment', momoRoute)
-app.use('/api/v1/court',courtRoute)
+app.use('/api/v1/court', courtRoute)
+app.use('/api/v1/invoice', invoiceRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
