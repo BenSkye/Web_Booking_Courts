@@ -16,6 +16,7 @@ const userSchema = new Schema(
     userPhone: {
       type: Number,
       default: ''
+      // required: true
     },
     userAddress: {
       type: String,
@@ -33,6 +34,11 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true
+    },
+    status: {
+      type: String,
+      enum: ['active', 'inactive'],
+      default: 'active'
     },
     passwordChangeAt: Date
   },
