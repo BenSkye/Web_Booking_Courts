@@ -68,7 +68,6 @@ function Routing() {
           element={<ManagerCalendar />}
         />
         <Route path="/courtManage/partner" element={<Partner />} />
-        <Route path="" />
       </Route>
 
       <Route path="/login" element={<Login />} />

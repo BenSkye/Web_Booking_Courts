@@ -41,23 +41,6 @@ export default function HeaderLayout() {
       ),
       key: "0",
     },
-    // {
-    //   label: (
-    //     <Link to="/courtManage">
-    //       <div
-    //         style={{
-    //           display: "flex",
-    //           alignItems: "center",
-    //           justifyContent: "start",
-    //         }}
-    //       >
-    //         <GiTennisCourt size="20px" />
-    //         <>Sân của bạn</>
-    //       </div>
-    //     </Link>
-    //   ),
-    //   key: "1",
-    // },
     {
       label: (
         <div
@@ -154,9 +137,7 @@ export default function HeaderLayout() {
       path: "/",
     },
     { key: "2", label: "Giới thiệu", path: "/aboutUs" },
-    // { key: "3", label: "Đăng kí đối tác", path: "/partner" },
     { key: "3", label: "Đăng kí giải", path: "/tournament" },
-    // { key: "5", label: "Đăng kí gói", path: "/registerPackageCourt" },
   ];
   const menuItemsManager = [
     { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
