@@ -1,6 +1,5 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-let token = Cookies.get("jwtToken");
 export const fetchDataEsgoo = async (url) => {
   try {
     const response = await axios.get(url);
@@ -27,6 +26,7 @@ export const fetchDataMockAPI = async (url) => {
 
 export const postData = async (url, data) => {
   try {
+    let token = Cookies.get("jwtToken");
     if (!token) {
       token = "";
     }
@@ -52,6 +52,7 @@ export const postData = async (url, data) => {
 
 export const patchData = async (url, data) => {
   try {
+    let token = Cookies.get("jwtToken");
     console.log(token);
     if (!token) {
       token = "";

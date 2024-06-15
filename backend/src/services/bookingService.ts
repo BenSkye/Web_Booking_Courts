@@ -107,7 +107,7 @@ class bookingService implements IbookingService {
     return true
   }
 
-  async changeBookingStatusAfterPay(bookingId: string) {
+  async changeBookingStatusAfterPaySuccess(bookingId: string) {
     const booking = await bookingRepository.getBookingbyId(bookingId)
     console.log('booking', booking)
     if (!booking) {
@@ -141,17 +141,63 @@ class bookingService implements IbookingService {
     return bookingRepository.updateBooking({ _id: booking._id }, booking)
   }
 
-  async callbackPayBookingByDay(orderId: any) {
-    console.log('vao dc callback')
+  async changeBookingStatusAfterPayFail(bookingId: string) {
+    const booking = await bookingRepository.getBookingbyId(bookingId)
+    console.log('booking', booking)
+    if (!booking) {
+      throw new AppError('Booking not found', 404)
+    }
+    const slot = {
+      courtId: booking.courtId.toString(),
+      date: booking.date,
+      start: booking.start,
+      end: booking.start
+    }
+    const slotAvailable = []
+    const timeSlotRepositoryInstance = new timeSlotRepository()
+    while (new Date(`1970-01-01T${slot.end}:00`) < new Date(`1970-01-01T${booking.end}:00`)) {
+      const [hour, minute] = slot.start.split(':')
+      if (minute === '00') {
+        slot.end = `${hour}:30`
+      } else {
+        slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
+      }
+      slotAvailable.push({ ...slot })
+      slot.start = slot.end
+    }
+    // Cập nhật trạng thái của các slot thành "booked"
+    await Promise.all(
+      slotAvailable.map(async (slot) => {
+        await timeSlotRepositoryInstance.updateSlotStatus(slot, 'available')
+      })
+    )
+    return bookingRepository.deleteBooking({ _id: booking._id })
+  }
+
+  async callbackPayBookingByDay(reqBody: any) {
+    console.log('vao dc callback', reqBody)
     const invoiceServiceInstance = new InvoiceService()
-    const invoice = await invoiceServiceInstance.paidIvoice(orderId)
+    if (reqBody.resultCode !== 0) {
+      console.log('vao fail')
+      const invoice = await invoiceServiceInstance.getInvoicesByInvoiceID(reqBody.orderId)
+      const listBooking = await bookingRepository.getListBooking({ invoiceId: invoice._id })
+      await Promise.all(
+        listBooking.map(async (booking: any) => {
+          await this.changeBookingStatusAfterPayFail(booking._id)
+        })
+      )
+      await invoiceServiceInstance.deleteInvoiceById(invoice._id)
+      return { status: 'fail' }
+    }
+
+    const invoice = await invoiceServiceInstance.paidIvoice(reqBody.orderId)
     if (!invoice) {
       throw new AppError('Invoice not found', 404)
     }
     const listBooking = await bookingRepository.getListBooking({ invoiceId: invoice._id })
     await Promise.all(
       listBooking.map(async (booking: any) => {
-        await this.changeBookingStatusAfterPay(booking._id)
+        await this.changeBookingStatusAfterPaySuccess(booking._id)
       })
     )
     return { status: 'success' }

@@ -18,9 +18,12 @@ export default function HeaderLayout() {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
   // console.log("user", user);
-  const logouthander = () => {
-    logout();
-    navigate("/");
+  const logouthander = async () => {
+    const user = await logout();
+    console.log("userlogout", user);
+    if (user == undefined) {
+      navigate("/");
+    }
   };
   const itemsManager = [
     //Items for the dropdown Profile
@@ -161,10 +164,22 @@ export default function HeaderLayout() {
   const menuItemsManager = [
     { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
     { key: "2", label: "Lịch hoạt động", path: "/courtManage/ManagerCalendar" },
-    { key: "3", label: "Yêu cầu tổ chức giải", path: "/courtManage/RequestToOrganizeATournament" },
+    {
+      key: "3",
+      label: "Yêu cầu tổ chức giải",
+      path: "/courtManage/RequestToOrganizeATournament",
+    },
     { key: "4", label: "Quản lý sân", path: "/courtManage" },
-    { key: "5", label: "Đặt sân trực tiếp", path: "/courtManage/BookingCourtDirectly" },
-    { key: "6", label: "Đăng kí gói", path: "/courtManage/registerPackageCourt" },
+    {
+      key: "5",
+      label: "Đặt sân trực tiếp",
+      path: "/courtManage/BookingCourtDirectly",
+    },
+    {
+      key: "6",
+      label: "Đăng kí gói",
+      path: "/courtManage/registerPackageCourt",
+    },
     { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
   ];
   const menuItems = user?.role === "manager" ? menuItemsManager : menuItemsUser;

@@ -3,8 +3,10 @@ import InvoiceRepository from '~/repository/invoiceReposotory'
 interface IinvoiceService {
   addInvoiceBookingbyDay(price: any, userid: string, orderId: string): Promise<any>
   paidIvoice(invoiceId: string): Promise<any>
-  getInvoices(query: any): Promise<any>
+  getListInvoices(query: any): Promise<any>
   getInvoice(query: any): Promise<any | null>
+  getInvoicesByInvoiceID(invoiceID: string): Promise<any | null>
+  deleteInvoiceById(id: string): Promise<any>
 }
 class InvoiceService implements IinvoiceService {
   async addInvoiceBookingbyDay(price: any, userid: string, orderId: string) {
@@ -23,7 +25,16 @@ class InvoiceService implements IinvoiceService {
     const InvoiceRepositoryInstance = new InvoiceRepository()
     return InvoiceRepositoryInstance.updateInvoice({ invoiceID: invoiceID }, { status: 'paid' })
   }
-  getInvoices(query: any): Promise<any> {
+  async getInvoicesByInvoiceID(invoiceID: string): Promise<any> {
+    const InvoiceRepositoryInstance = new InvoiceRepository()
+    const invoice = InvoiceRepositoryInstance.getInvoice({ invoiceID: invoiceID })
+    return invoice
+  }
+  async deleteInvoiceById(id: string): Promise<any> {
+    const InvoiceRepositoryInstance = new InvoiceRepository()
+    return InvoiceRepositoryInstance.deleteInvoice({ _id: id })
+  }
+  getListInvoices(query: any): Promise<any> {
     throw new Error('Method not implemented.')
   }
   getInvoice(query: any): Promise<any> {
