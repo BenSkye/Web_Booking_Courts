@@ -1,13 +1,13 @@
 import { fetchDataMockAPI } from '@/services/fetchAPI';
 
-export const getAllCenterAPI = async () => {
+export const getListCourtsByCenterId_API = async (id) => {
   const data = await fetchDataMockAPI(
-    'https://664b5118a300e8795d452247.mockapi.io/centers'
+    `http://localhost:5050/api/v1/court/get-court-by-centerId/${id}`
   );
-  if (Array.isArray(data)) {
-    return data; // Đảm bảo trả về mảng
+  if (data.status === 'success' && Array.isArray(data.data.courts)) {
+    return data.data.courts; // Return the courts array if the data format is correct
   } else {
     console.error('Invalid data format:', data);
-    return [];
+    return []; // Return an empty array if the data format is not as expected
   }
 };

@@ -94,7 +94,7 @@ class authController {
   static restricTO = (...roles: [string]) => {
     return (req: any, res: any, next: any) => {
       if (!roles.includes(req.user.role)) {
-        return next(new AppError('You do not have permission to perform this action', 403))
+        return next(new AppError('Không có quyền truy cập', 403))
       }
       next()
     }

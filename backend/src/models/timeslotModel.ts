@@ -21,6 +21,7 @@ const timeslotSchema = new Schema({
       },
       status: {
         type: String,
+        enum: ['available', 'booked', 'booking'], //booking là đang được book chưa thanh toán, booked là đã thanh toán
         default: 'available'
       }
     }

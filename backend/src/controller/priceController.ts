@@ -37,6 +37,21 @@ class PriceController {
   })
 
   // Additional methods for handling other price-related routes can be added here
+  static getPriceByCenterIdAndSchedulerType = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { centerId } = req.params
+    const { scheduleType } = req.params
+    const priceServiceInstance = new priceService()
+    const price = await priceServiceInstance.getPriceByCenterIdAndScheduleType(centerId, scheduleType)
+    if (!price) {
+      return next(new AppError('No price found for the given center ID', 404))
+    }
+    res.status(200).json({
+      status: 'success',
+      data: {
+        price
+      }
+    })
+  })   
 }
 
 export default PriceController
