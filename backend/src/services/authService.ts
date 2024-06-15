@@ -47,7 +47,13 @@ class authService implements IAuthService {
     if (!isMatch) {
       throw new AppError('Mật khẩu không đúng', 401)
     }
-    const token = jwt.sign({ id: foundUser._id, role: foundUser.role, avatar: foundUser.avatar, userName: foundUser.userName, userEmail: foundUser.userEmail, userPhone: foundUser.userPhone }, process.env.JWT_SECRET ?? '')
+    const token = jwt.sign(
+      {
+        id: foundUser._id,
+        role: foundUser.role
+      },
+      process.env.JWT_SECRET ?? ''
+    )
     const { password: userPassword, ...user } = foundUser.toObject()
     return { user, token }
   }
@@ -69,11 +75,9 @@ class authService implements IAuthService {
     return currentUser
   }
 
- 
-
- static async googleLogin(userEmail: string, userName: string, avatar: string,userPhone: string) {
-  const userRepositoryInstance = new userRepository()
-    const user = await userRepository.findByEmail(userEmail);
+  async googleLogin(userEmail: string, userName: string, avatar: string) {
+    const userRepositoryInstance = new userRepository()
+    const user = await userRepositoryInstance.findByEmail(userEmail)
 
     if (user) {
       const token = jwt.sign(
@@ -86,23 +90,25 @@ class authService implements IAuthService {
       const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
       const username = userName.split(' ').join('').toLowerCase() + Math.random().toString(36).slice(-8)
-      const phoneLength = Math.floor(Math.random() * 2) + 10; // Ngẫu nhiên 10 hoặc 11
-      let userPhoneStr = '';
-      for (let i = 0; i < phoneLength; i++) {
-        userPhoneStr += Math.floor(Math.random() * 10); // Thêm số ngẫu nhiên từ 0-9
-      }
-      const userPhone = parseInt(userPhoneStr, 10); 
-      const newUser = await userRepositoryInstance.create({
+      const newUser = await userRepositoryInstance.addUser({
         userName,
         userEmail,
         password: hashedPassword,
-        avatar: avatar,
-        userPhone: userPhone,
-      });
-      const token = jwt.sign({ id: newUser._id, role: newUser.role, avatar: newUser.avatar, userName: newUser.userName, userEmail: newUser.userEmail, userPhone: newUser.userPhone  },process.env.JWT_SECRET ?? '');
-     
-      const { password: hashedPassword2, ...rest } = newUser.toObject();
-      return { user: rest, token };
+        avatar: avatar
+      })
+      const token = jwt.sign(
+        {
+          id: newUser._id,
+          role: newUser.role,
+          avatar: newUser.avatar,
+          userName: newUser.userName,
+          userEmail: newUser.userEmail
+        },
+        process.env.JWT_SECRET ?? ''
+      )
+
+      const { password: hashedPassword2, ...rest } = newUser.toObject()
+      return { user: rest, token }
     }
   }
 
@@ -122,13 +128,9 @@ class authService implements IAuthService {
     if (!userNewPass) {
       throw new AppError('Lỗi khi cập nhật mật khẩu', 401)
     }
-    const token = jwt.sign(
-      { id: userNewPass._id, role: userNewPass.role, avatar: userNewPass.avatar, userName: userNewPass.userName },
-      process.env.JWT_SECRET ?? ''
-    )
+    const token = jwt.sign({ id: userNewPass._id, role: userNewPass.role }, process.env.JWT_SECRET ?? '')
     const { password: userPassword, ...newuser } = userNewPass.toObject()
     return { userNewPass, token }
   }
-  
 }
 export default authService

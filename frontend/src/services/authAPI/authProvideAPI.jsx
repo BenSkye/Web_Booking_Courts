@@ -155,32 +155,6 @@ export const AuthProvider = ({ children }) => {
       console.log("could not login with google", error);
     }
   };
-  const Updateuser = async (userName, userPhone, avatar) => {
-   
-    const token = Cookies.get("jwtToken");
-    const response = await putData(
-      "http://localhost:5050/api/v1/user/update",
-      {
-        userName: userName,
-        userPhone: userPhone,
-        avatar: avatar,
-      },
-      token
-    );
-    console.log("response", response);
-    if (response && response.data) {
-      const token = response.data.token;
-  
-      if (token) {
-        Cookies.set("jwtToken", token, { expires: 60 });
-        const decodedToken = jwtDecode(token);
-        setUser(decodedToken);
-        return decodedToken;
-      }
-    }
-    return null;
-  };
-  
 
   const logout = () => {
     Cookies.remove("jwtToken");
