@@ -1,6 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-let token = Cookies.get("jwtToken");
+
 export const fetchDataEsgoo = async (url) => {
   try {
     const response = await axios.get(url);
@@ -15,10 +15,19 @@ export const fetchDataEsgoo = async (url) => {
   return [];
 };
 
-export const fetchDataMockAPI = async (url) => {
+export const fetchData = async (url) => {
   try {
-    const response = await axios.get(url);
-    return response.data; // Trả về dữ liệu trực tiếp từ MockAPI
+    let token = Cookies.get("jwtToken");
+    if (!token) {
+      token = "";
+    }
+    const response = await axios.get(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
   } catch (error) {
     console.error("Error fetching data:", error.message);
   }
@@ -27,11 +36,10 @@ export const fetchDataMockAPI = async (url) => {
 
 export const postData = async (url, data) => {
   try {
+    let token = Cookies.get("jwtToken");
     if (!token) {
       token = "";
     }
-    console.log("Data to post:", data);
-    console.log("token:", token);
 
     const response = await axios.post(url, data, {
       headers: {
@@ -52,7 +60,7 @@ export const postData = async (url, data) => {
 
 export const patchData = async (url, data) => {
   try {
-    console.log(token);
+    let token = Cookies.get("jwtToken");
     if (!token) {
       token = "";
     }
@@ -72,4 +80,35 @@ export const patchData = async (url, data) => {
     return error.response;
   }
   return null;
+};
+export const putData = async (url, data) => {
+  try {
+    let token = Cookies.get("jwtToken");
+    if (!token) {
+      token = "";
+    }
+    console.log("Data to patch:", data);
+    const response = await axios.put(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("response", response);
+
+    // Kiểm tra trạng thái HTTP của phản hồi
+    if (response.status === 200) {
+      return response.data; // Trả về dữ liệu của phản hồi
+    } else {
+      console.error(
+        "Error patching data:",
+        response.status,
+        response.statusText
+      );
+      return null; // Trả về null nếu có lỗi nhưng không ném lỗi
+    }
+  } catch (error) {
+    console.error("Error patching data:", error.message);
+    return null; // Trả về null nếu có lỗi
+  }
 };

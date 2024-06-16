@@ -1,7 +1,7 @@
-import { fetchDataMockAPI } from "../fetchAPI";
+import { fetchData } from "../fetchAPI";
 
 export const getFreeTimeByDateAPI = async (centerId, date) => {
-  const response = await fetchDataMockAPI(
+  const response = await fetchData(
     `http://localhost:5050/api/v1/timeSlot/find-free-slot-by-center/${centerId}/by-date/${date}`
   );
   if (response) {
@@ -13,7 +13,7 @@ export const getFreeTimeByDateAPI = async (centerId, date) => {
 };
 
 export const getAvailableDurationAPI = async (centerId, date, startTime) => {
-  const response = await fetchDataMockAPI(
+  const response = await fetchData(
     `http://localhost:5050/api/v1/timeSlot/find-free-slot-by-center/${centerId}/by-date/${date}/by-start-time/${startTime}`
   );
   if (response) {
@@ -29,7 +29,7 @@ export const getAvailableCourtAPI = async (
   startTime,
   duration
 ) => {
-  const response = await fetchDataMockAPI(
+  const response = await fetchData(
     `http://localhost:5050/api/v1/timeSlot/find-free-slot-by-center/${centerId}/by-date/${date}/by-start-time/${startTime}/by-duration/${duration}`
   );
   if (response) {

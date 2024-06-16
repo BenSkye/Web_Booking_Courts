@@ -36,7 +36,7 @@ const centerSchema = new Schema(
     },
     services: {
       type: [String],
-      default: []
+      required: true
     },
     rule: {
       type: String,
@@ -70,7 +70,7 @@ const centerSchema = new Schema(
           ref: 'Price',
           required: true
         }
-      ]
+      ],
     },
     status: {
       type: String,

@@ -1,7 +1,6 @@
 import app from './app'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-
 dotenv.config({ path: '.env' })
 
 let DB = ''

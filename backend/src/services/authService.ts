@@ -48,7 +48,10 @@ class authService implements IAuthService {
       throw new AppError('Mật khẩu không đúng', 401)
     }
     const token = jwt.sign(
-      { id: foundUser._id, role: foundUser.role, avatar: foundUser.avatar, userName: foundUser.userName },
+      {
+        id: foundUser._id,
+        role: foundUser.role
+      },
       process.env.JWT_SECRET ?? ''
     )
     const { password: userPassword, ...user } = foundUser.toObject()
@@ -87,18 +90,23 @@ class authService implements IAuthService {
       const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
       const username = userName.split(' ').join('').toLowerCase() + Math.random().toString(36).slice(-8)
-
-      const newUser = await userRepositoryInstance.create({
+      const newUser = await userRepositoryInstance.addUser({
         userName,
         userEmail,
         password: hashedPassword,
         avatar: avatar
       })
-
       const token = jwt.sign(
-        { id: newUser._id, role: newUser.role, avatar: newUser.avatar, userName: newUser.userName },
+        {
+          id: newUser._id,
+          role: newUser.role,
+          avatar: newUser.avatar,
+          userName: newUser.userName,
+          userEmail: newUser.userEmail
+        },
         process.env.JWT_SECRET ?? ''
       )
+
       const { password: hashedPassword2, ...rest } = newUser.toObject()
       return { user: rest, token }
     }
@@ -120,10 +128,7 @@ class authService implements IAuthService {
     if (!userNewPass) {
       throw new AppError('Lỗi khi cập nhật mật khẩu', 401)
     }
-    const token = jwt.sign(
-      { id: userNewPass._id, role: userNewPass.role, avatar: userNewPass.avatar, userName: userNewPass.userName },
-      process.env.JWT_SECRET ?? ''
-    )
+    const token = jwt.sign({ id: userNewPass._id, role: userNewPass.role }, process.env.JWT_SECRET ?? '')
     const { password: userPassword, ...newuser } = userNewPass.toObject()
     return { userNewPass, token }
   }

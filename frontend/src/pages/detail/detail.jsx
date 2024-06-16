@@ -9,13 +9,11 @@ import { FaMapMarkerAlt } from 'react-icons/fa';
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
-const pricingData = [
-    { time: '05h30 – 07h00', price: '300.000 ₫' },
-    { time: '07h00 – 08h30', price: '500.000 ₫' },
-    { time: '08h30 – 10h00', price: '500.000 ₫' },
-    { time: '10h00 – 11h30', price: '500.000 ₫' },
-    { time: '11h30 – 13h00', price: '300.000 ₫' },
-];
+// Define the formatPrice function
+const formatPrice = (price) => {
+    if (!price) return 'N/A';
+    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND/h`;
+};
 
 function Detail() {
     const { id } = useParams();
@@ -27,9 +25,11 @@ function Detail() {
         const fetchCenterData = async () => {
             try {
                 const data = await getCenterByIdAPI(id);
-                console.log('datafe', data)
+                console.log('datafe', data);
 
-                setCenter(data.data.center);
+                // Find and format the normalPrice
+                const normalPrice = formatPrice(data.data.center.price.find(price => price.scheduleType === 'normalPrice')?.price);
+                setCenter({ ...data.data.center, normalPrice });
             } catch (error) {
                 console.error('Error fetching center data:', error);
             } finally {
@@ -136,27 +136,26 @@ function Detail() {
                 <Col span={12}>
                     <Title level={4}>Bảng Giá</Title>
                     <Row gutter={[16, 16]}>
-                        {pricingData.map((slot, index) => (
-                            <Col span={24} key={index}>
+                        {center.normalPrice ? (
+                            <Col span={24}>
                                 <Card>
                                     <Row justify="space-between">
                                         <Col>
-                                            <Text>{slot.time}</Text>
+                                            <Text>Normal Price</Text>
                                         </Col>
                                         <Col>
-                                            <Text>{slot.price}</Text>
+                                            <Text>{center.normalPrice}</Text>
                                         </Col>
                                     </Row>
                                 </Card>
                             </Col>
-                        ))}
+                        ) : (
+                            <Empty description="Không có dữ liệu giá" />
+                        )}
                     </Row>
                 </Col>
                 <Col span={12}>
-                    <Card
-                        title='Thông tin sân'
-                        style={{ boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)' }}
-                    >
+                    <Card title='Thông tin sân' style={{ boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)' }}>
                         <Text>
                             {center.centerName && <strong>{center.centerName}</strong>}
                             <a onClick={handleOpenModal}>
@@ -189,7 +188,7 @@ function Detail() {
                             onCancel={handleCloseModal}
                             footer={null}
                             centered
-                            style={{ height: '80vh' }} // Thiết lập chiều cao của modal
+                            style={{ height: '80vh' }}
                         >
                             <MyLocationMap address={center.location} />
                         </Modal>
@@ -206,4 +205,5 @@ function Detail() {
         </Content>
     );
 }
+
 export default Detail;

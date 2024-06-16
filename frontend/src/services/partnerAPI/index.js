@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { fetchData } from "../fetchAPI";
 
 // Hàm này sẽ gửi dữ liệu từ form đến API
 // export async function submitForm(data) {
@@ -83,5 +84,37 @@ export async function getCenterByIdAPI(centerId, token) {
   } catch (error) {
     console.error("API Call Error: ", error);
     return {};
+  }
+}
+
+export async function getPersonalActiveCenter() {
+  try {
+    const response = await fetchData(
+      "http://localhost:5050/api/v1/center/my-active-centers"
+    );
+    console.log("Response:", response);
+    if (response.status === "success") {
+      return response.data;
+    }
+    return [];
+  } catch (error) {
+    console.error("Error:", error);
+    return [];
+  }
+}
+
+export async function getBookingByCenterIdAndDay(centerId, date) {
+  try {
+    const response = await fetchData(
+      `http://localhost:5050/api/v1/booking/get-booking-by-day-and-center?centerId=${centerId}&date=${date}`
+    );
+    console.log("Response:", response);
+    if (response.status === "success") {
+      return response.data;
+    }
+    return [];
+  } catch (error) {
+    console.error("Error:", error);
+    return [];
   }
 }

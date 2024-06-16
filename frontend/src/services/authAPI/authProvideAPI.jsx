@@ -49,15 +49,17 @@
 
 import { createContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { patchData, postData } from "../fetchAPI";
+import { postData,patchData,putData } from "../fetchAPI";
 import { jwtDecode } from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../../utils/firebase/firebase";
 import { signInSuccess } from "../../../redux/user/userSlice";
+import { Spin } from "antd";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const tokenStored = Cookies.get("jwtToken");
@@ -65,6 +67,7 @@ export const AuthProvider = ({ children }) => {
       const decodedToken = jwtDecode(tokenStored);
       setUser(decodedToken);
     }
+    setIsLoading(false);
   }, []);
 
   const login = async (email, password) => {
@@ -148,6 +151,7 @@ export const AuthProvider = ({ children }) => {
         role: data.data.user?.role,
         avatar: data.data.user?.avatar,
         name: data.data.user?.userName,
+        mail: data.data.user?.userEmail,
       });
       return data;
     } catch (error) {
@@ -155,18 +159,44 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    Cookies.remove("jwtToken");
-    setUser(null);
+  const logout = async () => {
+    await setIsLoading(true);
+    await new Promise((resolve) => {
+      setUser(null);
+      resolve();
+    });
+    await new Promise((resolve) => {
+      Cookies.remove("jwtToken");
+      resolve();
+    });
+    await setIsLoading(false);
+    if (!user) {
+      return user;
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div>
-      <AuthContext.Provider
-        value={{ user, login, logout, handleGoogleClick, changePass }}
-      >
-        {children}
-      </AuthContext.Provider>
+    <AuthContext.Provider value={{ user, login, logout, handleGoogleClick,changePass }}>
+      {children}
+    </AuthContext.Provider>
+
+    
     </div>
   );
 };
