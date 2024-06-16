@@ -39,5 +39,16 @@ class bookingController {
       }
     })
   })
+  static getPersonalBooking = catchAsync(async (req: any, res: any, next: any) => {
+    const userId = req.user._id
+    const bookingServiceInstance = new bookingService()
+    const bookings = await bookingServiceInstance.getPersonalBooking(userId)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        bookings
+      }
+    })
+  })
 }
 export default bookingController
