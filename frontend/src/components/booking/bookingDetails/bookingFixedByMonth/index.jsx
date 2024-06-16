@@ -28,7 +28,9 @@ import { getAPriceByCenterIdAPIAndScheduleType } from '../../../../services/cent
 const { Option } = Select;
 const { Text } = Typography;
 
-const scheduleType = 'nomalPrice';
+const ScheduleTypes = {
+  NORMAL_PRICE: 'normalPrice',
+};
 
 const BookingFixedByMonth = ({ id }) => {
   const navigate = useNavigate();
@@ -80,7 +82,6 @@ const BookingFixedByMonth = ({ id }) => {
   useEffect(() => {
     const getListCourts = async (id) => {
       const data = await getListCourtsByCenterId_API(id);
-      console.log('list courts: ', data);
       setCourts(data);
     };
     getListCourts(id);
@@ -92,11 +93,9 @@ const BookingFixedByMonth = ({ id }) => {
         id,
         scheduleType
       );
-      console.log('scheduleType: ', scheduleType);
-      console.log('price: ', data);
       setPrice(data.price);
     };
-    getPrice(id, scheduleType);
+    getPrice(id, ScheduleTypes.NORMAL_PRICE);
   }, [id]);
 
   const getDaysOfWeekBetweenDates = (start, end, dayOfWeek) => {

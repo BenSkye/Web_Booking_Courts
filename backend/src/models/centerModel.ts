@@ -2,7 +2,6 @@ import mongoose from 'mongoose'
 const { Schema } = mongoose
 const centerSchema = new Schema(
   {
-
     managerId: {
       type: Schema.Types.ObjectId,
       required: true
