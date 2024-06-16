@@ -6,8 +6,8 @@ import axios from 'axios'
 const momoRoute = Router()
 
 momoRoute.route('/').post(async (req, res) => {
-  const accessKey = 'F8BBA842ECF85'
-  const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz'
+  const accessKey = process.env.MOMO_ACCESS_TOKEN || ''
+  const secretKey = process.env.MOMO_SECRET_KEY || ''
   const orderInfo = 'pay with MoMo123'
   const partnerCode = 'MOMO'
   const redirectUrl = 'https://web-booking-courts.vercel.app/'
