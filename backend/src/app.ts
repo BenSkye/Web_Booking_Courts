@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+import morgan from 'morgan'
 import AppError from './utils/appError'
 import errorHandler from './controller/errorController'
 import authRoute from './routes/authRoute'
@@ -18,6 +19,7 @@ import userRoute from './routes/userRoute'
 dotenv.config()
 
 const app = express()
+app.use(morgan('dev'))
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
