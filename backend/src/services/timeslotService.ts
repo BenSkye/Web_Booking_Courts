@@ -20,7 +20,7 @@ class timeSlotService implements ITimeSlotService {
     for (const courtId of listcourtId) {
       const timeSlots = await timeSlotRepositoryInstance.getTimeslot({ courtId, date: isoDate })
       if (timeSlots) {
-        const freeSlots = timeSlots.slot.filter((slot) => slot.status !== 'booked')
+        const freeSlots = timeSlots.slot.filter((slot) => slot.status !== 'booked' && slot.status !== 'booking')
         for (const slot of freeSlots) {
           startTimes.add(slot.start)
         }
@@ -43,7 +43,9 @@ class timeSlotService implements ITimeSlotService {
     for (const courtId of listcourtId) {
       const timeSlots = await timeSlotRepositoryInstance.getTimeslot({ courtId, date: isoDate })
       if (timeSlots) {
-        const bookedSlots = timeSlots.slot.filter((slot) => slot.status == 'booked' && slot.start >= startTime)
+        const bookedSlots = timeSlots.slot.filter(
+          (slot) => (slot.status === 'booked' || slot.status === 'booking') && slot.start >= startTime
+        )
         if (bookedSlots.length > 1) {
           const StartTimeBooked = []
           for (const slot of bookedSlots) {
@@ -106,7 +108,9 @@ class timeSlotService implements ITimeSlotService {
         const timeSlots = await timeSlotRepositoryInstance.getTimeslot({ courtId, date: isoDate })
         let isAvailable = true
         if (timeSlots) {
-          const bookedSlots = (timeSlots.slot as Array<any>).filter((slot) => slot.status == 'booked')
+          const bookedSlots = (timeSlots.slot as Array<any>).filter(
+            (slot) => slot.status === 'booked' || slot.status === 'booking'
+          )
 
           for (const slot of bookedSlots) {
             if (slot.start >= start && slot.end <= formattedEndTime) {
@@ -140,20 +144,21 @@ class timeSlotService implements ITimeSlotService {
     }
     let totalprice = 0
     const priceRepositoryInstance = new priceRepository()
-    const nomalPrice = await priceRepositoryInstance.getPrice({
+    const normalPrice = await priceRepositoryInstance.getPrice({
       centerId: centerId,
-      scheduleType: 'nomalPrice'
+      scheduleType: 'normalPrice'
     })
+    console.log('normalPrice', normalPrice)
     const GoldenPrice = await priceRepositoryInstance.getPrice({
       centerId: centerId,
       scheduleType: 'GoldenPrice'
     })
-    if (!nomalPrice) {
+    if (!normalPrice) {
       return null
     }
     if (!GoldenPrice) {
       for (const slot of slotFormStarttoEndInMinutes) {
-        totalprice += nomalPrice.price
+        totalprice += normalPrice.price
       }
     }
     if (GoldenPrice) {
@@ -163,7 +168,7 @@ class timeSlotService implements ITimeSlotService {
         if (slot >= GoldenPriceStartInMinutes && slot < GoldenPriceEndInMinutes) {
           totalprice += GoldenPrice.price / 2
         } else {
-          totalprice += nomalPrice.price / 2
+          totalprice += normalPrice.price / 2
         }
       }
     }

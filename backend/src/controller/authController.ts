@@ -32,6 +32,7 @@ class authController {
       return next(new AppError('Vui lòng nhập email và mật khẩu', 400))
     }
     const { user, token } = await authServiceInstance.loginUser(userEmail, password)
+    console.log('token', token)
     res
       .cookie('access_token', token, {
         httpOnly: true,
@@ -76,8 +77,8 @@ class authController {
   //check user đã đăng nhập chưa
   static protect = catchAsync(async (req: any, res: any, next: any) => {
     const authServiceInstance = new authService()
-
     let token
+    console.log('token', token)
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1]
     }
