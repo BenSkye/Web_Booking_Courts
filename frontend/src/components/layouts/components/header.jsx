@@ -10,7 +10,6 @@ import { BsCalendarWeek } from "react-icons/bs";
 import { TiClipboard } from "react-icons/ti";
 import { MdCheckCircle } from 'react-icons/md';
 
-import { useSelector } from "react-redux";
 import logo from "@/assets/logonew.png";
 
 import AuthContext from "../../../services/authAPI/authProvideAPI";
@@ -228,6 +227,7 @@ const menuItemsAdmin = [
   { key: "1", label: "Tổng quan", path: "/admin/Dashboard" },
   { key: "2", label: "Quản lý sân", path: "/admin/manageCenter" },
   { key: "3", label: "Quản lý người dùng", path: "/admin/UserManagement" },
+  { key: "4", label: "Quản lý người chủ sân", path: "/admin/ManagerManagement" },
 
 ];
  const menuItems = user?.role === "manager" ? menuItemsManager : (user?.role === "customer" ? menuItemsUser : menuItemsAdmin);

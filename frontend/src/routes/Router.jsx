@@ -14,7 +14,6 @@ import RegisterPackageCourt from "@/pages/courtManage/registerPackageCourt";
 import TournamentCreate from "@/pages/tournamentCreate";
 import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTournamentForm";
 import CourtManage from "@/pages/courtManage";
-import TournamentDetail from "../pages/TournamentDetail";
 import CourtManageDetail from "../pages/courtManage/courtManageDetail";
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
@@ -25,6 +24,8 @@ import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/
 import ManageCenter from  "../pages/courtManage/manageCourtByAdmin/manageCenter";
 import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage"
 import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople"
+import PrivateRouteInfoUser from "../utils/private/privateInfoUser"
+import ManagerManagement from "../pages/courtManage/manageCourtByAdmin/manageManager"
 function Routing() {
   return (
     <Routes>
@@ -43,8 +44,13 @@ function Routing() {
           element={<TournamentDetail />}
         /> */}
         <Route path="/bookingdetail/:id" element={<BookingDetail />} />
+        
         <Route path="/user" element={<ProfileAccount />} />
+
+        <Route element={<PrivateRouteInfoUser/>}>
         <Route path="/user/my-account" element={<ProfileAccount />} />
+        </Route>
+        
         <Route path="/user/update-password" element={<ProfileAccount />} />
         <Route path="/user/bill" element={<ProfileAccount />} />
         <Route path="/user/booking-court" element={<ProfileAccount />} />
@@ -76,6 +82,8 @@ function Routing() {
         />
           <Route path="/admin/Dashboard" element={<AdminDashboard />} />
           <Route path="/admin/UserManagement" element={<UserManagement />} />
+          <Route path="/admin/ManagerManagement" element={<ManagerManagement />} />
+
         <Route path="" />
       </Route>
     

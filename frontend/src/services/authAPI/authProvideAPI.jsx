@@ -49,13 +49,13 @@
 
 import { createContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { postData,patchData,putData } from "../fetchAPI";
+import { postData,patchData } from "../fetchAPI";
 import { jwtDecode } from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../../utils/firebase/firebase";
-import { signInSuccess } from "../../../redux/user/userSlice";
 const AuthContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 

@@ -1,4 +1,5 @@
 
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import AccountSettingsForm from "../accountInformation/index";
 import UpdatePassword from "../updatePassword/index";
@@ -16,7 +17,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const ProfileAccount = () => {
   const [collapsed, setCollapsed] = useState(false);
