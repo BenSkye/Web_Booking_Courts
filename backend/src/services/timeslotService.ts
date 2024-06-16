@@ -9,6 +9,7 @@ interface ITimeSlotService {
   getMaxTimeAviableFromStartTime(centerId: string, date: string, startTime: string): Promise<number | null>
   getCourtByFreeSlot(centerId: string, date: string, start: string, duration: number): Promise<any[] | null>
   getPriceFormStartoEnd(centerId: string, start: string, end: string): Promise<number | null>
+  checkAndUpdateTimeSlots(): Promise<any>
 }
 class timeSlotService implements ITimeSlotService {
   async getFreeStartTimeByCenterAndDate(centerId: string, date: string) {
@@ -173,6 +174,43 @@ class timeSlotService implements ITimeSlotService {
       }
     }
     return totalprice
+  }
+
+  async checkAndUpdateTimeSlots() {
+    const currentTime = new Date()
+    const hours = currentTime.getHours()
+    let minutes = currentTime.getMinutes()
+
+    // Round down to the nearest half hour
+    minutes = Math.floor(minutes / 30) * 30
+
+    // Format hours and minutes as 2 digits
+    const formattedHours = hours < 10 ? '0' + hours : hours
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes
+
+    const formattedTime = `${formattedHours}:${formattedMinutes}`
+    const now = new Date()
+    now.setUTCHours(0, 0, 0, 0)
+    const timeSlotRepositoryInstance = new timeSlotRepository()
+    const listTimeSlots = await timeSlotRepositoryInstance.getListTimeslot({ date: now.toISOString() })
+    await Promise.all(
+      listTimeSlots.map(async (timeSlot) => {
+        const courtId = timeSlot.courtId.toString()
+        const date = timeSlot.date
+        const slots = timeSlot.slot
+
+        return Promise.all(
+          slots.map(async (slot) => {
+            if (slot.status === 'available' && slot.start <= formattedTime) {
+              await timeSlotRepositoryInstance.updateSlotStatus(
+                { courtId, date, start: slot.start, end: slot.end },
+                'expired'
+              )
+            }
+          })
+        )
+      })
+    )
   }
 }
 export default timeSlotService

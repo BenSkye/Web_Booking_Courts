@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import cron from 'node-cron'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import AppError from './utils/appError'
@@ -15,6 +16,8 @@ import momoRoute from './routes/momoRoute'
 import courtRoute from './routes/courtRoute'
 import invoiceRoute from './routes/invoiceRoutes'
 import userRoute from './routes/userRoute'
+import timeSlotService from './services/timeslotService'
+import bookingService from './services/bookingService'
 
 dotenv.config()
 
@@ -36,6 +39,14 @@ app.use('/api/v1/user', userRoute)
 app.use('/api/v1/court', courtRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
+})
+
+cron.schedule('0,30 * * * *', async () => {
+  console.log('Cron job started at', new Date().toISOString())
+  const timeSlotServiceInstance = new timeSlotService()
+  await timeSlotServiceInstance.checkAndUpdateTimeSlots() //cập nhật hếthạn cho những slot đã qua giờ hiện tại
+  const bookingServiceInstance = new bookingService()
+  await bookingServiceInstance.checkAndUpdateBooking() // câp nhật hết hạn cho những booking chưa checkin  sau 30 phút
 })
 
 app.use(errorHandler)
