@@ -54,10 +54,12 @@ import { jwtDecode } from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../../utils/firebase/firebase";
 import { signInSuccess } from "../../../redux/user/userSlice";
+import { Spin } from "antd";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const tokenStored = Cookies.get("jwtToken");
@@ -65,6 +67,7 @@ export const AuthProvider = ({ children }) => {
       const decodedToken = jwtDecode(tokenStored);
       setUser(decodedToken);
     }
+    setIsLoading(false);
   }, []);
 
   const login = async (email, password) => {
@@ -156,10 +159,36 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    Cookies.remove("jwtToken");
-    setUser(null);
+  const logout = async () => {
+    await setIsLoading(true);
+    await new Promise((resolve) => {
+      setUser(null);
+      resolve();
+    });
+    await new Promise((resolve) => {
+      Cookies.remove("jwtToken");
+      resolve();
+    });
+    await setIsLoading(false);
+    if (!user) {
+      return user;
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div>

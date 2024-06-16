@@ -21,13 +21,13 @@ const AccountSettingsForm = () => {
   // const { user } = useContext(AuthContext);
   const [user, setUser] = useState();
   const fileRef = useRef(null);
-  const getPersonal = async()=>{
-    const personal = await  PersonalInformation();
-    console.log('personal',personal)
+  const getPersonal = async () => {
+    const personal = await PersonalInformation();
+    console.log("personal", personal);
     setUser(personal);
-  }
+  };
   useEffect(() => {
-    getPersonal()
+    getPersonal();
   }, []);
   useEffect(() => {
     if (user) {

@@ -22,66 +22,214 @@ import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
 import SignupPartner from "../pages/login/signupPartner";
 import BookingCourtDirectly from "../pages/BookingCourtDirectly/BookingCourtDirectly";
 import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/RequestToOrganizeATournament";
-import ManageCenter from  "../pages/courtManage/manageCourtByAdmin/manageCenter";
-import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage"
-import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople"
+import NoAccess from "../components/noAccess/noAccess";
+import ProtectedRoute from "../utils/authRoute/authRoute";
+
+import ManageCenter from "../pages/courtManage/manageCourtByAdmin/manageCenter";
+import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage";
+import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople";
 function Routing() {
   return (
     <Routes>
       <Route path="/" element={<LayoutMain />}>
-        <Route index element={<Home />} />
-        <Route path="/aboutUs" element={<AboutUs />} />
-        <Route path="/detail/:id" element={<Detail />} />
-        <Route path="/tournament" element={<Tournament />} />
-        <Route path="/tournament/create" element={<TournamentCreate />} />
+        <Route
+          index
+          element={
+            <ProtectedRoute roles={["guest"]}>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/aboutUs"
+          element={
+            <ProtectedRoute roles={["guest"]}>
+              <AboutUs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/detail/:id"
+          element={
+            <ProtectedRoute roles={["guest"]}>
+              <Detail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tournament"
+          element={
+            <ProtectedRoute roles={["guest"]}>
+              <Tournament />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tournament/create"
+          element={
+            <ProtectedRoute roles={["guest"]}>
+              <TournamentCreate />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/tournament/create/:centerID"
-          element={<RegistTournamentForm />}
+          element={
+            <ProtectedRoute roles={["guest"]}>
+              <RegistTournamentForm />
+            </ProtectedRoute>
+          }
         />
         {/* <Route
           path="/tournament/detail/:tournamentID"
           element={<TournamentDetail />}
         /> */}
-        <Route path="/bookingdetail/:id" element={<BookingDetail />} />
-        <Route path="/user" element={<ProfileAccount />} />
-        <Route path="/user/my-account" element={<ProfileAccount />} />
-        <Route path="/user/update-password" element={<ProfileAccount />} />
-        <Route path="/user/bill" element={<ProfileAccount />} />
-        <Route path="/user/booking-court" element={<ProfileAccount />} />
+        <Route
+          path="/bookingdetail/:id"
+          element={
+            <ProtectedRoute roles={["guest"]}>
+              <BookingDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute roles={["customer", "manager", "admin"]}>
+              <ProfileAccount />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/my-account"
+          element={
+            <ProtectedRoute roles={["customer", "manager", "admin"]}>
+              <ProfileAccount />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/update-password"
+          element={
+            <ProtectedRoute roles={["customer", "manager", "admin"]}>
+              <ProfileAccount />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/bill"
+          element={
+            <ProtectedRoute roles={["customer"]}>
+              <ProfileAccount />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/booking-court"
+          element={
+            <ProtectedRoute roles={["customer"]}>
+              <ProfileAccount />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/paymentBookingFixed" element={<PaymentBookingFixed />} />
         <Route
           path="/courtManage/registerPackageCourt"
-          element={<RegisterPackageCourt />}
+          element={
+            <ProtectedRoute roles={["manager"]}>
+              <RegisterPackageCourt />
+            </ProtectedRoute>
+          }
         />
 
-        <Route path="/courtManage" element={<CourtManage />} />
-        <Route path="/courtManage/detail/:id" element={<CourtManageDetail />} />
-        <Route path="/courtManage/Dashboard" element={<ManagerDashboar />} />
+        <Route
+          path="/courtManage"
+          element={
+            <ProtectedRoute roles={["manager"]}>
+              <CourtManage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/courtManage/detail/:id"
+          element={
+            <ProtectedRoute roles={["manager"]}>
+              <CourtManageDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/courtManage/Dashboard"
+          element={
+            <ProtectedRoute roles={["manager"]}>
+              <ManagerDashboar />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/courtManage/BookingCourtDirectly"
-          element={<BookingCourtDirectly />}
+          element={
+            <ProtectedRoute roles={["manager"]}>
+              <BookingCourtDirectly />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/courtManage/RequestToOrganizeATournament"
-          element={<RequestToOrganizeATournament />}
+          element={
+            <ProtectedRoute roles={["manager"]}>
+              <RequestToOrganizeATournament />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/courtManage/ManagerCalendar"
-          element={<ManagerCalendar />}
+          element={
+            <ProtectedRoute roles={["manager"]}>
+              <ManagerCalendar />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/courtManage/partner" element={<Partner />} />
+        <Route
+          path="/courtManage/partner"
+          element={
+            <ProtectedRoute roles={["manager"]}>
+              <Partner />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/manageCenter"
-          element={<ManageCenter />}
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <ManageCenter />{" "}
+            </ProtectedRoute>
+          }
         />
-          <Route path="/admin/Dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/UserManagement" element={<UserManagement />} />
+        <Route
+          path="/admin/Dashboard"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/UserManagement"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <UserManagement />
+            </ProtectedRoute>
+          }
+        />
         <Route path="" />
       </Route>
-    
+
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/signupPartner" element={<SignupPartner />} />
+      <Route path="/no-access" element={<NoAccess />} />
     </Routes>
   );
 }

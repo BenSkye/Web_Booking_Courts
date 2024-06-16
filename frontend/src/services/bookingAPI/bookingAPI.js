@@ -1,8 +1,8 @@
-import { fetchDataMockAPI, postData } from "../fetchAPI";
+import { fetchData, postData } from "../fetchAPI";
 import Cookies from "js-cookie";
 
 export const getBookingIndayCenterAPI = async (day, centerId) => {
-  const data = await fetchDataMockAPI(
+  const data = await fetchData(
     "https://664b5118a300e8795d452247.mockapi.io/centers"
   );
   if (Array.isArray(data)) {

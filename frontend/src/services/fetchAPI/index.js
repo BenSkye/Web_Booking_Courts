@@ -15,7 +15,7 @@ export const fetchDataEsgoo = async (url) => {
   return [];
 };
 
-export const fetchDataMockAPI = async (url) => {
+export const fetchData = async (url) => {
   try {
     let token = Cookies.get("jwtToken");
     if (!token) {
@@ -27,7 +27,7 @@ export const fetchDataMockAPI = async (url) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data; // Trả về dữ liệu trực tiếp từ MockAPI
+    return response.data;
   } catch (error) {
     console.error("Error fetching data:", error.message);
   }
@@ -40,8 +40,6 @@ export const postData = async (url, data) => {
     if (!token) {
       token = "";
     }
-    console.log("Data to post:", data);
-    console.log("token:", token);
 
     const response = await axios.post(url, data, {
       headers: {
