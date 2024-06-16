@@ -218,9 +218,7 @@ export default function HeaderLayout() {
       path: "/",
     },
     { key: "2", label: "Giới thiệu", path: "/aboutUs" },
-    // { key: "3", label: "Đăng kí đối tác", path: "/partner" },
     { key: "3", label: "Đăng kí giải", path: "/tournament" },
-    // { key: "5", label: "Đăng kí gói", path: "/registerPackageCourt" },
   ];
   const menuItemsManager = [
     { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },

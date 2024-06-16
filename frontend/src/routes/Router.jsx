@@ -223,6 +223,7 @@ function Routing() {
             </ProtectedRoute>
           }
         />
+        <Route path="/courtManage/partner" element={<Partner />} />
         <Route path="" />
       </Route>
 
