@@ -6,13 +6,13 @@ import {
   Spin,
   Alert,
   Card,
-  Badge,
   Row,
   Col,
 } from "antd";
 import { useParams } from "react-router-dom";
 import { getCenterByIdAPI } from "../../../services/partnerAPI";
 import Cookies from "js-cookie";
+
 const CourtManageDetail = () => {
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -58,11 +58,6 @@ const CourtManageDetail = () => {
   }
 
   return (
-    // <Card
-    //   title="Court Detail"
-    //   bordered={false}
-    //   style={{ maxWidth: 800, margin: "auto" }}
-    // >
     <div>
       <h1>Chi tiết về sân đấu của bạn</h1>
       <Descriptions bordered column={1}>
@@ -75,8 +70,12 @@ const CourtManageDetail = () => {
         <Descriptions.Item label="Số lượng sân dấu">
           {data.courtCount}
         </Descriptions.Item>
-        <Descriptions.Item label="Quy định sử dụng sân">{data.rule}</Descriptions.Item>
-        <Descriptions.Item label="Giờ mở cửa">{data.openTime}</Descriptions.Item>
+        <Descriptions.Item label="Quy định sử dụng sân">
+          {data.rule}
+        </Descriptions.Item>
+        <Descriptions.Item label="Giờ mở cửa">
+          {data.openTime}
+        </Descriptions.Item>
         <Descriptions.Item label="Giờ đóng cửa">
           {data.closeTime}
         </Descriptions.Item>
@@ -105,20 +104,20 @@ const CourtManageDetail = () => {
               dataSource={data.price}
               renderItem={(item) => (
                 <List.Item>
-                  <Descriptions column={1} bordered>
-                    <Descriptions.Item label="Giá tiền">
-                      {item.price}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Giờ bắt đầu">
-                      {item.startTime}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Giờ kết thúc">
-                      {item.endTime}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Loại giờ">
-                      {item.scheduleType}
-                    </Descriptions.Item>
-                  </Descriptions>
+                  <Row gutter={16} style={{ width: "100%" }}>
+                    <Col span={6}>
+                      <b>Giá tiền:</b> {item.price}
+                    </Col>
+                    <Col span={6}>
+                      <b>Giờ bắt đầu:</b> {item.startTime}
+                    </Col>
+                    <Col span={6}>
+                      <b>Giờ kết thúc:</b> {item.endTime}
+                    </Col>
+                    <Col span={6}>
+                      <b>Loại giờ:</b> {item.scheduleType}
+                    </Col>
+                  </Row>
                 </List.Item>
               )}
             />

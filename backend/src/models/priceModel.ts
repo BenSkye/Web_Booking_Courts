@@ -8,7 +8,8 @@ const priceSchema = new Schema(
     },
     price: {
       type: Number,
-      required: true
+      required: true,
+      min: 10000
     },
     startTime: {
       type: String,
