@@ -107,7 +107,7 @@ export default function CalendarSlot({ selectedDate, center }) {
           courtRow[startColumn] = (
             <Tooltip title={`Xem chi tiết đặt sân`}>
               <td
-                onClick={() => showModal(booking._id)}
+                onClick={() => showModal(booking)}
                 colSpan={columnsInRange.length}
                 style={{
                   paddingRight: "2px",
@@ -164,12 +164,12 @@ export default function CalendarSlot({ selectedDate, center }) {
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [BookingId, setBookingId] = useState();
+  const [Booking, setBooking] = useState();
   const [bookingInDay, setBookingInDay] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const showModal = (id) => {
-    setBookingId(id);
+  const showModal = (booking) => {
+    setBooking(booking);
     setIsModalOpen(true);
   };
   const handleOk = () => {
@@ -238,7 +238,7 @@ export default function CalendarSlot({ selectedDate, center }) {
         footer={null}
         onCancel={handleOk}
       >
-        <BookingDetail id={BookingId} />
+        <BookingDetail Booking={Booking} />
       </Modal>
     </>
   );

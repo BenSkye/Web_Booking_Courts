@@ -9,5 +9,8 @@ bookingRoute.route('/callback-pay-booking-by-day').post(bookingController.callba
 bookingRoute
   .route('/get-booking-by-day-and-center')
   .get(authController.protect, authController.restricTO('manager'), bookingController.getBookingByDayAndCenter)
+bookingRoute
+  .route('/get-personal-booking')
+  .get(authController.protect, authController.restricTO('customer'), bookingController.getPersonalBooking)
 // bookingRoute.route('/check-booking-available').post(authController.protect, bookingController.checkBookingAvailable)
 export default bookingRoute

@@ -7,10 +7,13 @@ import centerService from './centerService'
 import momoService from './momoService'
 import InvoiceRepository from '~/repository/invoiceReposotory'
 import courtRepository from '~/repository/courtRepository'
+import userRepository from '~/repository/userRepository'
+import centerRepository from '~/repository/centerRepository'
 interface IbookingService {
   createBookingbyDay(listBooking: [any], totalprice: number, userId: string): Promise<any>
   checkAllSlotsAvailability(listBooking: [any]): Promise<boolean>
   createBooking(data: any, userId: string): Promise<any>
+  getPersonalBooking(userId: string): Promise<any>
 }
 class bookingService implements IbookingService {
   async createBookingbyDay(listBooking: any, totalprice: number, userId: string) {
@@ -203,22 +206,70 @@ class bookingService implements IbookingService {
     )
     return { status: 'success' }
   }
+
   async getBookingByDayAndCenter(centerId: string, date: string) {
     const courtRepositoryInstance = new courtRepository()
     const listCourt = await courtRepositoryInstance.getListCourt({ centerId })
     console.log('date', date)
+    const userRepositoryInstance = new userRepository()
     const bookingIncourt: any[] = await Promise.all(
       listCourt.map(async (court: any) => {
         const bookings = await bookingRepository.getListBooking({
           courtId: court._id,
-          date: date
+          date: date,
+          status: 'confirmed'
         })
-        return { courtid: court._id, courtnumber: court.courtNumber, bookings }
+        const bookingsWithUser = await Promise.all(
+          bookings.map(async (booking: any) => {
+            const user = await userRepositoryInstance.findUser({ _id: booking.userId })
+            if (!user)
+              return {
+                ...booking._doc,
+                customerName: 'Khách hàng không tồn tại',
+                customerEmail: 'Khách hàng không tồn tại',
+                customerPhone: 'Khách hàng không tồn tại'
+              }
+            return {
+              ...booking._doc,
+              customerName: user.userName,
+              customerEmail: user.userEmail,
+              customerPhone: user.userPhone
+            }
+          })
+        )
+        return { courtid: court._id, courtnumber: court.courtNumber, bookings: bookingsWithUser }
       })
     )
 
     console.log('bookingIncourt', bookingIncourt)
     return bookingIncourt
+  }
+
+  async getPersonalBooking(userId: string) {
+    const bookings = await bookingRepository.getListBooking({ userId })
+    const bookingWithCenterAndCourt = await Promise.all(
+      bookings.map(async (booking: any) => {
+        const centerRepositoryInstance = new centerRepository()
+        const center = await centerRepositoryInstance.getCenterById(booking.centerId)
+        const courtRepositoryInstance = new courtRepository()
+        const court = await courtRepositoryInstance.getCourt({ _id: booking.courtId })
+        if (!center || !court) {
+          return {
+            ...booking._doc,
+            centerName: 'Trung tâm không tồn tại',
+            centerAddress: 'Trung tâm không tồn tại',
+            courtNumber: 'Sân không tồn tại'
+          }
+        }
+        return {
+          ...booking._doc,
+          centerName: center.centerName,
+          centerAddress: center.location,
+          courtNumber: court.courtNumber
+        }
+      })
+    )
+    return bookingWithCenterAndCourt
   }
 }
 export default bookingService
