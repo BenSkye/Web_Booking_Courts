@@ -3,8 +3,6 @@ import bookingRepository from '~/repository/bookingRepository'
 import centerRepository from '~/repository/centerRepository'
 import priceRepository from '~/repository/priceRepository'
 import moment from 'moment'
-import { log } from 'console'
-
 interface IFixedPackageScheduleService {
   addFixedPackageSchedule(fixedPackageSchedule: any): Promise<any>
   getFixedPackageScheduleById(id: any): Promise<any | null>
@@ -47,7 +45,6 @@ class FixedPackageScheduleService implements IFixedPackageScheduleService {
         allPlayDates.push(...dayPlayDates) // Thêm các playDates của ngày hiện tại vào mảng chung
 
         for (const playDate of dayPlayDates) {
-          log(`Creating booking for play date: ${playDate}`)
           const booking = await bookingRepository.createBooking({
             centerId,
             courtId,
