@@ -21,7 +21,7 @@ class InvoiceService implements IinvoiceService {
       price: price,
       userId: userid,
       status: 'pending',
-      invoiceFor: 'bookingByDay'
+      invoiceFor: 'BBD'
     }
     return InvoiceRepositoryInstance.addInvoice(newInvoice)
   }
@@ -44,7 +44,7 @@ class InvoiceService implements IinvoiceService {
     const ListInvoice = await InvoiceRepositoryInstance.getListInvoices({ userId: userid })
     const updatedInvoices = await Promise.all(
       ListInvoice.map(async (invoice: any) => {
-        if (invoice.invoiceFor === 'bookingByDay') {
+        if (invoice.invoiceFor === 'BBD') {
           const booking = await bookingRepository.getBooking({ invoiceId: invoice._id })
           const centerRepositoryInstance = new centerRepository()
           if (!booking) return invoice
@@ -54,6 +54,11 @@ class InvoiceService implements IinvoiceService {
         return invoice
       })
     )
+    updatedInvoices.sort((a: any, b: any) => {
+      const dateA = new Date(a.updatedAt)
+      const dateB = new Date(b.updatedAt)
+      return dateB.getTime() - dateA.getTime() // Sort in descending order
+    })
     return updatedInvoices
   }
   getListInvoices(query: any): Promise<any> {

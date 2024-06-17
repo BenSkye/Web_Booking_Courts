@@ -8,50 +8,27 @@ import {
   List,
   Modal,
   Row,
+  Spin,
   Typography,
 } from "antd";
 import moment from "moment";
 import { getPersonalBookingAPI } from "../../../services/bookingAPI/bookingAPI";
+import UpdateBooking from "./components/updateBooking";
 
 const { Paragraph } = Typography;
-
-// const Bookings = [
-//   {
-//     id: 1,
-//     name: "Sân bóng ABC",
-//     address: "123 Đường XYZ, Quận 1, TP.HCM",
-//     fieldNumber: "Sân 1",
-//     date: new Date(2024, 5, 3), // 3/6/2024
-//     time: "17h - 19h ",
-//   },
-//   {
-//     id: 2,
-//     name: "Sân bóng XYZ",
-//     address: "456 Đường ABC, Quận 2, TP.HCM",
-//     fieldNumber: "Sân 2",
-//     date: new Date(2024, 5, 10), // 10/6/2024
-//     time: "16h - 17h",
-//   },
-//   {
-//     id: 3,
-//     name: "Sân bóng ABC",
-//     address: "123 Đường XYZ, Quận 1, TP.HCM",
-//     fieldNumber: "Sân 1",
-//     date: new Date(2024, 5, 3), // 3/6/2024
-//     time: "6h - 12h ",
-//   },
-//   // Thêm các invoice khác nếu cần
-// ];
-
 const BookingCourt = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
+  const [selectedBookingForUpdate, setSelectedBookingForUpdate] =
+    useState(null);
   const [selectedDateBookings, setSelectedDateBookings] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [Bookings, setBookings] = useState([]);
   const getPersonalBooking = async () => {
     const data = await getPersonalBookingAPI();
     console.log("data:", data);
     setBookings(data.bookings);
+    setIsLoading(false);
   };
   useEffect(() => {
     getPersonalBooking();
@@ -75,7 +52,15 @@ const BookingCourt = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+  const handleUpdateCancel = () => {
+    setIsUpdateModalVisible(false);
+    setSelectedBookingForUpdate(null);
+  };
 
+  const handleEditClick = (booking) => {
+    setSelectedBookingForUpdate(booking);
+    setIsUpdateModalVisible(true);
+  };
   const dateCellRender = (value) => {
     const date = value.toDate();
     const bookingsOnDate = Bookings.filter((inv) => {
@@ -101,69 +86,93 @@ const BookingCourt = () => {
 
   return (
     <div>
-      <Calendar dateCellRender={dateCellRender} />
+      {isLoading ? (
+        <Spin size="large" />
+      ) : (
+        <Calendar dateCellRender={dateCellRender} />
+      )}
       {selectedDateBookings.length > 0 && (
+        <>
+          <Modal
+            title="Chi tiết đặt sân"
+            visible={isModalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={null}
+          >
+            <List
+              itemLayout="vertical"
+              dataSource={selectedDateBookings}
+              renderItem={(booking) => (
+                <List.Item key={booking._id}>
+                  <Card>
+                    <List.Item.Meta
+                      title={booking.centerName}
+                      description={`${booking.centerAddress} - Sân: ${booking.courtNumber}`}
+                    />
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24} sm={12}>
+                        <Paragraph>
+                          <strong>Ngày chơi:</strong>{" "}
+                          {new Date(booking.date).toLocaleDateString("en-US")}
+                        </Paragraph>
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        <Paragraph>
+                          <strong>Giờ chơi:</strong> {booking.start} -{" "}
+                          {booking.end}
+                        </Paragraph>
+                      </Col>
+                    </Row>
+                    <Paragraph>
+                      <strong>Sân:</strong> {booking.courtNumber}
+                    </Paragraph>
+                    <Paragraph>
+                      <strong>Trạng thái:</strong>{" "}
+                      <span
+                        style={{
+                          color:
+                            booking.status === "pending"
+                              ? "orange"
+                              : booking.status === "confirmed"
+                              ? "green"
+                              : booking.status === "cancelled"
+                              ? "red"
+                              : "black",
+                        }}
+                      >
+                        {booking.status === "pending"
+                          ? "Chưa thanh toán"
+                          : booking.status === "confirmed"
+                          ? "Đã thanh toán"
+                          : booking.status === "cancelled"
+                          ? "Đã hủy"
+                          : "Không xác định"}
+                      </span>
+                    </Paragraph>
+                    {booking.status === "confirmed" && (
+                      <Button
+                        type="primary"
+                        onClick={() => handleEditClick(booking)}
+                      >
+                        Sửa giờ chơi
+                      </Button>
+                    )}
+                  </Card>
+                </List.Item>
+              )}
+            />
+          </Modal>
+        </>
+      )}
+      {selectedBookingForUpdate && (
         <Modal
-          title="Chi tiết đặt sân"
-          visible={isModalVisible}
-          onOk={handleOk}
-          onCancel={handleCancel}
+          title="Sửa giờ chơi"
+          visible={isUpdateModalVisible}
+          onCancel={handleUpdateCancel}
           footer={null}
         >
-          <List
-            itemLayout="vertical"
-            dataSource={selectedDateBookings}
-            renderItem={(booking) => (
-              <List.Item key={booking._id}>
-                <Card>
-                  <List.Item.Meta
-                    title={booking.centerName}
-                    description={`${booking.centerAddress} - Sân: ${booking.courtNumber}`}
-                  />
-                  <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={12}>
-                      <Paragraph>
-                        <strong>Ngày chơi:</strong>{" "}
-                        {new Date(booking.date).toLocaleDateString("en-US")}
-                      </Paragraph>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <Paragraph>
-                        <strong>Giờ chơi:</strong> {booking.start} -{" "}
-                        {booking.end}
-                      </Paragraph>
-                    </Col>
-                  </Row>
-                  <Paragraph>
-                    <strong>Trạng thái:</strong>{" "}
-                    <span
-                      style={{
-                        color:
-                          booking.status === "pending"
-                            ? "orange"
-                            : booking.status === "confirmed"
-                            ? "green"
-                            : booking.status === "cancelled"
-                            ? "red"
-                            : "black",
-                      }}
-                    >
-                      {booking.status === "pending"
-                        ? "Chưa thanh toán"
-                        : booking.status === "confirmed"
-                        ? "Đã thanh toán"
-                        : booking.status === "cancelled"
-                        ? "Đã hủy"
-                        : "Không xác định"}
-                    </span>
-                  </Paragraph>
-                  {booking.status === "confirmed" && (
-                    <Button type="primary">Sửa giờ chơi</Button>
-                  )}
-                </Card>
-              </List.Item>
-            )}
-          />
+          <UpdateBooking oldBooking={selectedBookingForUpdate} />
         </Modal>
       )}
     </div>

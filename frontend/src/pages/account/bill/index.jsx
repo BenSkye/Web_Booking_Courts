@@ -146,7 +146,7 @@ const OrderDetails = () => {
           <div>
             <p>
               Hình thức đặt sân:{" "}
-              {selectedInvoice.invoiceFor === "bookingByDay"
+              {selectedInvoice.invoiceFor === "BBD"
                 ? "Đặt lịch theo ngày"
                 : selectedInvoice.invoiceFor}
             </p>

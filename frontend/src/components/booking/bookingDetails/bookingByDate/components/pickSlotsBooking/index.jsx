@@ -56,6 +56,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   useEffect(() => {
     console.log("availableCourts", availableCourts);
   }, [availableCourts]);
+
   const handleSelectedDay = (date) => {
     const dateObject = new Date(date);
     const utcDateObject = new Date(

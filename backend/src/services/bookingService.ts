@@ -288,10 +288,10 @@ class bookingService implements IbookingService {
     const formattedTime = `${formattedHours}:${formattedMinutes}`
     const now = new Date()
     now.setUTCHours(0, 0, 0, 0)
-    const listBooking = await bookingRepository.getListBooking({ date: now.toISOString() })
+    const listBooking = await bookingRepository.getListBooking({ date: now.toISOString(), status: 'confirmed' })
     await Promise.all(
       listBooking.map(async (booking) => {
-        if (booking.status === 'confirmed' && booking.start <= formattedTime) {
+        if (booking.start <= formattedTime) {
           await bookingRepository.updateBooking({ _id: booking._id }, { status: 'expired' })
         }
       })

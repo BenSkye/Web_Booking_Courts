@@ -1,6 +1,11 @@
 import React from "react";
 import { Card, Col, Row, List, Descriptions, Image } from "antd";
-
+const scheduleTypeMapping = {
+  NP: "Giờ bình thường",
+  GP: "Giờ vàng",
+  MP: "Đặt lịch cố định theo tháng",
+  PP: "Mua gói giờ chơi",
+};
 const ReviewStep = ({ formValues }) => {
   const { center, price } = formValues;
 
@@ -79,7 +84,7 @@ const ReviewStep = ({ formValues }) => {
                       {item.endTime}
                     </Descriptions.Item>
                     <Descriptions.Item label="Loại giờ">
-                      {item.scheduleType}
+                      {scheduleTypeMapping[item.scheduleType]}
                     </Descriptions.Item>
                   </Descriptions>
                 </List.Item>
