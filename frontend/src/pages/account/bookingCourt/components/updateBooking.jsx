@@ -1,35 +1,54 @@
 import { Button, Card, Col, DatePicker, List, Row, Select, Steps } from "antd";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { formatPrice } from "../../../../utils/priceFormatter";
 import {
-  getAvailableCourtAPI,
-  getAvailableDurationAPI,
-  getFreeTimeByDateAPI,
+  getAvailableCourtForUpdateAPI,
+  getAvailableDurationForUpdateAPI,
+  getFreeTimeByDateForUpdateAPI,
 } from "../../../../services/slotBookingAPI";
+import dayjs from "dayjs";
 const { Step } = Steps;
 const { Option } = Select;
 
 export default function UpdateBooking({ oldBooking }) {
-  const [selectedDate, setSelectedDate] = useState(moment(oldBooking.date));
+  console.log("oldBooking", oldBooking);
+  const dateFormat = "YYYY-MM-DD";
+
+  const [selectedDate, setSelectedDate] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [timeOptions, setTimeOptions] = useState([]);
   const [durationOptions, setDurationOptions] = useState([]);
   const [duration, setDuration] = useState(null);
   const [availableCourts, setAvailableCourts] = useState([]);
+  const oldDurationRef = useRef(null);
 
   const getFreeStartTime = async (id, selectedDate) => {
-    const data = await getFreeTimeByDateAPI(id, selectedDate);
+    let data = await getFreeTimeByDateForUpdateAPI(
+      id,
+      selectedDate,
+      oldBooking.start,
+      oldBooking.end,
+      oldBooking.courtId
+    );
+    console.log("data", data);
+
     setTimeOptions(data.freeStartTime);
   };
 
   const getAvailableDuration = async (centerId, date, startTime) => {
-    const data = await getAvailableDurationAPI(centerId, date, startTime);
+    const data = await getAvailableDurationForUpdateAPI(
+      centerId,
+      date,
+      startTime,
+      oldBooking.start,
+      oldBooking.end,
+      oldBooking.courtId
+    );
     let maxDuration = data.maxDuration;
     let listduration = [];
     while (maxDuration > 0) {
-      console.log("maxDuration", maxDuration);
       listduration = [...listduration, maxDuration];
       maxDuration -= 0.5;
     }
@@ -37,14 +56,53 @@ export default function UpdateBooking({ oldBooking }) {
   };
 
   const getAvailableCourt = async (centerId, date, startTime, duration) => {
-    const data = await getAvailableCourtAPI(
+    const data = await getAvailableCourtForUpdateAPI(
       centerId,
       date,
       startTime,
-      duration
+      duration,
+      oldBooking.start,
+      oldBooking.end,
+      oldBooking.courtId
     );
-    setAvailableCourts(data.courtFree);
+    if (data.courtFree === null) {
+      setAvailableCourts([]);
+    } else {
+      setAvailableCourts(data.courtFree);
+    }
   };
+
+  const handleSelectedDay = (date) => {
+    const dateObject = new Date(date);
+    const utcDateObject = new Date(
+      dateObject.getTime() - dateObject.getTimezoneOffset() * 60000
+    );
+    // Format the date to "YYYY-MM-DD"
+    const formattedDate = utcDateObject.toISOString().split("T")[0];
+    setSelectedDate(formattedDate);
+  };
+  useEffect(() => {
+    if (oldBooking) {
+      const start = moment(oldBooking.start, "HH:mm");
+      const end = moment(oldBooking.end, "HH:mm");
+      const durationJs = moment.duration(end.diff(start));
+      const totalMinutes = durationJs.asMinutes();
+      const oldDuration = totalMinutes / 60;
+
+      // Lưu oldDuration vào useRef
+      oldDurationRef.current = oldDuration;
+      console.log("oldDurationRef", oldDurationRef.current);
+      const oldDay = new Date(oldBooking.date);
+      const utcOldDay = new Date(
+        oldDay.getTime() - oldDay.getTimezoneOffset() * 60000
+      );
+      const formattedOldDay = utcOldDay.toISOString().split("T")[0];
+
+      setSelectedDate(formattedOldDay);
+      setStartTime(oldBooking.start);
+      setDuration(oldDuration);
+    }
+  }, [oldBooking]);
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -57,27 +115,25 @@ export default function UpdateBooking({ oldBooking }) {
   }, [selectedDate, startTime]);
 
   useEffect(() => {
-    if (!startTime || !selectedDate || !duration) return;
+    if (
+      !selectedDate ||
+      !startTime ||
+      !duration ||
+      (startTime === oldBooking.start && duration === oldDurationRef.current)
+    ) {
+      setAvailableCourts([]);
+      return;
+    }
     getAvailableCourt(oldBooking.centerId, selectedDate, startTime, duration);
   }, [selectedDate, startTime, duration]);
 
-  const handleSelectedDay = (date) => {
-    const dateObject = new Date(date);
-    const utcDateObject = new Date(
-      dateObject.getTime() - dateObject.getTimezoneOffset() * 60000
-    );
-    // Format the date to "YYYY-MM-DD"
-    const formattedDate = utcDateObject.toISOString().split("T")[0];
-    setSelectedDate(formattedDate);
-  };
   useEffect(() => {
     if (currentStep === 0 && selectedDate) {
       setCurrentStep(1);
     } else if (currentStep === 1 && startTime && duration) {
       setCurrentStep(2);
     }
-  }, [selectedDate, startTime, duration]);
-
+  }, [currentStep, selectedDate, startTime, duration]);
   return (
     <div>
       <Steps
@@ -90,6 +146,7 @@ export default function UpdateBooking({ oldBooking }) {
           description={
             <div>
               <DatePicker
+                value={dayjs(`${selectedDate}`, dateFormat)}
                 placeholder="Chọn ngày"
                 onChange={(date) => handleSelectedDay(date)}
                 disabledDate={(current) =>
@@ -119,6 +176,7 @@ export default function UpdateBooking({ oldBooking }) {
                 }}
               >
                 <Select
+                  value={startTime}
                   placeholder="Giờ bắt đầu"
                   style={{
                     width: "100%",
@@ -134,6 +192,7 @@ export default function UpdateBooking({ oldBooking }) {
                   ))}
                 </Select>
                 <Select
+                  value={duration}
                   placeholder="Số giờ chơi"
                   style={{
                     width: "100%",
