@@ -12,7 +12,8 @@ import timeslotRoute from './routes/timeslotRoute'
 import priceRoute from './routes/priceRoute'
 import momoRoute from './routes/momoRoute'
 import courtRoute from './routes/courtRoute'
-import userRoute from './routes/userRoute';
+import invoiceRoute from './routes/invoiceRoutes'
+import userRoute from './routes/userRoute'
 
 dotenv.config()
 
@@ -28,6 +29,7 @@ app.use('/api/v1/timeSlot', timeslotRoute)
 app.use('/api/v1/price', priceRoute)
 app.use('/api/v1/payment', momoRoute)
 app.use('/api/v1/court', courtRoute)
+app.use('/api/v1/invoice', invoiceRoute)
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/court', courtRoute)
 app.all('*', (req, res, next) => {

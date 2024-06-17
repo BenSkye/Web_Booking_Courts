@@ -8,7 +8,7 @@ import { FaUserPlus } from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsCalendarWeek } from "react-icons/bs";
 import { TiClipboard } from "react-icons/ti";
-import { MdCheckCircle } from 'react-icons/md';
+import { MdCheckCircle } from "react-icons/md";
 
 import logo from "@/assets/logonew.png";
 
@@ -19,9 +19,12 @@ export default function HeaderLayout() {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
   // console.log("user", user);
-  const logouthander = () => {
-    logout();
-    navigate("/");
+  const logouthander = async () => {
+    const user = await logout();
+    console.log("userlogout", user);
+    if (user == undefined) {
+      navigate("/");
+    }
   };
   const itemsManager = [
     //Items for the dropdown Profile
@@ -199,9 +202,13 @@ export default function HeaderLayout() {
       key: "3",
     },
   ];
-  
 
- const items = user?.role === "manager" ? itemsManager : (user?.role === "customer" ? itemsCustomer : itemsAdmin);
+  const items =
+    user?.role === "manager"
+      ? itemsManager
+      : user?.role === "customer"
+      ? itemsCustomer
+      : itemsAdmin;
 
  const menuItemsUser = [
   {

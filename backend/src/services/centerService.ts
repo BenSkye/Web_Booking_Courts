@@ -13,6 +13,7 @@ interface ICenterService {
   getPersonalCenterById(centerId: string, userId: string): Promise<any>
   selectPackage(centerId: string, packageId: string, userId: string): Promise<any>
   changeCenterStatusAccept(centerId: string): Promise<any>
+  getPersonalActiveCenters(userId: string): Promise<any>
 }
 
 class centerService implements ICenterService {
@@ -172,6 +173,11 @@ class centerService implements ICenterService {
     }
     center.status = 'accepted'
     return centerRepositoryInstance.updateCenter({ _id: centerId }, center)
+  }
+  async getPersonalActiveCenters(userId: string) {
+    const centerRepositoryInstance = new centerRepository()
+    const ListCenter = await centerRepositoryInstance.getListCenter({ managerId: userId, status: 'active' })
+    return ListCenter
   }
 }
 export default centerService
