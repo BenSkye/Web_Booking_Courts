@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import cron from 'node-cron'
 import bodyParser from 'body-parser'
+import morgan from 'morgan'
 import AppError from './utils/appError'
 import errorHandler from './controller/errorController'
 import authRoute from './routes/authRoute'
@@ -14,12 +15,14 @@ import priceRoute from './routes/priceRoute'
 import courtRoute from './routes/courtRoute'
 import invoiceRoute from './routes/invoiceRoutes'
 import userRoute from './routes/userRoute'
+import fixedPackageScheduleRoute from './routes/fixedPackageScheduleRoute'
 import timeSlotService from './services/timeslotService'
 import bookingService from './services/bookingService'
 
 dotenv.config()
 
 const app = express()
+app.use(morgan('dev'))
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -33,6 +36,7 @@ app.use('/api/v1/court', courtRoute)
 app.use('/api/v1/invoice', invoiceRoute)
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/court', courtRoute)
+app.use('/api/v1/fixed-package-schedule', fixedPackageScheduleRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
