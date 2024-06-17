@@ -14,6 +14,7 @@ interface ICenterService {
   selectPackage(centerId: string, packageId: string, userId: string): Promise<any>
   changeCenterStatusAccept(centerId: string): Promise<any>
   getPersonalActiveCenters(userId: string): Promise<any>
+  getAllSubscriptions():  Promise<any>
 }
 
 class centerService implements ICenterService {
@@ -105,8 +106,8 @@ class centerService implements ICenterService {
     }
     let latestSubscription
     if (center.subscriptions.length > 0) {
-      latestSubscription = center.subscriptions.reduce((latest, subscription) => {
-        return latest.expiryDate > subscription.expiryDate ? latest : subscription
+      latestSubscription = center.subscriptions.reduce((latest: { expiryDate: number }, subscription: { expiryDate: number }) => {
+          return latest.expiryDate > subscription.expiryDate ? latest : subscription
       })
     }
     let activationDate = new Date()
@@ -178,6 +179,15 @@ class centerService implements ICenterService {
     const centerRepositoryInstance = new centerRepository()
     const ListCenter = await centerRepositoryInstance.getListCenter({ managerId: userId, status: 'active' })
     return ListCenter
+  }
+  async getAllSubscriptions(){
+    try {
+      const centerRepositoryInstance = new centerRepository()
+      const centers = await centerRepositoryInstance.getAllSubscriptions()
+      return centers
+    } catch (error) {
+      throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
+    }
   }
 }
 export default centerService

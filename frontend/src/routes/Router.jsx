@@ -27,6 +27,7 @@ import ProtectedRoute from "../utils/authRoute/authRoute";
 import ManageCenter from "../pages/courtManage/manageCourtByAdmin/manageCenter";
 import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage";
 import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople";
+import ManagerManagement from "../pages/courtManage/manageCourtByAdmin/manageManager";
 function Routing() {
   return (
     <Routes>
@@ -219,6 +220,14 @@ function Routing() {
           element={
             <ProtectedRoute roles={["admin"]}>
               <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/admin/ManagerManagement"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <ManagerManagement />
             </ProtectedRoute>
           }
         />

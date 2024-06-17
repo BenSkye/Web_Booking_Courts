@@ -1,9 +1,9 @@
 // services/admin/manageUser.js
-import axios from 'axios';
 
+import { fetchData } from "../fetchAPI";
 const getAllUsersAPI = async () => {
   try {
-    const response = await axios.get('http://localhost:5050/api/v1/user/admin/manage_people');
+    const response = await fetchData('http://localhost:5050/api/v1/user/admin/manage_people');
     // Chuyển đổi dữ liệu nếu cần thiết
     const users = response.data.map(user => ({
       ...user,
