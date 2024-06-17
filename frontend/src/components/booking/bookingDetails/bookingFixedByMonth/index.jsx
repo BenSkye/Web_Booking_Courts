@@ -12,18 +12,20 @@ import {
   Typography,
   Row,
   Col,
-  Empty} from 'antd';
+  Empty,
+} from 'antd';
 import { ImBin } from 'react-icons/im';
 import { formatPrice } from '../../../../utils/priceFormatter';
 import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
 import { getListCourtsByCenterId_API } from '../../../../services/courtAPI/getCourtsAPI';
 import { getAPriceByCenterIdAPIAndScheduleType } from '../../../../services/centersAPI/getCenters';
+import { createFixedPackageScheduleAPI } from '../../../../services/fixedPackagesScheduleAPI/createFixedPackageScheduleAPI';
 
 const { Option } = Select;
 const { Text } = Typography;
 
 const ScheduleTypes = {
-  NORMAL_PRICE: 'normalPrice',
+  FIXED_MONTH_PACKAGE_PRICE: 'MP',
 };
 
 const BookingFixedByMonth = ({ id }) => {
@@ -34,8 +36,6 @@ const BookingFixedByMonth = ({ id }) => {
   const [endDate, setEndDate] = useState(null);
   const [totalPriceAll, setTotalPriceAll] = useState(0);
   const [price, setPrice] = useState(0);
-
-
 
   const calculateEndDate = () => {
     const startDate = form.getFieldValue('startDate');
@@ -80,7 +80,7 @@ const BookingFixedByMonth = ({ id }) => {
       );
       setPrice(data.price);
     };
-    getPrice(id, ScheduleTypes.NORMAL_PRICE);
+    getPrice(id, ScheduleTypes.FIXED_MONTH_PACKAGE_PRICE);
   }, [id]);
 
   const getDaysOfWeekBetweenDates = (start, end, dayOfWeek) => {
@@ -132,35 +132,7 @@ const BookingFixedByMonth = ({ id }) => {
     setTotalPriceAll(totalPrice);
   };
 
-  // const onFinish = (values) => {
-  //   const { days } = values;
-  //   let totalDuration = 0;
-  //   const startDate = form.getFieldValue('startDate');
-  //   const endDate = moment(startDate)
-  //     .add(form.getFieldValue('months'), 'months')
-  //     .subtract(1, 'days')
-  //     .endOf('day');
-
-  //   if (days) {
-  //     days.forEach((day) => {
-  //       const validDays = getDaysOfWeekBetweenDates(
-  //         startDate,
-  //         endDate,
-  //         day.dayOfWeek
-  //       );
-  //       totalDuration += validDays.length * parseFloat(day.duration);
-  //     });
-  //   }
-
-  //   const totalPrice = totalDuration * center.pricePerHour;
-
-  //   navigate({
-  //     pathname: '/paymentBookingFixed',
-  //     state: { bookingData: values, totalPrice: totalPrice },
-  //   });
-  // };
-
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     const startDate = form.getFieldValue('startDate').format('YYYY-MM-DD');
     const months = form.getFieldValue('months');
     const days = values.days.map((day) => ({
@@ -168,28 +140,29 @@ const BookingFixedByMonth = ({ id }) => {
       startTime: day.startTime.format('HH:mm'),
       duration: parseFloat(day.duration),
     }));
-  
-    const bookingData = { startDate, totalMonths: months, days, centerId: id, scheduleType: 'normalPrice', courtId: values.pickCourt};
+
+    const bookingData = {
+      centerId: id,
+      courtId: values.pickCourt,
+      userId: '667040da47f6663015c9ac1a',
+      scheduleType: ScheduleTypes.FIXED_MONTH_PACKAGE_PRICE,
+      startDate,
+      totalMonths: months,
+      days,
+    };
     console.log('bookingData: ', bookingData);
-  
+
     // Send the bookingData to the backend
-    fetch('/api/v1/booking/calculateBookingDates', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(bookingData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response data (e.g., navigate to the payment page)
-        console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    try {
+      const data =
+        await createFixedPackageScheduleAPI.createFixedPackageSchedule(
+          bookingData
+        );
+      console.log('Success MP:', data);
+    } catch (error) {
+      console.error('Error MP:', error);
+    }
   };
-  
 
   const onAddDay = (add) => {
     add();
@@ -207,13 +180,19 @@ const BookingFixedByMonth = ({ id }) => {
     let newSelectedDays = selectedDays.filter((selectedDay, i) => i !== index);
     setSelectedDays(newSelectedDays);
   };
-  
-  
 
   const getAvailableDaysOfWeek = () => {
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  return daysOfWeek.filter(day => !selectedDays.includes(day));
-};
+    const daysOfWeek = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    return daysOfWeek.filter((day) => !selectedDays.includes(day));
+  };
 
   return (
     <Row gutter={[16, 16]} justify='center'>
@@ -303,7 +282,7 @@ const BookingFixedByMonth = ({ id }) => {
             <Form.List name='days'>
               {(fields, { add, remove }) => (
                 <>
-                  {fields.map(({ key, name, ...restField },index) => (
+                  {fields.map(({ key, name, ...restField }, index) => (
                     <Space
                       key={key}
                       style={{ display: 'flex', marginBottom: 8 }}
@@ -333,7 +312,10 @@ const BookingFixedByMonth = ({ id }) => {
                         name={[name, 'startTime']}
                         label='Giờ bắt đầu'
                         rules={[
-                          { required: true, message: 'Vui lòng chọn giờ bắt đầu!' },
+                          {
+                            required: true,
+                            message: 'Vui lòng chọn giờ bắt đầu!',
+                          },
                         ]}
                       >
                         <TimePicker format='HH:mm' />
@@ -348,10 +330,15 @@ const BookingFixedByMonth = ({ id }) => {
                       >
                         <Input type='number' step='0.5' min='0.5' />
                       </Form.Item>
-                      <ImBin onClick={() => {
-                        remove(name);
-                        removeDay(form.getFieldValue(['days', name, 'dayOfWeek']));
-                      }} style={{ cursor: 'pointer', color: 'red' }} />
+                      <ImBin
+                        onClick={() => {
+                          remove(name);
+                          removeDay(
+                            form.getFieldValue(['days', name, 'dayOfWeek'])
+                          );
+                        }}
+                        style={{ cursor: 'pointer', color: 'red' }}
+                      />
                     </Space>
                   ))}
                   <Form.Item>

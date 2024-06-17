@@ -12,10 +12,10 @@ import centerPackageRoute from './routes/centerPackageRoute'
 import bookingRoute from './routes/bookingRoute'
 import timeslotRoute from './routes/timeslotRoute'
 import priceRoute from './routes/priceRoute'
-import momoRoute from './routes/momoRoute'
 import courtRoute from './routes/courtRoute'
 import invoiceRoute from './routes/invoiceRoutes'
 import userRoute from './routes/userRoute'
+import fixedPackageScheduleRoute from './routes/fixedPackageScheduleRoute'
 import timeSlotService from './services/timeslotService'
 import bookingService from './services/bookingService'
 
@@ -32,11 +32,11 @@ app.use('/api/v1/centerpackage', centerPackageRoute)
 app.use('/api/v1/booking', bookingRoute)
 app.use('/api/v1/timeSlot', timeslotRoute)
 app.use('/api/v1/price', priceRoute)
-app.use('/api/v1/payment', momoRoute)
 app.use('/api/v1/court', courtRoute)
 app.use('/api/v1/invoice', invoiceRoute)
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/court', courtRoute)
+app.use('/api/v1/fixed-package-schedule', fixedPackageScheduleRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
