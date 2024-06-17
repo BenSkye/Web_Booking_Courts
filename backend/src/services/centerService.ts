@@ -14,6 +14,7 @@ interface ICenterService {
   selectPackage(centerId: string, packageId: string, userId: string): Promise<any>
   changeCenterStatusAccept(centerId: string): Promise<any>
   getPersonalActiveCenters(userId: string): Promise<any>
+  updateCenterInforById(id: string, data: any, userId: string): Promise<any>
 }
 
 class centerService implements ICenterService {
@@ -178,6 +179,19 @@ class centerService implements ICenterService {
     const centerRepositoryInstance = new centerRepository()
     const ListCenter = await centerRepositoryInstance.getListCenter({ managerId: userId, status: 'active' })
     return ListCenter
+  }
+  async updateCenterInforById(centerId: string, data: any, userId: string) {
+    const centerRepositoryInstance = new centerRepository()
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId })
+    if (!center) {
+      throw new AppError(`Center with id ${centerId} not found`, 404)
+    }
+    if (center.managerId.toString() !== userId) {
+      throw new AppError('You are not authorized to perform this action', 403)
+    }
+    Object.assign(center, data)
+    const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
+    return updatedCenter
   }
 }
 export default centerService
