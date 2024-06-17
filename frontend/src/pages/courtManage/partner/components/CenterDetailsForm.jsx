@@ -145,7 +145,7 @@ const CenterDetailsForm = ({
             >
               <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>
-            
+
             {uploadProgressCourt > 0 && (
               <Progress percent={uploadProgressCourt} />
             )}

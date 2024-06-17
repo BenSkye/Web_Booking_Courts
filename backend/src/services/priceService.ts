@@ -16,9 +16,9 @@ class PriceService implements IPriceService {
       throw error // Rethrow the error to be handled by the caller
     }
   }
-  async getPricesByScheduleType(cheduleType: string) {
+  async getPricesByScheduleType(scheduleType: string) {
     try {
-      const prices = await priceRepository.getPricesByScheduleType(cheduleType)
+      const prices = await priceRepository.getPricesByScheduleType(scheduleType)
       return prices
     } catch (error) {
       console.error('Error fetching prices by schedule type:', error)

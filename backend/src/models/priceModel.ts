@@ -20,6 +20,7 @@ const priceSchema = new Schema(
       required: true
     },
     scheduleType: {
+      enum: ['NP', 'GP', 'MP', 'PP'], //NP=Normal Price, GP=Golden Price, MP=Month Price, PP=PackagePrice
       type: String,
       required: true
     }
