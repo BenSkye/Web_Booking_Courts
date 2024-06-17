@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, Button, InputNumber } from 'antd';
 
-const BookingFlexibleByPackage = ({ id }) => {
+const BookingFlexibleByPackage = ({ id, onSelectPackage }) => {
   const [hours, setHours] = useState(10); // Số giờ mặc định
   const pricePerHour = 10; // Giá tiền mỗi giờ
 
@@ -10,8 +10,7 @@ const BookingFlexibleByPackage = ({ id }) => {
   };
 
   const handlePackageSelect = () => {
-    // Xử lý logic khi người dùng chọn gói ở đây
-    console.log(`Selected package: ${hours} giờ`);
+    onSelectPackage(hours); // Gọi callback và truyền số giờ đã chọn
   };
 
   return (

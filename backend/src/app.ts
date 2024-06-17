@@ -13,7 +13,7 @@ import priceRoute from './routes/priceRoute'
 import momoRoute from './routes/momoRoute'
 import courtRoute from './routes/courtRoute'
 import userRoute from './routes/userRoute';
-
+import playPackageRoute from './routes/playPackageRoute'
 dotenv.config()
 
 const app = express()
@@ -30,6 +30,7 @@ app.use('/api/v1/payment', momoRoute)
 app.use('/api/v1/court', courtRoute)
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/court', courtRoute)
+app.use('/api/v1/playPackage', playPackageRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })

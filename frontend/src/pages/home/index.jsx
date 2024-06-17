@@ -7,13 +7,13 @@ import NoImg from "@/assets/noImg.jpg";
 import { getAllCenterAPI } from "@/services/centersAPI/getCenters";
 import GetAllLocationCenter from "../../utils/getAllCenterMap";
 
+
 const { Meta } = Card;
 
 export default function Home() {
   const [centers, setCenters] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Define the formatPrice function
   const formatPrice = (price) => {
     if (!price) return 'N/A';
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND/h`;

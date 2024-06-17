@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Typography, Space, Row, Col, Card, Button, Divider, Modal, Carousel, Empty, Spin } from 'antd';
 import { PhoneOutlined } from '@ant-design/icons';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import MyLocationMap from '@/utils/map';
 import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
 import { FaMapMarkerAlt } from 'react-icons/fa';
@@ -9,27 +9,21 @@ import { FaMapMarkerAlt } from 'react-icons/fa';
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
-// Define the formatPrice function
-const formatPrice = (price) => {
-    if (!price) return 'N/A';
-    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND/h`;
-};
-
 function Detail() {
     const { id } = useParams();
+    const location = useLocation();
     const [center, setCenter] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+
+    const pricingData = location.state?.pricingData || [];
 
     useEffect(() => {
         const fetchCenterData = async () => {
             try {
                 const data = await getCenterByIdAPI(id);
                 console.log('datafe', data);
-
-                // Find and format the normalPrice
-                const normalPrice = formatPrice(data.data.center.price.find(price => price.scheduleType === 'normalPrice')?.price);
-                setCenter({ ...data.data.center, normalPrice });
+                setCenter(data.data.center);
             } catch (error) {
                 console.error('Error fetching center data:', error);
             } finally {
@@ -53,7 +47,7 @@ function Detail() {
     };
 
     const handleImageError = (e) => {
-        e.target.src = 'https://via.placeholder.com/800x500'; // Placeholder image URL
+        e.target.src = 'https://via.placeholder.com/800x500';
     };
 
     if (loading) {
@@ -78,7 +72,7 @@ function Detail() {
                                                 src={image}
                                                 alt={`Image ${index}`}
                                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                onError={(e) => handleImageError(e)} // Enhanced error handling
+                                                onError={(e) => handleImageError(e)}
                                             />
                                         </div>
                                     ))
@@ -136,19 +130,21 @@ function Detail() {
                 <Col span={12}>
                     <Title level={4}>Bảng Giá</Title>
                     <Row gutter={[16, 16]}>
-                        {center.normalPrice ? (
-                            <Col span={24}>
-                                <Card>
-                                    <Row justify="space-between">
-                                        <Col>
-                                            <Text>Normal Price</Text>
-                                        </Col>
-                                        <Col>
-                                            <Text>{center.normalPrice}</Text>
-                                        </Col>
-                                    </Row>
-                                </Card>
-                            </Col>
+                        {pricingData.length > 0 ? (
+                            pricingData.map((price, index) => (
+                                <Col span={24} key={index}>
+                                    <Card>
+                                        <Row justify="space-between">
+                                            <Col>
+                                                <Text>{price.scheduleType}</Text>
+                                            </Col>
+                                            <Col>
+                                                <Text>{price.price}</Text>
+                                            </Col>
+                                        </Row>
+                                    </Card>
+                                </Col>
+                            ))
                         ) : (
                             <Empty description="Không có dữ liệu giá" />
                         )}
