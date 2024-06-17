@@ -39,14 +39,13 @@ const fixedPackageScheduleSchema = new Schema(
     ],
     bookingType: {
       type: String,
-      enum: ['byday', 'bymonth'],
-      default: 'byday',
+      default: 'byMonth',
       required: true
     },
     status: {
       type: String,
-      enum: ['pending', 'confirmed', 'completed', 'cancelled', 'expired'],
-      default: 'pending',
+      enum: ['review', 'pending', 'paided', 'expired'],
+      default: 'review',
       required: true
     },
     invoiceId: {
@@ -56,12 +55,10 @@ const fixedPackageScheduleSchema = new Schema(
     totalPrice: {
       type: Number,
       required: true
-    },
-    notes: {
-      type: String
     }
   },
   { timestamps: true }
 )
 
-module.exports = mongoose.model('FixedPackageSchedule', fixedPackageScheduleSchema)
+const FixedPackageSchedule = mongoose.model('FixedPackageSchedule', fixedPackageScheduleSchema)
+export default FixedPackageSchedule
