@@ -271,5 +271,31 @@ class bookingService implements IbookingService {
     )
     return bookingWithCenterAndCourt
   }
+
+  async checkAndUpdateBooking() {
+    const currentTime = new Date()
+    currentTime.setMinutes(currentTime.getMinutes() + 30) //sau 30 phut không checkin thì chuyển sang hết hạn
+    const hours = currentTime.getHours()
+    let minutes = currentTime.getMinutes()
+
+    // Round down to the nearest half hour
+    minutes = Math.floor(minutes / 30) * 30
+
+    // Format hours and minutes as 2 digits
+    const formattedHours = hours < 10 ? '0' + hours : hours
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes
+
+    const formattedTime = `${formattedHours}:${formattedMinutes}`
+    const now = new Date()
+    now.setUTCHours(0, 0, 0, 0)
+    const listBooking = await bookingRepository.getListBooking({ date: now.toISOString() })
+    await Promise.all(
+      listBooking.map(async (booking) => {
+        if (booking.status === 'confirmed' && booking.start <= formattedTime) {
+          await bookingRepository.updateBooking({ _id: booking._id }, { status: 'expired' })
+        }
+      })
+    )
+  }
 }
 export default bookingService
