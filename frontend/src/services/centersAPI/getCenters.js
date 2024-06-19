@@ -1,5 +1,5 @@
 import { fetchData } from "@/services/fetchAPI";
-
+import axios from "axios";
 export const getAllCenterAPI = async () => {
   try {
     const response = await fetch("http://localhost:5050/api/v1/center");
@@ -41,3 +41,21 @@ export const getAPriceByCenterIdAPIAndScheduleType = async (
     return {};
   }
 };
+
+export async function updateCenter(centerId, data, token) {
+  try {
+    const url = `http://localhost:5050/api/v1/center/my-centers/update/${centerId}`;
+    const response = await axios.put(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    console.log("Cập nhật thành công:", response.data);
+  } catch (error) {
+    console.error(
+      "Lỗi khi cập nhật trung tâm:",
+      error.response ? error.response.data : error.message
+    );
+  }
+}
