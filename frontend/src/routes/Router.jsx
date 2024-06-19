@@ -135,7 +135,7 @@ function Routing() {
         />
         <Route path="/paymentBookingFixed" element={<PaymentBookingFixed />} />
         <Route
-          path="/courtManage/registerPackageCourt"
+          path="/courtManage/registerPackageCourt/:id"
           element={
             <ProtectedRoute roles={["manager"]}>
               <RegisterPackageCourt />
