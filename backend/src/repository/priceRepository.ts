@@ -24,10 +24,11 @@ class priceRepository implements IPriceRepository {
   async getPrice(query: object) {
     return await Price.findOne(query)
   }
-  static async getPricesByScheduleType(cheduleType: any) {
-    return await Price.find({ cheduleType })
+  static async getPricesByScheduleType(scheduleType: any) {
+    return await Price.find({ scheduleType })
   }
   async getPriceByCenterIdAndScheduleType(centerId: any, scheduleType: any) {
     return await Price.findOne({ centerId, scheduleType })
-}}
+  }
+}
 export default priceRepository

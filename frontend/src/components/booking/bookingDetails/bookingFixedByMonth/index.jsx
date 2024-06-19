@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
-import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import moment from "moment";
 import {
   Form,
   Input,
@@ -13,57 +12,45 @@ import {
   Typography,
   Row,
   Col,
-  Carousel,
   Empty,
-  Modal,
-} from 'antd';
-import { ImBin } from 'react-icons/im';
-import { FaMapMarkerAlt } from 'react-icons/fa';
-import MyLocationMap from '@/utils/map';
-import { formatPrice } from '../../../../utils/priceFormatter';
-import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
-import { getListCourtsByCenterId_API } from '../../../../services/courtAPI/getCourtsAPI';
-import { getAPriceByCenterIdAPIAndScheduleType } from '../../../../services/centersAPI/getCenters';
+} from "antd";
+import { ImBin } from "react-icons/im";
+import { formatPrice } from "../../../../utils/priceFormatter";
+import { getCenterByIdAPI } from "@/services/centersAPI/getCenters";
+import { getListCourtsByCenterId_API } from "../../../../services/courtAPI/getCourtsAPI";
+import { getAPriceByCenterIdAPIAndScheduleType } from "../../../../services/centersAPI/getCenters";
+import { createFixedPackageScheduleAPI } from "../../../../services/fixedPackagesScheduleAPI/createFixedPackageScheduleAPI";
 
 const { Option } = Select;
 const { Text } = Typography;
 
-const scheduleType = 'nomalPrice';
+const ScheduleTypes = {
+  FIXED_MONTH_PACKAGE_PRICE: "MP",
+};
 
 const BookingFixedByMonth = ({ id }) => {
-  const navigate = useNavigate();
-
   const [form] = Form.useForm();
   const [selectedDays, setSelectedDays] = useState([]);
   const [center, setCenter] = useState({});
-  const [courts, setCourts] = useState([]); //
+  const [courts, setCourts] = useState([]);
   const [endDate, setEndDate] = useState(null);
   const [totalPriceAll, setTotalPriceAll] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-  const [price, setPrice] = useState(0); // [1
-
-  const handleOpenModal = () => {
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
+  const [price, setPrice] = useState(0);
 
   const calculateEndDate = () => {
-    const startDate = form.getFieldValue('startDate');
-    const months = form.getFieldValue('months');
+    const startDate = form.getFieldValue("startDate");
+    const months = form.getFieldValue("months");
     if (startDate && months) {
       const daysInMonth = moment(startDate)
-        .add(months, 'months')
-        .subtract(1, 'days')
-        .endOf('day');
-      const remainingDays = daysInMonth.diff(startDate, 'days') + 1;
+        .add(months, "months")
+        .subtract(1, "days")
+        .endOf("day");
+      const remainingDays = daysInMonth.diff(startDate, "days") + 1;
       const numMonths = Math.floor(remainingDays / 30);
       const endDate = moment(startDate)
-        .add(numMonths, 'months')
-        .subtract(1, 'days')
-        .endOf('day');
+        .add(numMonths, "months")
+        .subtract(1, "days")
+        .endOf("day");
       setEndDate(endDate);
     }
   };
@@ -71,7 +58,7 @@ const BookingFixedByMonth = ({ id }) => {
   useEffect(() => {
     const getCenter = async (id) => {
       const data = await getCenterByIdAPI(id);
-      console.log('center: ', data.data.center);
+      console.log("center: ", data.data.center);
       setCenter(data.data.center);
     };
     getCenter(id);
@@ -80,7 +67,6 @@ const BookingFixedByMonth = ({ id }) => {
   useEffect(() => {
     const getListCourts = async (id) => {
       const data = await getListCourtsByCenterId_API(id);
-      console.log('list courts: ', data);
       setCourts(data);
     };
     getListCourts(id);
@@ -92,11 +78,9 @@ const BookingFixedByMonth = ({ id }) => {
         id,
         scheduleType
       );
-      console.log('scheduleType: ', scheduleType);
-      console.log('price: ', data);
       setPrice(data.price);
     };
-    getPrice(id, scheduleType);
+    getPrice(id, ScheduleTypes.FIXED_MONTH_PACKAGE_PRICE);
   }, [id]);
 
   const getDaysOfWeekBetweenDates = (start, end, dayOfWeek) => {
@@ -112,12 +96,12 @@ const BookingFixedByMonth = ({ id }) => {
     const day = daysOfWeek[dayOfWeek];
     let current = moment(start).day(day);
     if (current.isBefore(start)) {
-      current.add(7, 'days');
+      current.add(7, "days");
     }
     const dates = [];
     while (current.isSameOrBefore(end)) {
       dates.push(current.clone());
-      current.add(7, 'days');
+      current.add(7, "days");
     }
     return dates;
   };
@@ -126,11 +110,11 @@ const BookingFixedByMonth = ({ id }) => {
     const values = form.getFieldsValue();
     const { days } = values;
     let totalDuration = 0;
-    const startDate = form.getFieldValue('startDate');
+    const startDate = form.getFieldValue("startDate");
     const endDate = moment(startDate)
-      .add(form.getFieldValue('months'), 'months')
-      .subtract(1, 'days')
-      .endOf('day');
+      .add(form.getFieldValue("months"), "months")
+      .subtract(1, "days")
+      .endOf("day");
 
     if (days) {
       days.forEach((day) => {
@@ -148,75 +132,95 @@ const BookingFixedByMonth = ({ id }) => {
     setTotalPriceAll(totalPrice);
   };
 
-  const onFinish = (values) => {
-    const { days } = values;
-    let totalDuration = 0;
-    const startDate = form.getFieldValue('startDate');
-    const endDate = moment(startDate)
-      .add(form.getFieldValue('months'), 'months')
-      .subtract(1, 'days')
-      .endOf('day');
+  const onFinish = async (values) => {
+    const startDate = form.getFieldValue("startDate").format("YYYY-MM-DD");
+    const months = form.getFieldValue("months");
+    const days = values.days.map((day) => ({
+      dayOfWeek: day.dayOfWeek,
+      startTime: day.startTime.format("HH:mm"),
+      duration: parseFloat(day.duration),
+    }));
 
-    if (days) {
-      days.forEach((day) => {
-        const validDays = getDaysOfWeekBetweenDates(
-          startDate,
-          endDate,
-          day.dayOfWeek
+    const bookingData = {
+      centerId: id,
+      courtId: values.pickCourt,
+      userId: "667040da47f6663015c9ac1a",
+      scheduleType: ScheduleTypes.FIXED_MONTH_PACKAGE_PRICE,
+      startDate,
+      totalMonths: months,
+      days,
+    };
+    console.log("bookingData: ", bookingData);
+
+    // Send the bookingData to the backend
+    try {
+      const data =
+        await createFixedPackageScheduleAPI.createFixedPackageSchedule(
+          bookingData
         );
-        totalDuration += validDays.length * parseFloat(day.duration);
-      });
+      console.log("Success MP:", data);
+    } catch (error) {
+      console.error("Error MP:", error);
     }
-
-    const totalPrice = totalDuration * center.pricePerHour;
-
-    navigate({
-      pathname: '/paymentBookingFixed',
-      state: { bookingData: values, totalPrice: totalPrice },
-    });
   };
 
   const onAddDay = (add) => {
     add();
   };
 
-  const handleSelectChange = (value) => {
+  const handleSelectChange = (value, index) => {
     if (!selectedDays.includes(value)) {
-      setSelectedDays([...selectedDays, value]);
+      let newSelectedDays = [...selectedDays];
+      newSelectedDays[index] = value;
+      setSelectedDays(newSelectedDays);
     }
   };
 
-  const isDaySelected = (day) => {
-    return selectedDays.includes(day);
+  const removeDay = (day, index) => {
+    let newSelectedDays = selectedDays.filter((selectedDay, i) => i !== index);
+    setSelectedDays(newSelectedDays);
+  };
+
+  const getAvailableDaysOfWeek = () => {
+    const daysOfWeek = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+    return daysOfWeek.filter((day) => !selectedDays.includes(day));
   };
 
   return (
-    <Row gutter={[16, 16]} justify='center'>
+    <Row gutter={[16, 16]} justify="center">
       <Col span={12}>
         <Card>
-          <div style={{ marginBottom: '1.2rem' }}>
+          <div style={{ marginBottom: "1.2rem" }}>
             <h2>Đặt lịch cố định theo tháng</h2>
             <Text italic>
               Giá:
-              <strong style={{ color: 'red', marginLeft: '0.2rem' }}>
+              <strong style={{ color: "red", marginLeft: "0.2rem" }}>
                 {formatPrice(price)}đ/giờ
               </strong>
             </Text>
           </div>
 
-          <Space style={{ margin: '10px' }} />
-          <Form form={form} onFinish={onFinish} layout='vertical'>
+          <Space style={{ margin: "10px" }} />
+          <Form form={form} onFinish={onFinish} layout="vertical">
             <Form.Item
-              name='pickCourt'
-              label='Chọn sân'
+              name="pickCourt"
+              label="Chọn sân"
               rules={[
                 {
                   required: true,
-                  message: 'Vui lòng chọn sân',
+                  message: "Vui lòng chọn sân",
                 },
               ]}
             >
-              <Select placeholder='Chọn sân'>
+              <Select placeholder="Chọn sân">
                 {courts.map((court) => (
                   <Option key={court._id} value={court._id}>
                     {court.courtNumber}
@@ -225,41 +229,41 @@ const BookingFixedByMonth = ({ id }) => {
               </Select>
             </Form.Item>
             <Form.Item
-              name='startDate'
-              label='Ngày bắt đầu'
+              name="startDate"
+              label="Ngày bắt đầu"
               rules={[
                 {
                   required: true,
-                  message: 'Vui lòng chọn ngày bắt đầu!',
+                  message: "Vui lòng chọn ngày bắt đầu!",
                 },
               ]}
             >
               <DatePicker
-                placeholder='Ngày bắt đầu'
+                placeholder="Ngày bắt đầu"
                 disabledDate={(current) =>
                   current &&
-                  (current.isBefore(moment().add(8, 'days').startOf('day')) ||
+                  (current.isBefore(moment().add(8, "days").startOf("day")) ||
                     current.isAfter(
                       moment()
-                        .add(8, 'days')
-                        .startOf('day')
+                        .add(8, "days")
+                        .startOf("day")
                         .clone()
-                        .add(30, 'days')
-                        .endOf('day')
+                        .add(30, "days")
+                        .endOf("day")
                     ))
                 }
                 onChange={() => calculateEndDate()}
-                format='DD-MM-YYYY'
+                format="DD-MM-YYYY"
               />
             </Form.Item>
 
             <Form.Item
-              name='months'
-              label='Số tháng'
-              rules={[{ required: true, message: 'Vui lòng chọn số tháng!' }]}
+              name="months"
+              label="Số tháng"
+              rules={[{ required: true, message: "Vui lòng chọn số tháng!" }]}
             >
               <Select
-                placeholder='Số tháng'
+                placeholder="Số tháng"
                 onChange={() => calculateEndDate()}
               >
                 <Option value={1}>1 tháng</Option>
@@ -268,196 +272,110 @@ const BookingFixedByMonth = ({ id }) => {
               </Select>
             </Form.Item>
 
-            <Form.Item label='Ngày kết thúc'>
+            <Form.Item label="Ngày kết thúc">
               <Input
-                value={endDate ? endDate.format('DD-MM-YYYY') : ''}
+                value={endDate ? endDate.format("DD-MM-YYYY") : ""}
                 disabled
               />
             </Form.Item>
 
-            <Form.List name='days'>
+            <Form.List name="days">
               {(fields, { add, remove }) => (
                 <>
-                  {fields.map(({ key, name, ...restField }) => (
+                  {fields.map(({ key, name, ...restField }, index) => (
                     <Space
                       key={key}
-                      style={{ display: 'flex', marginBottom: 8 }}
-                      align='baseline'
+                      style={{ display: "flex", marginBottom: 8 }}
+                      align="baseline"
                     >
                       <Form.Item
                         {...restField}
-                        name={[name, 'dayOfWeek']}
-                        label='Chọn thứ trong tuần'
+                        name={[name, "dayOfWeek"]}
+                        label="Chọn thứ trong tuần"
                         rules={[
-                          { required: true, message: 'Vui lòng chọn thứ!' },
+                          { required: true, message: "Vui lòng chọn thứ!" },
                         ]}
                       >
                         <Select
-                          placeholder='Chọn thứ'
-                          onChange={handleSelectChange}
+                          placeholder="Chọn thứ"
+                          onChange={(value) => handleSelectChange(value, index)}
                         >
-                          <Option
-                            value='Monday'
-                            disabled={isDaySelected('Monday')}
-                          >
-                            Thứ Hai
-                          </Option>
-                          <Option
-                            value='Tuesday'
-                            disabled={isDaySelected('Tuesday')}
-                          >
-                            Thứ Ba
-                          </Option>
-                          <Option
-                            value='Wednesday'
-                            disabled={isDaySelected('Wednesday')}
-                          >
-                            Thứ Tư
-                          </Option>
-                          <Option
-                            value='Thursday'
-                            disabled={isDaySelected('Thursday')}
-                          >
-                            Thứ Năm
-                          </Option>
-                          <Option
-                            value='Friday'
-                            disabled={isDaySelected('Friday')}
-                          >
-                            Thứ Sáu
-                          </Option>
-                          <Option
-                            value='Saturday'
-                            disabled={isDaySelected('Saturday')}
-                          >
-                            Thứ Bảy
-                          </Option>
-                          <Option
-                            value='Sunday'
-                            disabled={isDaySelected('Sunday')}
-                          >
-                            Chủ Nhật
-                          </Option>
+                          {getAvailableDaysOfWeek().map((day) => (
+                            <Option key={day} value={day}>
+                              {day}
+                            </Option>
+                          ))}
                         </Select>
                       </Form.Item>
                       <Form.Item
                         {...restField}
-                        name={[name, 'startTime']}
-                        label='Giờ bắt đầu'
+                        name={[name, "startTime"]}
+                        label="Giờ bắt đầu"
                         rules={[
                           {
                             required: true,
-                            message: 'Vui lòng chọn giờ bắt đầu!',
+                            message: "Vui lòng chọn giờ bắt đầu!",
                           },
                         ]}
                       >
-                        <TimePicker format='HH:mm' minuteStep={30} />
+                        <TimePicker format="HH:mm" />
                       </Form.Item>
-
                       <Form.Item
                         {...restField}
-                        name={[name, 'duration']}
-                        label='Thời lượng (giờ)'
+                        name={[name, "duration"]}
+                        label="Số giờ chơi"
                         rules={[
-                          {
-                            required: true,
-                            message: 'Vui lòng chọn thời lượng!',
-                          },
+                          { required: true, message: "Vui lòng nhập số giờ!" },
                         ]}
                       >
-                        <Input type='number' min={1} step={0.5} />
+                        <Input type="number" step="0.5" min="0.5" />
                       </Form.Item>
-                      <Form.Item>
-                        <Button
-                          style={{
-                            color: '#ff3200',
-                            padding: 0,
-                          }}
-                          type='danger'
-                          onClick={() => remove(name)}
-                          icon={<ImBin style={{ fontSize: '1.2rem' }} />}
-                        />
-                      </Form.Item>
+                      <ImBin
+                        onClick={() => {
+                          remove(name);
+                          removeDay(
+                            form.getFieldValue(["days", name, "dayOfWeek"])
+                          );
+                        }}
+                        style={{ cursor: "pointer", color: "red" }}
+                      />
                     </Space>
                   ))}
                   <Form.Item>
                     <Button
-                      type='dashed'
-                      onClick={() => onAddDay(add, fields)}
+                      type="dashed"
+                      onClick={() => onAddDay(add)}
                       block
-                      icon='+'
+                      icon="+"
                     >
-                      Thêm ngày
+                      Thêm ngày chơi
                     </Button>
                   </Form.Item>
                 </>
               )}
             </Form.List>
+
             <Form.Item>
-              <Text code style={{ fontSize: '1.2rem' }}>
-                Tổng tiền:
-                <strong> {formatPrice(totalPriceAll)}đ</strong>
-              </Text>
               <Button
-                type='default'
+                type="primary"
+                htmlType="submit"
                 onClick={estimatePrice}
-                style={{
-                  marginLeft: '10px',
-                  background: '#727374',
-                  color: 'white',
-                }}
+                block
               >
-                Tính tổng tiền
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button type='primary' htmlType='submit'>
-                Đặt lịch
+                Tính giá và thanh toán
               </Button>
             </Form.Item>
           </Form>
         </Card>
       </Col>
-      <Col span={8}>
-        <Card
-          title='Thông tin sân'
-          style={{ boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)' }}
-        >
-          <Text>
-            {center.centerName && <strong>{center.centerName}</strong>}
-            <a onClick={handleOpenModal}>
-              {center.location && (
-                <p>
-                  {center.location} <FaMapMarkerAlt />
-                </p>
-              )}
-            </a>
-          </Text>
-          <Carousel autoplay style={{ height: '10rem', width: '10rem' }}>
-            {!center.images || center.images.length === 0 ? (
-              <Empty />
-            ) : (
-              center.images.map((image, index) => (
-                <div key={index}>
-                  <img
-                    src={image}
-                    style={{ width: '100%' }}
-                    alt={center.nameCenter}
-                  />
-                </div>
-              ))
-            )}
-          </Carousel>
-          <Modal
-            visible={showModal}
-            title='Vị trí'
-            onCancel={handleCloseModal}
-            footer={null}
-            centered
-            style={{ height: '80vh' }} // Thiết lập chiều cao của modal
-          >
-            <MyLocationMap address={center.addressCenter} />
-          </Modal>
+      <Col span={12}>
+        <Card>
+          <h3 style={{ marginTop: "20px" }}>Giá dự kiến</h3>
+          {totalPriceAll > 0 ? (
+            <Text strong>{formatPrice(totalPriceAll)}đ</Text>
+          ) : (
+            <Empty description="Chưa có thông tin giá" />
+          )}
         </Card>
       </Col>
     </Row>

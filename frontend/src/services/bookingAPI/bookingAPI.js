@@ -26,3 +26,16 @@ export const checkBookingAvailablebyDayAPI = async (data) => {
     return response.data;
   }
 };
+
+export const getPersonalBookingAPI = async () => {
+  const response = await fetchData(
+    "http://localhost:5050/api/v1/booking/get-personal-booking"
+  );
+  console.log("Response:", response);
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === "success") {
+    return response.data;
+  }
+};

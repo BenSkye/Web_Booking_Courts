@@ -4,64 +4,6 @@ import { useParams } from "react-router-dom";
 import BookingDetail from "./bookingDetail";
 import { getBookingByCenterIdAndDay } from "../../../../services/partnerAPI";
 
-const center = {
-  _id: { $oid: "6659c9640c9744e84bee0fe7" },
-  name: "Test Center123",
-  location: "123 Test Street, Test City, Test Country",
-  openTime: "08:30",
-  closeTime: "20:00",
-  courtNumber: 5,
-  expiryDate: { $date: "2024-12-31T00:00:00.000Z" },
-  status: "pending",
-  __v: 0,
-};
-
-const courtSlotInDay = [
-  {
-    courtid: "02383",
-    courtnumber: "01",
-    bookings: [
-      // {
-      //   bookingId: "3132",
-      //   date: "2024-06-01T12:58:12.813+00:00",
-      //   startTime: "09:30",
-      //   endTime: "11:00",
-      // },
-      // {
-      //   bookingId: "3462",
-      //   date: "2024-06-01T12:58:12.813+00:00",
-      //   startTime: "11:00",
-      //   endTime: "12:00",
-      // },
-      // {
-      //   bookingId: "456",
-      //   date: "2024-06-01T12:58:12.813+00:00",
-      //   startTime: "15:00",
-      //   endTime: "17:00",
-      // },
-    ],
-  },
-  {
-    courtid: "23131",
-    courtnumber: "02",
-    bookings: [
-      // {
-      //   bookingId: "321",
-      //   date: "2024-06-01T12:58:12.813+00:00",
-      //   startTime: "10:30",
-      //   endTime: "13:00",
-      // },
-      // {
-      //   bookingId: "789",
-      //   date: "2024-06-01T12:58:12.813+00:00",
-      //   startTime: "17:30",
-      //   endTime: "19:00",
-      // },
-    ],
-  },
-  { courtid: "4324", courtnumber: "03", bookings: [] },
-];
-
 export default function CalendarSlot({ selectedDate, center }) {
   const generateSlots = (center) => {
     const slotsArray = [{ dataIndex: "court" }];
@@ -107,7 +49,7 @@ export default function CalendarSlot({ selectedDate, center }) {
           courtRow[startColumn] = (
             <Tooltip title={`Xem chi tiết đặt sân`}>
               <td
-                onClick={() => showModal(booking._id)}
+                onClick={() => showModal(booking)}
                 colSpan={columnsInRange.length}
                 style={{
                   paddingRight: "2px",
@@ -164,12 +106,12 @@ export default function CalendarSlot({ selectedDate, center }) {
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [BookingId, setBookingId] = useState();
+  const [Booking, setBooking] = useState();
   const [bookingInDay, setBookingInDay] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const showModal = (id) => {
-    setBookingId(id);
+  const showModal = (booking) => {
+    setBooking(booking);
     setIsModalOpen(true);
   };
   const handleOk = () => {
@@ -238,7 +180,7 @@ export default function CalendarSlot({ selectedDate, center }) {
         footer={null}
         onCancel={handleOk}
       >
-        <BookingDetail id={BookingId} />
+        <BookingDetail Booking={Booking} />
       </Modal>
     </>
   );
