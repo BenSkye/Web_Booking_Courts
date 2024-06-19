@@ -100,7 +100,8 @@ class centerService implements ICenterService {
     if (center.status.includes('pending')) {
       throw new AppError('Can not set Package now', 409)
     }
-    const centerPackage = await centerPackageRepository.getCenterPackage({ _id: packageid })
+    const centerPackageRepositoryInstance = new centerPackageRepository()
+    const centerPackage = await centerPackageRepositoryInstance.getCenterPackage({ _id: packageid })
     if (!centerPackage) {
       throw new AppError('Can not found centerPackage', 404)
     }
@@ -182,13 +183,13 @@ class centerService implements ICenterService {
   }
   async updateCenterInforById(centerId: string, data: any, userId: string) {
     const centerRepositoryInstance = new centerRepository()
-    const center = await centerRepositoryInstance.getCenter({ _id: centerId })
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId})
     if (!center) {
-      throw new AppError(`Center with id ${centerId} not found`, 404)
+      throw new AppError(`Center not found`, 404)
     }
-    if (center.managerId.toString() !== userId) {
-      throw new AppError('You are not authorized to perform this action', 403)
-    }
+    // if (center.managerId.toString() !== userId) {
+    //   throw new AppError('You are not authorized to perform this action', 403)
+    // }
     Object.assign(center, data)
     const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
     return updatedCenter
