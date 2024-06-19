@@ -64,7 +64,7 @@ class authController {
         httpOnly: true,
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
       })
-      .status(200)
+      .status(201)
       .json({
         status: 'success',
         data: {
@@ -78,7 +78,6 @@ class authController {
   static protect = catchAsync(async (req: any, res: any, next: any) => {
     const authServiceInstance = new authService()
     let token
-    console.log('token', token)
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1]
     }

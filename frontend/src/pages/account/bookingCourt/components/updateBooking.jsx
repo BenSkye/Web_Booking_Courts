@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 const { Step } = Steps;
 const { Option } = Select;
 
-export default function UpdateBooking({ oldBooking }) {
+export default function UpdateBooking({ oldBooking, newBooking }) {
   console.log("oldBooking", oldBooking);
   const dateFormat = "YYYY-MM-DD";
 
@@ -134,6 +134,16 @@ export default function UpdateBooking({ oldBooking }) {
       setCurrentStep(2);
     }
   }, [currentStep, selectedDate, startTime, duration]);
+
+  const handleUpdateBooking = (court) => {
+    court = {
+      ...court,
+      date: selectedDate,
+      start: startTime,
+      end: moment(startTime, "HH:mm").add(duration, "hours").format("HH:mm"),
+    };
+    newBooking(court);
+  };
   return (
     <div>
       <Steps
@@ -250,16 +260,13 @@ export default function UpdateBooking({ oldBooking }) {
                               <Row>Giá: {formatPrice(court?.price)}đ</Row>
                             </Col>
                             <Col>
-                              {/* <Button
-                                    type="primary"
-                                    onClick={() => handleAddToCart(court)}
-                                    disabled={selectedCourts.some(
-                                      (selectedCourt) =>
-                                        selectedCourt._id === court._id
-                                    )}
-                                  >
-                                    Thêm vào giỏ
-                                  </Button> */}
+                              <Button
+                                type="primary"
+                                onClick={() => handleUpdateBooking(court)}
+                                // disabled={court.isBooked}
+                              >
+                                Chọn sân
+                              </Button>
                             </Col>
                           </Row>
                         </Card>

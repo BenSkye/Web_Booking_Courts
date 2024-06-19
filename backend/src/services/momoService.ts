@@ -6,7 +6,8 @@ class momoService {
     amount: number,
     orderId: string,
     centerId: string,
-    callbackUrl: string
+    callbackUrl: string,
+    extraData: string
   ) {
     const accessKey = process.env.MOMO_ACCESS_TOKEN
     const secretKey = process.env.MOMO_SECRET_KEY
@@ -16,7 +17,6 @@ class momoService {
     console.log('ipnUrl', ipnUrl)
     const requestType = 'captureWallet'
     const requestId = orderId
-    const extraData = ''
     const orderGroupId = ''
     const autoCapture = true
     const orderExpireTime = 1

@@ -6,6 +6,8 @@ import bookingRepository from '~/repository/bookingRepository'
 
 interface IinvoiceService {
   addInvoiceBookingbyDay(price: any, userid: string, orderId: string): Promise<any>
+
+  addInvoiceUpdateBookingbyDay(price: any, userid: string, orderId: string): Promise<any>
   paidIvoice(invoiceId: string): Promise<any>
   getInvoicesByUserId(userid: string): Promise<any>
   getListInvoices(query: any): Promise<any>
@@ -25,7 +27,17 @@ class InvoiceService implements IinvoiceService {
     }
     return InvoiceRepositoryInstance.addInvoice(newInvoice)
   }
-
+  async addInvoiceUpdateBookingbyDay(price: any, userid: string, orderId: string) {
+    const InvoiceRepositoryInstance = new InvoiceRepository()
+    const newInvoice = {
+      invoiceID: orderId,
+      price: price,
+      userId: userid,
+      status: 'pending',
+      invoiceFor: 'UBBD'
+    }
+    return InvoiceRepositoryInstance.addInvoice(newInvoice)
+  }
   async paidIvoice(invoiceID: string) {
     const InvoiceRepositoryInstance = new InvoiceRepository()
     return InvoiceRepositoryInstance.updateInvoice({ invoiceID: invoiceID }, { status: 'paid' })
@@ -44,7 +56,7 @@ class InvoiceService implements IinvoiceService {
     const ListInvoice = await InvoiceRepositoryInstance.getListInvoices({ userId: userid })
     const updatedInvoices = await Promise.all(
       ListInvoice.map(async (invoice: any) => {
-        if (invoice.invoiceFor === 'BBD') {
+        if (invoice.invoiceFor === 'BBD' || invoice.invoiceFor === 'UBBD') {
           const booking = await bookingRepository.getBooking({ invoiceId: invoice._id })
           const centerRepositoryInstance = new centerRepository()
           if (!booking) return invoice

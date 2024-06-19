@@ -71,7 +71,7 @@ export const patchData = async (url, data) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (response.status === 200) {
+    if (response.status === 201) {
       return response;
     } else {
       console.error("Error patching data:", response.status);
@@ -97,8 +97,8 @@ export const putData = async (url, data) => {
     console.log("response", response);
 
     // Kiểm tra trạng thái HTTP của phản hồi
-    if (response.status === 200) {
-      return response.data; // Trả về dữ liệu của phản hồi
+    if (response.status === 201) {
+      return response; // Trả về dữ liệu của phản hồi
     } else {
       console.error(
         "Error patching data:",

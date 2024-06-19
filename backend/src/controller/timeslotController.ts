@@ -95,5 +95,16 @@ class timeSlotController {
       }
     })
   })
+  static getPriceFormStartoEnd = catchAsync(async (req: any, res: any, next: any) => {
+    const { centerId, start, end } = req.params
+    const timeSlotServiceInstance = new timeSlotService()
+    const price = await timeSlotServiceInstance.getPriceFormStartoEnd(centerId, start, end)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        price
+      }
+    })
+  })
 }
 export default timeSlotController

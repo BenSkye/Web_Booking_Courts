@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Image, Modal, Row, Col } from "antd";
+import { Card, Button, Image, Modal, Row, Col, Spin, Empty } from "antd";
 import moment from "moment";
 import { getPersonalInvoiceAPI } from "../../../services/invoiceAPI/invoiceAPI";
 
@@ -18,16 +18,20 @@ const OrderDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getInvoices = async () => {
+    setLoading(true);
     const data = await getPersonalInvoiceAPI();
     console.log("data:", data);
     setInvoices(data.invoices);
+    setLoading(false);
   };
 
   useEffect(() => {
     getInvoices();
   }, []);
+
   useEffect(() => {
     console.log("Invoices:", invoices);
   }, [invoices]);
@@ -47,83 +51,90 @@ const OrderDetails = () => {
 
   return (
     <div style={{ maxHeight: "80vh", overflowY: "auto", padding: "16px" }}>
-      {invoices.map((invoice, index) => (
-        <Card
-          key={index}
-          style={{
-            border: "1px solid #e8e8e8",
-            borderRadius: "10px",
-            marginBottom: "16px",
-            padding: "24px",
-            width: "100%",
-            margin: "0 auto",
-            height: "fit-content",
-            marginTop: "20px",
-          }}
-        >
-          <Row gutter={[16, 16]} style={{ alignItems: "center" }}>
-            <Col xs={24} sm={24} md={24} lg={6}>
-              <Image
-                width="80%"
-                src={invoice.center.images[0]}
-                alt={invoice.center.centerName}
-                style={{ width: "100%" }}
-              />
-            </Col>
-            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-              <h3 style={{ fontSize: "13px" }}>{invoice.center.centerName}</h3>
-              <p style={{ fontSize: "13px" }}>{invoice.center.location}</p>
-            </Col>
-            <Col
-              xs={24}
-              sm={24}
-              md={12}
-              lg={6}
-              xl={3}
-              style={{ textAlign: "left" }}
-            >
-              <p
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "16px",
-                }}
+      {loading ? (
+        <Spin size="large" style={{ display: "block", margin: "20px auto" }} />
+      ) : invoices.length === 0 ? (
+        <Empty />
+      ) : (
+        invoices.map((invoice, index) => (
+          <Card
+            key={index}
+            style={{
+              border: "1px solid #e8e8e8",
+              borderRadius: "10px",
+              marginBottom: "16px",
+              padding: "24px",
+              width: "100%",
+              margin: "0 auto",
+              height: "fit-content",
+              marginTop: "20px",
+            }}
+          >
+            <Row gutter={[16, 16]} style={{ alignItems: "center" }}>
+              <Col xs={24} sm={24} md={24} lg={6}>
+                <Image
+                  width="80%"
+                  src={invoice.center.images[0]}
+                  alt={invoice.center.centerName}
+                  style={{ width: "100%" }}
+                />
+              </Col>
+              <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+                <h3 style={{ fontSize: "13px" }}>
+                  {invoice.center.centerName}
+                </h3>
+                <p style={{ fontSize: "13px" }}>{invoice.center.location}</p>
+              </Col>
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={6}
+                xl={3}
+                style={{ textAlign: "left" }}
               >
-                Tổng tiền:{" "}
-                {Number(invoice.price).toLocaleString("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                })}{" "}
-              </p>
-            </Col>
-            <Col
-              xs={24}
-              sm={24}
-              md={12}
-              lg={6}
-              xl={3}
-              style={{ textAlign: "left" }}
-            >
-              <p
-                style={{ color: invoice.status === "paid" ? "green" : "black" }}
+                <p
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                  }}
+                >
+                  Tổng tiền:{" "}
+                  {Number(invoice.price).toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  })}{" "}
+                </p>
+              </Col>
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={6}
+                xl={3}
+                style={{ textAlign: "left" }}
               >
-                {invoice.status === "paid" ? "Đã thanh toán" : invoice.status}
-              </p>
-            </Col>
-          </Row>
+                <p
+                  style={{
+                    color: invoice.status === "paid" ? "green" : "black",
+                  }}
+                >
+                  {invoice.status === "paid" ? "Đã thanh toán" : invoice.status}
+                </p>
+              </Col>
+            </Row>
 
-          <div style={{ marginTop: "40px", height: "50px" }}>
-            {/* <Button type="primary" style={{ marginRight: 1, float: "right" }}>
-              Đặt lại
-            </Button> */}
-            <Button
-              style={{ float: "right" }}
-              onClick={() => showModal(invoice)}
-            >
-              Xem chi tiết
-            </Button>
-          </div>
-        </Card>
-      ))}
+            <div style={{ marginTop: "40px", height: "50px" }}>
+              <Button
+                style={{ float: "right" }}
+                onClick={() => showModal(invoice)}
+              >
+                Xem chi tiết
+              </Button>
+            </div>
+          </Card>
+        ))
+      )}
       {selectedInvoice && (
         <Modal
           title="Chi tiết hóa đơn"
