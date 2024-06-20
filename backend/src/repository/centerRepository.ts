@@ -32,6 +32,7 @@ interface ICenterRepository {
   getCenter(query: object): Promise<any | null>;
   updateCenter(query: object, data: Partial<ICenter>): Promise<any | null>;
   getAllSubscriptions(): Promise<any[]>;
+  updateCenterInforById(id: any, data: any): Promise<any | null>
 }
 
 class CenterRepository implements ICenterRepository {
@@ -104,6 +105,17 @@ class CenterRepository implements ICenterRepository {
         .exec()
     } catch (error) {
       throw new Error(`Could not fetch subscriptions: ${(error as Error).message}`);
+    }
+  }
+  async updateCenterInforById(id: any, data: any) {
+    try {
+      const center = await Center.findByIdAndUpdate(id, data, { new: true })
+      if (!center) {
+        throw new Error(`Center with id ${id} not found`)
+      }
+      return center
+    } catch (error) {
+      throw new Error(`Could not update center: ${(error as Error).message}`)
     }
   }
 }

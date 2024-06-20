@@ -1,9 +1,8 @@
-
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import AccountSettingsForm from "../accountInformation/index";
 import UpdatePassword from "../updatePassword/index";
-import { Link } from "react-router-dom";
 import OrderDetails from "../bill/index";
 import BookingCourt from "../bookingCourt/index";
 import {
@@ -21,17 +20,47 @@ const { Sider, Content } = Layout;
 
 const ProfileAccount = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey, setSelectedKey] = useState("1"); // State để lưu trạng thái liên kết được chọn
+  const [selectedKey, setSelectedKey] = useState("1");
+  const [isCustomer, setIsCustomer] = useState(false); // State để xác định vai trò của người dùng
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Simulate determining user role (replace with your actual logic)
+    const userRole = "admin, manager"; // Change this to 'customer', 'admin', 'manager' based on your logic
+
+    // Set isCustomer based on userRole
+    setIsCustomer(userRole === "customer");
+
+    // Determine the selected key based on the current pathname
+    setSelectedKey(getSelectedKey(location.pathname));
+  }, [location.pathname]);
+
+  const getSelectedKey = (pathname) => {
+    switch (pathname) {
+      case "/user/my-account":
+        return "1";
+      case "/user/update-password":
+        return "2";
+      case "/user/booking-court":
+        return "3";
+      case "/user/game-time":
+        return "4";
+      case "/user/bill":
+        return "5";
+      default:
+        return "1"; // Default to "1" for other routes
+    }
+  };
 
   const handleClick = (e) => {
-    setSelectedKey(e.key); // Cập nhật trạng thái khi một liên kết được chọn
+    setSelectedKey(e.key); // Update the selected key on menu click
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" , maxWidth: "100%" }}>
+    <Layout style={{ minHeight: "100vh", maxWidth: "100%" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu
@@ -41,7 +70,7 @@ const ProfileAccount = () => {
           style={{ marginTop: "60px" }}
           onClick={handleClick}
         >
-            <Button
+          <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
@@ -49,40 +78,31 @@ const ProfileAccount = () => {
               fontSize: "16px",
               width: 64,
               height: 64,
-              color: "#fff"
+              color: "#fff",
             }}
           />
           <Menu.Item key="1" icon={<UserOutlined />}>
-          <Link to="/user/my-account"></Link>
-          Tài khoản của tôi
-         
+            <Link to="/user/my-account">Tài khoản của tôi</Link>
           </Menu.Item>
           <Menu.Item key="2" icon={<LockOutlined />}>
-          <Link to="/user/update-password"></Link>
-            Cập nhật mật khẩu
+            <Link to="/user/update-password">Cập nhật mật khẩu</Link>
           </Menu.Item>
-          <Menu.Item key="3" icon={<BookOutlined />}>
-          <Link to="/user/booking-court"></Link>
-            Đặt sân
-          </Menu.Item>
-          <Menu.Item key="4" icon={<PlayCircleOutlined />}>
-            Số giờ chơi
-          </Menu.Item>
+          {isCustomer && (
+            <>
+              <Menu.Item key="3" icon={<BookOutlined />}>
+                <Link to="/user/booking-court">Đặt sân</Link>
+              </Menu.Item>
+              <Menu.Item key="4" icon={<PlayCircleOutlined />}>
+                <Link to="/user/game-time">Số giờ chơi</Link>
+              </Menu.Item>
+            </>
+          )}
           <Menu.Item key="5" icon={<FileTextOutlined />}>
-          <Link to="/user/bill"></Link>
-            Hóa đơn
+            <Link to="/user/bill">Hóa đơn</Link>
           </Menu.Item>
         </Menu>
       </Sider>
       <Layout>
-        {/* <Header
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-          }}
-        >
-        
-        </Header> */}
         <Content
           style={{
             margin: "24px 16px",
@@ -90,20 +110,14 @@ const ProfileAccount = () => {
             minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
-            border: "2px solid #d9d9d9", // Đặt đường viền màu xám nhạt
-            // display: "flex",
-            // justifyContent: "flex-start",
+            border: "2px solid #d9d9d9",
           }}
         >
-          {selectedKey === "1" && (
-            
-              <AccountSettingsForm />
-            
-          )}
+          {selectedKey === "1" && <AccountSettingsForm />}
           {selectedKey === "2" && <UpdatePassword />}
-          {selectedKey === "3" && <BookingCourt/>}
-          {selectedKey === "4" && <h1>Game Content</h1>}
-          {selectedKey === "5" && <h1><OrderDetails/></h1>}
+          {selectedKey === "3" && isCustomer && <BookingCourt />}
+          {selectedKey === "4" && isCustomer && <h1>Số giờ chơi</h1>}
+          {selectedKey === "5" && <OrderDetails />}
         </Content>
       </Layout>
     </Layout>

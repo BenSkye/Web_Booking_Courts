@@ -53,7 +53,6 @@ import { postData,patchData } from "../fetchAPI";
 import { jwtDecode } from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../../utils/firebase/firebase";
-import { signInSuccess } from "../../../redux/user/userSlice";
 import { Spin } from "antd";
 const AuthContext = createContext();
 

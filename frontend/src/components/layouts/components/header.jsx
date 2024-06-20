@@ -224,11 +224,18 @@ export default function HeaderLayout() {
 const menuItemsManager = [
   { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
   { key: "2", label: "Lịch hoạt động", path: "/courtManage/ManagerCalendar" },
-  { key: "3", label: "Yêu cầu tổ chức giải", path: "/courtManage/RequestToOrganizeATournament" },
+  {
+    key: "3",
+    label: "Yêu cầu tổ chức giải",
+    path: "/courtManage/RequestToOrganizeATournament",
+  },
   { key: "4", label: "Quản lý sân", path: "/courtManage" },
-  { key: "5", label: "Đặt sân trực tiếp", path: "/courtManage/BookingCourtDirectly" },
-  { key: "6", label: "Đăng kí gói", path: "/courtManage/registerPackageCourt" },
-  { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
+  {
+    key: "5",
+    label: "Đặt sân trực tiếp",
+    path: "/courtManage/BookingCourtDirectly",
+  },
+  { key: "6", label: "Đăng ký sân", path: "/courtManage/partner" },
 ];
 const menuItemsAdmin = [
   { key: "1", label: "Tổng quan", path: "/admin/Dashboard" },
@@ -237,7 +244,12 @@ const menuItemsAdmin = [
   { key: "4", label: "Quản lý người chủ sân", path: "/admin/ManagerManagement" },
 
 ];
- const menuItems = user?.role === "manager" ? menuItemsManager : (user?.role === "customer" ? menuItemsUser : menuItemsAdmin);
+const menuItems =
+user?.role === "manager"
+  ? menuItemsManager
+  : user?.role === "admin"
+  ? menuItemsAdmin
+  : menuItemsUser;
 
  
 
