@@ -9,9 +9,8 @@ import catchAsync from '~/utils/catchAsync'
 class bookingController {
   static createBookingbyDay = catchAsync(async (req: any, res: any, next: any) => {
     const listBooking = req.body.listBooking
-    const totalPrice = req.body.totalPrice
     const bookingServiceInstance = new bookingService()
-    const paymentResult = await bookingServiceInstance.createBookingbyDay(listBooking, totalPrice, req.user._id)
+    const paymentResult = await bookingServiceInstance.createBookingbyDay(listBooking, req.user._id)
     res.status(201).json({
       status: 'success',
       data: {

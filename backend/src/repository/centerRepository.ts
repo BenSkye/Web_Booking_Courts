@@ -30,6 +30,7 @@ interface ICenterRepository {
   getListCenter(query: object): Promise<any[]>
   getCenter(query: object): Promise<any | null>
   updateCenter(query: object, data: any): Promise<any | null>
+  updateCenterInforById(id: any, data: any): Promise<any | null>
 }
 class centerRepository implements ICenterRepository {
   async addCenter(center: ICenter) {
@@ -66,6 +67,18 @@ class centerRepository implements ICenterRepository {
   }
   async updateCenter(query: object, data: any) {
     return await Center.findOneAndUpdate(query, data, { new: true })
+  }
+
+  async updateCenterInforById(id: any, data: any) {
+    try {
+      const center = await Center.findByIdAndUpdate(id, data, { new: true })
+      if (!center) {
+        throw new Error(`Center with id ${id} not found`)
+      }
+      return center
+    } catch (error) {
+      throw new Error(`Could not update center: ${(error as Error).message}`)
+    }
   }
 }
 export default centerRepository

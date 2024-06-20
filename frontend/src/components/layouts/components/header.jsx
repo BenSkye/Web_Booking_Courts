@@ -234,12 +234,7 @@ export default function HeaderLayout() {
       label: "Đặt sân trực tiếp",
       path: "/courtManage/BookingCourtDirectly",
     },
-    {
-      key: "6",
-      label: "Đăng kí gói",
-      path: "/courtManage/registerPackageCourt",
-    },
-    { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
+    { key: "6", label: "Đăng ký sân", path: "/courtManage/partner" },
   ];
   const menuItemsAdmin = [
     { key: "1", label: "Tổng quan", path: "/admin/Dashboard" },

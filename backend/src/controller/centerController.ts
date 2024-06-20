@@ -96,5 +96,19 @@ class centerController {
       }
     })
   })
+  static updateCenterInforById = catchAsync(async (req: any, res: any, next: any) => {
+    const userId = req.user._id
+    const centerServiceInstance = new centerService()
+    const updatedCenter = await centerServiceInstance.updateCenterInforById(req.params.centerId, req.body, userId)
+    if (!updatedCenter) {
+      return next(new AppError('No center found with that ID', 404))
+    }
+    res.status(200).json({
+      status: 'success',
+      data: {
+        center: updatedCenter
+      }
+    })
+  })
 }
 export default centerController

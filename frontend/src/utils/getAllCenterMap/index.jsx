@@ -42,7 +42,7 @@ const GetAllLocationCenter = ({ locations }) => {
                 address: match.location,
                 // name: location.nameCenter,
                 name: location.centerName,
-                price: location.pricePerHour.price,
+                price: location.pricePerHour,
               };
             }
           })

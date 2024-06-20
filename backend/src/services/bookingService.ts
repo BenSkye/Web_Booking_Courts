@@ -9,30 +9,42 @@ import InvoiceRepository from '~/repository/invoiceReposotory'
 import courtRepository from '~/repository/courtRepository'
 import userRepository from '~/repository/userRepository'
 import centerRepository from '~/repository/centerRepository'
+import timeSlotService from './timeslotService'
 interface IbookingService {
-  createBookingbyDay(listBooking: [any], totalprice: number, userId: string): Promise<any>
+  createBookingbyDay(listBooking: [any], userId: string): Promise<any>
   checkAllSlotsAvailability(listBooking: [any]): Promise<boolean>
   createBooking(data: any, userId: string): Promise<any>
   getPersonalBooking(userId: string): Promise<any>
 }
 class bookingService implements IbookingService {
-  async createBookingbyDay(listBooking: any, totalprice: number, userId: string) {
+  async createBookingbyDay(listBooking: any, userId: string) {
     const allSlotsAvailable = await this.checkAllSlotsAvailability(listBooking)
     if (!allSlotsAvailable) {
       throw new AppError('Xin lỗi slot đã được đặt hoặc đang được đặt, kiểm tra lại booking', 400)
     }
     //chuyển hướng tới payment nhận response từ payment
     const orderId = 'RacketRise' + new Date().getTime()
-    const newInvoiceInstance = new InvoiceService()
-    const newInvoice = await newInvoiceInstance.addInvoiceBookingbyDay(totalprice, userId, orderId)
+    const InvoiceServiceInstance = new InvoiceService()
+    let totalprice = 0
+    const newInvoice = await InvoiceServiceInstance.addInvoiceBookingbyDay(totalprice, userId, orderId)
+    const timeSlotServiceInstance = new timeSlotService()
     const listnewbooking = await Promise.all(
       listBooking.map(async (booking: any) => {
         booking.invoiceId = newInvoice._id
+        const PricePerBooking = await timeSlotServiceInstance.getPriceFormStartoEnd(
+          booking.centerId,
+          booking.start,
+          booking.end
+        )
+        if (PricePerBooking) {
+          totalprice += PricePerBooking
+        }
         const newbooking = await this.createBooking(booking, userId)
         return newbooking
       })
     )
-
+    const InvoiceRepositoryInstance = new InvoiceRepository()
+    const updateInvoice = await InvoiceRepositoryInstance.updateInvoice({ _id: newInvoice._id }, { price: totalprice })
     const bookingDetail = listBooking.map((booking: { date: any; start: any; end: any }) => {
       return `${booking.date} (${booking.start} - ${booking.end})`
     })
@@ -288,10 +300,10 @@ class bookingService implements IbookingService {
     const formattedTime = `${formattedHours}:${formattedMinutes}`
     const now = new Date()
     now.setUTCHours(0, 0, 0, 0)
-    const listBooking = await bookingRepository.getListBooking({ date: now.toISOString() })
+    const listBooking = await bookingRepository.getListBooking({ date: now.toISOString(), status: 'confirmed' })
     await Promise.all(
       listBooking.map(async (booking) => {
-        if (booking.status === 'confirmed' && booking.start <= formattedTime) {
+        if (booking.start <= formattedTime) {
           await bookingRepository.updateBooking({ _id: booking._id }, { status: 'expired' })
         }
       })
