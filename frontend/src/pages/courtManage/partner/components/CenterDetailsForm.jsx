@@ -64,7 +64,7 @@ const CenterDetailsForm = ({
         <MyLocationMap2 address={address} />
       </Form.Item>
       <Form.Item
-        label="Giờ mở cửa"
+        label="Giờ mở cửa (giờ mở cửa sẻ cách giờ đóng cửa 8 tiếng)"
         name="openTime"
         rules={[{ required: true, message: "Hãy nhập giờ mở cửa" }]}
       >
@@ -145,7 +145,7 @@ const CenterDetailsForm = ({
             >
               <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>
-            
+
             {uploadProgressCourt > 0 && (
               <Progress percent={uploadProgressCourt} />
             )}

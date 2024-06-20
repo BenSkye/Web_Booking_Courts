@@ -1,14 +1,19 @@
 import React from "react";
 import { Card, Col, Row, List, Descriptions, Image } from "antd";
-
+const scheduleTypeMapping = {
+  NP: "Giờ bình thường",
+  GP: "Giờ vàng",
+  MP: "Đặt lịch cố định theo tháng",
+  PP: "Mua gói giờ chơi",
+};
 const ReviewStep = ({ formValues }) => {
   const { center, price } = formValues;
 
   return (
     <div style={{ padding: "20px" }}>
       <h3>Review your details</h3>
-      <Row gutter={16}>
-        <Col span={12}>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} md={12}>
           <Card title="Thông tin bạn đã nhập" bordered={false}>
             <Descriptions column={1}>
               <Descriptions.Item label="Tên trung tâm">
@@ -26,11 +31,13 @@ const ReviewStep = ({ formValues }) => {
               <Descriptions.Item label="Số lượng sân đấu">
                 {center.courtCount}
               </Descriptions.Item>
-              <Descriptions.Item label="Quy định sử dụng sân">{center.rule}</Descriptions.Item>
+              <Descriptions.Item label="Quy định sử dụng sân">
+                {center.rule}
+              </Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
-        <Col span={12}>
+        <Col xs={24} md={12}>
           <Card title="Dịch vụ" bordered={false}>
             <List
               dataSource={center.services}
@@ -39,8 +46,8 @@ const ReviewStep = ({ formValues }) => {
           </Card>
         </Col>
       </Row>
-      <Row gutter={16} style={{ marginTop: "20px" }}>
-        <Col span={12}>
+      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+        <Col xs={24} md={12}>
           <Card title="Hình ảnh của sân" bordered={false}>
             <Image.PreviewGroup>
               {center.images.map((image, index) => (
@@ -49,7 +56,7 @@ const ReviewStep = ({ formValues }) => {
             </Image.PreviewGroup>
           </Card>
         </Col>
-        <Col span={12}>
+        <Col xs={24} md={12}>
           <Card title="Giấy phép kinh doanh" bordered={false}>
             <Image.PreviewGroup>
               {center.imagesLicense.map((image, index) => (
@@ -59,8 +66,8 @@ const ReviewStep = ({ formValues }) => {
           </Card>
         </Col>
       </Row>
-      <Row gutter={16} style={{ marginTop: "20px" }}>
-        <Col span={24}>
+      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+        <Col xs={24}>
           <Card title="Chi tiết về giá cả" bordered={false}>
             <List
               dataSource={price}
@@ -77,7 +84,7 @@ const ReviewStep = ({ formValues }) => {
                       {item.endTime}
                     </Descriptions.Item>
                     <Descriptions.Item label="Loại giờ">
-                      {item.scheduleType}
+                      {scheduleTypeMapping[item.scheduleType]}
                     </Descriptions.Item>
                   </Descriptions>
                 </List.Item>

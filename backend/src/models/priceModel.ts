@@ -8,7 +8,8 @@ const priceSchema = new Schema(
     },
     price: {
       type: Number,
-      required: true
+      required: true,
+      min: 10000
     },
     startTime: {
       type: String,
@@ -19,6 +20,7 @@ const priceSchema = new Schema(
       required: true
     },
     scheduleType: {
+      enum: ['NP', 'GP', 'MP', 'PP'], //NP=Normal Price, GP=Golden Price, MP=Month Price, PP=PackagePrice
       type: String,
       required: true
     }

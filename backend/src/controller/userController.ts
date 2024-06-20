@@ -23,7 +23,7 @@ class UserController {
 
     const { newuser } = await UserService.updateUser(userId, { userName, avatar, userPhone })
 
-    res.status(200).json({
+    res.status(201).json({
       status: 'success',
       data: {
         user: newuser

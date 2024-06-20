@@ -15,5 +15,8 @@ class bookingRepository {
   static async updateBooking(query: object, update: object) {
     return await Booking.findOneAndUpdate(query, update, { new: true })
   }
+  static async deleteBooking(query: object) {
+    return await Booking.deleteOne(query)
+  }
 }
 export default bookingRepository

@@ -5,7 +5,7 @@ import moment from "moment";
 import { FaCalendarAlt } from "react-icons/fa";
 import dayjs from "dayjs";
 
-export default function ChooseDay() {
+export default function ChooseDay({ center }) {
   const currentDay = moment();
   console.log(currentDay);
   const [dayChoose, setDayChoose] = useState(currentDay);
@@ -40,7 +40,7 @@ export default function ChooseDay() {
         </div>
       </div>
 
-      <CalendarSlot selectedDate={dayChoose} />
+      <CalendarSlot selectedDate={dayChoose} center={center} />
     </>
   );
 }

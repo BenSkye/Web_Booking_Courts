@@ -16,6 +16,7 @@ interface ITimeSlotRepository {
   getTimeslot(query: object): Promise<any | null>
   updateSlotStatus(param: object, status: string): Promise<any | null>
   checkTimeSlotAvailable(param: object): Promise<boolean>
+  checkTimeSlotAvailableForUpdate(param: object): Promise<boolean>
 }
 class timeSlotRepository implements ITimeSlotRepository {
   async addTimeSlot(timeslot: ITimeSlot) {
@@ -54,10 +55,35 @@ class timeSlotRepository implements ITimeSlotRepository {
     if (result !== null) {
       const isBooked = result.slot.some(
         (slot: any) =>
-          (slot.status === 'booked' || slot.status === 'booking') &&
-          slot.start === param.start &&
-          slot.end === param.end
+          (slot.status === 'booked' || slot.status === 'booking') && slot.start < param.end && slot.end > param.start
       )
+      return !isBooked
+    }
+    return false
+  }
+  async checkTimeSlotAvailableForUpdate(param: {
+    courtId: string
+    date: Date
+    start: string
+    end: string
+    oldStart: string
+    oldEnd: string
+  }) {
+    const query = {
+      courtId: param.courtId,
+      date: param.date
+    }
+    console.log('param', param)
+    const result = await TimeSlot.findOne(query)
+    if (result !== null) {
+      const isBooked = result.slot.some(
+        (slot: any) =>
+          (slot.status === 'booked' || slot.status === 'booking') &&
+          slot.start < param.end &&
+          slot.end > param.start &&
+          (slot.start > param.oldEnd || slot.end < param.oldStart)
+      )
+      console.log('isBooked', isBooked)
       return !isBooked
     }
     return false

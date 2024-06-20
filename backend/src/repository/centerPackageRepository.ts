@@ -1,16 +1,25 @@
-
 import CenterPackage from '~/models/centerPackageModel'
 
-class centerPackageRepository {
-  static async addCenterPackage(centerPackage: any) {
+interface ICenterRepository {
+  addCenterPackage(centerPackage: any): Promise<any>
+  getListCenterPackage(query: any): Promise<any[]>
+  getCenterPackage(query: any): Promise<any | null>
+  getAllCenterPackage(): Promise<any[]>
+}
+
+class centerPackageRepository implements ICenterRepository {
+  async addCenterPackage(centerPackage: any) {
     const newcenterPackage = new CenterPackage(centerPackage)
     return newcenterPackage.save()
   }
-  static async getListCenterPackage(query: any) {
+  async getListCenterPackage(query: any) {
     return await CenterPackage.find(query)
   }
-  static async getCenterPackage(query: any) {
+  async getCenterPackage(query: any) {
     return await CenterPackage.findOne(query)
+  }
+  async getAllCenterPackage() {
+    return await CenterPackage.find()
   }
 }
 export default centerPackageRepository

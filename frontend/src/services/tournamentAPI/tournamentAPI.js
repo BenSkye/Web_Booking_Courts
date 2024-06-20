@@ -1,8 +1,8 @@
-import { fetchDataMockAPI } from "@/services/fetchAPI";
+import { fetchData } from "@/services/fetchAPI";
 import { postData } from "../fetchAPI";
 
 export const getAllTournamentAPI = async () => {
-  const data = await fetchDataMockAPI(
+  const data = await fetchData(
     "https://664e992dfafad45dfae087c5.mockapi.io/Tournament"
   );
   if (Array.isArray(data)) {
@@ -21,7 +21,7 @@ export const getAllTournamentAPI = async () => {
 };
 
 export const getPersonalTournamentAPI = async () => {
-  const data = await fetchDataMockAPI(
+  const data = await fetchData(
     "https://664e992dfafad45dfae087c5.mockapi.io/Tournament?userId=1"
   );
   if (Array.isArray(data)) {
@@ -43,7 +43,7 @@ export const getPersonalTournamentAPI = async () => {
 };
 
 export const getTournamentAPI = async (id) => {
-  const data = await fetchDataMockAPI(
+  const data = await fetchData(
     `https://664e992dfafad45dfae087c5.mockapi.io/Tournament/${id}`
   );
   console.log("data", data);

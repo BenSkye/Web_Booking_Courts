@@ -1,4 +1,3 @@
-
 import PlayPackage from '~/models/playPackagesModel';
 import { Schema } from 'mongoose';
 interface IPlayPackage {

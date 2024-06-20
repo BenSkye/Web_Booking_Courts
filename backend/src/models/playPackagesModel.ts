@@ -1,6 +1,15 @@
-import mongoose from 'mongoose';
 
-const { Schema } = mongoose;
+
+import mongoose, { Schema, Document } from 'mongoose';
+
+
+export interface IPlayPackage extends Document {
+  userId: Schema.Types.ObjectId;
+  centerId: Schema.Types.ObjectId;
+  totalHours: number;
+  remainingHours: number;
+
+}
 
 const playPackageSchema = new Schema(
   {
