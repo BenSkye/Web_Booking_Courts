@@ -14,7 +14,6 @@ import RegisterPackageCourt from "@/pages/courtManage/registerPackageCourt";
 import TournamentCreate from "@/pages/tournamentCreate";
 import RegistTournamentForm from "@/pages/tournamentCreate/components/RegistTournamentForm";
 import CourtManage from "@/pages/courtManage";
-import TournamentDetail from "../pages/TournamentDetail";
 import CourtManageDetail from "../pages/courtManage/courtManageDetail";
 import PaymentBookingFixed from "../components/booking/bookingDetails/bookingFixedByMonth/components/payment/paymentBookingFixed";
 import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
@@ -29,6 +28,7 @@ import CourtManageUpdate from "../pages/courtManage/courtManageUpdate";
 import ManageCenter from "../pages/courtManage/manageCourtByAdmin/manageCenter";
 import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage";
 import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople";
+import ManagerManagement from "../pages/courtManage/manageCourtByAdmin/manageManager";
 function Routing() {
   return (
     <Routes>
@@ -229,6 +229,14 @@ function Routing() {
           element={
             <ProtectedRoute roles={["admin"]}>
               <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/admin/ManagerManagement"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <ManagerManagement />
             </ProtectedRoute>
           }
         />

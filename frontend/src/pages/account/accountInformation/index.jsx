@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Button, Form, Input, message, Spin, Avatar, Row } from "antd";
 // import Updateuser from '../../../services/authAPI/authProvideAPI'
-import AuthContext from "../../../services/authAPI/authProvideAPI";
 import {
   getStorage,
   ref,
@@ -160,6 +159,9 @@ const AccountSettingsForm = () => {
         <Input disabled />
       </Form.Item>
       <Form.Item label="Số điện thoại" name="userPhone">
+        <Input />
+      </Form.Item>
+      <Form.Item label="Địa chỉ" name="userAddress">
         <Input />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

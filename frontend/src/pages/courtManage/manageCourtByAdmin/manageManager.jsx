@@ -5,7 +5,7 @@ import { EditOutlined } from '@ant-design/icons';
 import AuthContext from "../../../services/authAPI/authProvideAPI";
 import getAllUsersAPI from '../../../services/admin/manageUser';
 
-const UserManagement = () => {
+const ManagerManagement = () => {
   const { user } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
 
@@ -107,7 +107,7 @@ const UserManagement = () => {
   ];
 
   // Filter the users to show only those with the role 'user'
-  const filteredUsers = users.filter(user => user.role === 'customer');
+  const filteredUsers = users.filter(user => user.role === 'manager');
 
   return (
     <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -124,4 +124,4 @@ const UserManagement = () => {
   );
 };
 
-export default UserManagement;
+export default ManagerManagement;

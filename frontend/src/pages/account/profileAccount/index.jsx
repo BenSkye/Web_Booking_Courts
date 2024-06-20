@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+// eslint-disable-next-line no-unused-vars
+import React, { useState, useEffect, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
 import AccountSettingsForm from "../accountInformation/index";
 import UpdatePassword from "../updatePassword/index";
-import { Link } from "react-router-dom";
 import OrderDetails from "../bill/index";
 import BookingCourt from "../bookingCourt/index";
 import {
@@ -14,55 +15,46 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
-import { useLocation } from "react-router-dom";
-const { Header, Sider, Content } = Layout;
+import AuthContext from "../../../services/authAPI/authProvideAPI";
+
+const { Sider, Content } = Layout;
 
 const ProfileAccount = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const location = useLocation();
-  const path = location.pathname;
-  console.log("path", path);
-  let defaultKey;
-  switch (path) {
-    case "/user/my-account":
-      defaultKey = "1";
-      break;
-    case "/user/update-password":
-      defaultKey = "2";
-      break;
-    case "/user/booking-court":
-      defaultKey = "3";
-      break;
-    // Add more cases as needed
-    default:
-      defaultKey = "1";
-  }
-  const [selectedKey, setSelectedKey] = useState(defaultKey);
-  useEffect(() => {
-    switch (path) {
-      case "/user/my-account":
-        setSelectedKey("1");
-        break;
-      case "/user/update-password":
-        setSelectedKey("2");
-        break;
-      case "/user/booking-court":
-        setSelectedKey("3");
-        break;
-      case "/user/bill":
-        setSelectedKey("5");
-        break;
-      // Add more cases as needed
-      default:
-        setSelectedKey("1");
-    }
-  }, [path]);
+  const [selectedKey, setSelectedKey] = useState("1");
+  const [isCustomer, setIsCustomer] = useState(false); // State để xác định vai trò của người dùng
+  const { user } = useContext(AuthContext);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (user.role === "customer") setIsCustomer(true);
+
+    // Determine the selected key based on the current pathname
+    setSelectedKey(getSelectedKey(location.pathname));
+  }, [location.pathname, user.role]);
+
+  const getSelectedKey = (pathname) => {
+    switch (pathname) {
+      case "/user/my-account":
+        return "1";
+      case "/user/update-password":
+        return "2";
+      case "/user/booking-court":
+        return "3";
+      case "/user/game-time":
+        return "4";
+      case "/user/bill":
+        return "5";
+      default:
+        return "1"; // Default to "1" for other routes
+    }
+  };
 
   const handleClick = (e) => {
-    setSelectedKey(e.key); // Cập nhật trạng thái khi một liên kết được chọn
+    setSelectedKey(e.key); // Update the selected key on menu click
   };
 
   return (
@@ -88,35 +80,27 @@ const ProfileAccount = () => {
             }}
           />
           <Menu.Item key="1" icon={<UserOutlined />}>
-            <Link to="/user/my-account"></Link>
-            Tài khoản của tôi
+            <Link to="/user/my-account">Tài khoản của tôi</Link>
           </Menu.Item>
           <Menu.Item key="2" icon={<LockOutlined />}>
-            <Link to="/user/update-password"></Link>
-            Cập nhật mật khẩu
+            <Link to="/user/update-password">Cập nhật mật khẩu</Link>
           </Menu.Item>
-          <Menu.Item key="3" icon={<BookOutlined />}>
-            <Link to="/user/booking-court"></Link>
-            Đặt sân
-          </Menu.Item>
-          <Menu.Item key="4" icon={<PlayCircleOutlined />}>
-            Số giờ chơi
-          </Menu.Item>
+          {isCustomer && (
+            <>
+              <Menu.Item key="3" icon={<BookOutlined />}>
+                <Link to="/user/booking-court">Đặt sân</Link>
+              </Menu.Item>
+              <Menu.Item key="4" icon={<PlayCircleOutlined />}>
+                <Link to="/user/game-time">Số giờ chơi</Link>
+              </Menu.Item>
+            </>
+          )}
           <Menu.Item key="5" icon={<FileTextOutlined />}>
-            <Link to="/user/bill"></Link>
-            Hóa đơn
+            <Link to="/user/bill">Hóa đơn</Link>
           </Menu.Item>
         </Menu>
       </Sider>
       <Layout>
-        {/* <Header
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-          }}
-        >
-        
-        </Header> */}
         <Content
           style={{
             margin: "24px 16px",
@@ -124,20 +108,14 @@ const ProfileAccount = () => {
             minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
-            border: "2px solid #d9d9d9", // Đặt đường viền màu xám nhạt
-            // display: "flex",
-            // justifyContent: "flex-start",
+            border: "2px solid #d9d9d9",
           }}
         >
           {selectedKey === "1" && <AccountSettingsForm />}
           {selectedKey === "2" && <UpdatePassword />}
-          {selectedKey === "3" && <BookingCourt />}
-          {selectedKey === "4" && <h1>Game Content</h1>}
-          {selectedKey === "5" && (
-            <h1>
-              <OrderDetails />
-            </h1>
-          )}
+          {selectedKey === "3" && isCustomer && <BookingCourt />}
+          {selectedKey === "4" && isCustomer && <h1>Số giờ chơi</h1>}
+          {selectedKey === "5" && <OrderDetails />}
         </Content>
       </Layout>
     </Layout>
