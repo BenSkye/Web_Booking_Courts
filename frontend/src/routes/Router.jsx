@@ -24,6 +24,7 @@ import BookingCourtDirectly from "../pages/BookingCourtDirectly/BookingCourtDire
 import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/RequestToOrganizeATournament";
 import NoAccess from "../components/noAccess/noAccess";
 import ProtectedRoute from "../utils/authRoute/authRoute";
+import CourtManageUpdate from "../pages/courtManage/courtManageUpdate";
 
 import ManageCenter from "../pages/courtManage/manageCourtByAdmin/manageCenter";
 import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage";
@@ -135,7 +136,7 @@ function Routing() {
         />
         <Route path="/paymentBookingFixed" element={<PaymentBookingFixed />} />
         <Route
-          path="/courtManage/registerPackageCourt"
+          path="/courtManage/registerPackageCourt/:id"
           element={
             <ProtectedRoute roles={["manager"]}>
               <RegisterPackageCourt />
@@ -156,6 +157,14 @@ function Routing() {
           element={
             <ProtectedRoute roles={["manager"]}>
               <CourtManageDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/courtManage/update/:id"
+          element={
+            <ProtectedRoute roles={["manager"]}>
+              <CourtManageUpdate />
             </ProtectedRoute>
           }
         />

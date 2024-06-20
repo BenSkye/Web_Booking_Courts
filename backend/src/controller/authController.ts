@@ -92,7 +92,7 @@ class authController {
   })
 
   //Check user role có qyền thực hiện action không
-  static restricTO = (...roles: [string]) => {
+  static restricTO = (...roles: string[]) => {
     return (req: any, res: any, next: any) => {
       if (!roles.includes(req.user.role)) {
         return next(new AppError('Không có quyền truy cập', 403))
