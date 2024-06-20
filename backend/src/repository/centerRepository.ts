@@ -53,15 +53,15 @@ class CenterRepository implements ICenterRepository {
     }
   }
 
-  async getCenterById(id: Schema.Types.ObjectId): Promise<any | null> {
+  async getCenterById(id: any) {
     try {
-      const center = await Center.findById(id).populate('price');
+      const center = await Center.findOne(id)
       if (!center) {
-        throw new Error(`Center with id ${id} not found`);
+        throw new Error(`Center with id ${id} not found`)
       }
-      return center;
+      return center
     } catch (error) {
-      throw new Error(`Could not fetch center: ${(error as Error).message}`);
+      throw new Error(`Could not fetch center: ${(error as Error).message}`)
     }
   }
 

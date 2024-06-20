@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Avatar,
+  Button,
   Calendar,
   Card,
   Col,
@@ -133,6 +134,32 @@ const BookingCourt = () => {
                       </Paragraph>
                     </Col>
                   </Row>
+                  <Paragraph>
+                    <strong>Trạng thái:</strong>{" "}
+                    <span
+                      style={{
+                        color:
+                          booking.status === "pending"
+                            ? "orange"
+                            : booking.status === "confirmed"
+                            ? "green"
+                            : booking.status === "cancelled"
+                            ? "red"
+                            : "black",
+                      }}
+                    >
+                      {booking.status === "pending"
+                        ? "Chưa thanh toán"
+                        : booking.status === "confirmed"
+                        ? "Đã thanh toán"
+                        : booking.status === "cancelled"
+                        ? "Đã hủy"
+                        : "Không xác định"}
+                    </span>
+                  </Paragraph>
+                  {booking.status === "confirmed" && (
+                    <Button type="primary">Sửa giờ chơi</Button>
+                  )}
                 </Card>
               </List.Item>
             )}
