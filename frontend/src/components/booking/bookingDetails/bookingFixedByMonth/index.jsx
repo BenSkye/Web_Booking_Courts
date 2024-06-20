@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import moment from 'moment';
+import dayjs from 'dayjs';
 import {
   Form,
   Input,
@@ -13,6 +14,8 @@ import {
   Row,
   Col,
   Empty,
+  Calendar,
+  Badge,
 } from 'antd';
 import { ImBin } from 'react-icons/im';
 import { formatPrice } from '../../../../utils/priceFormatter';
@@ -20,6 +23,7 @@ import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
 import { getListCourtsByCenterId_API } from '../../../../services/courtAPI/getCourtsAPI';
 import { getAPriceByCenterIdAPIAndScheduleType } from '../../../../services/centersAPI/getCenters';
 import { createFixedPackageScheduleAPI } from '../../../../services/fixedPackagesScheduleAPI/createFixedPackageScheduleAPI';
+import { getFixedPackageScheduleByIdAPI } from '../../../../services/fixedPackagesScheduleAPI/getFixedPackageScheuleAPI';
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -31,11 +35,12 @@ const ScheduleTypes = {
 const BookingFixedByMonth = ({ id }) => {
   const [form] = Form.useForm();
   const [selectedDays, setSelectedDays] = useState([]);
-  const [center, setCenter] = useState({});
   const [courts, setCourts] = useState([]);
   const [endDate, setEndDate] = useState(null);
-  const [totalPriceAll, setTotalPriceAll] = useState(0);
   const [price, setPrice] = useState(0);
+  const [bookingId, setBookingId] = useState(null); // State to store the new booking ID
+  const [bookings, setBookings] = useState([]); // State to store the bookings
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const calculateEndDate = () => {
     const startDate = form.getFieldValue('startDate');
@@ -59,7 +64,6 @@ const BookingFixedByMonth = ({ id }) => {
     const getCenter = async (id) => {
       const data = await getCenterByIdAPI(id);
       console.log('center: ', data.data.center);
-      setCenter(data.data.center);
     };
     getCenter(id);
   }, [id]);
@@ -83,55 +87,6 @@ const BookingFixedByMonth = ({ id }) => {
     getPrice(id, ScheduleTypes.FIXED_MONTH_PACKAGE_PRICE);
   }, [id]);
 
-  const getDaysOfWeekBetweenDates = (start, end, dayOfWeek) => {
-    const daysOfWeek = {
-      Monday: 1,
-      Tuesday: 2,
-      Wednesday: 3,
-      Thursday: 4,
-      Friday: 5,
-      Saturday: 6,
-      Sunday: 0,
-    };
-    const day = daysOfWeek[dayOfWeek];
-    let current = moment(start).day(day);
-    if (current.isBefore(start)) {
-      current.add(7, 'days');
-    }
-    const dates = [];
-    while (current.isSameOrBefore(end)) {
-      dates.push(current.clone());
-      current.add(7, 'days');
-    }
-    return dates;
-  };
-
-  const estimatePrice = () => {
-    const values = form.getFieldsValue();
-    const { days } = values;
-    let totalDuration = 0;
-    const startDate = form.getFieldValue('startDate');
-    const endDate = moment(startDate)
-      .add(form.getFieldValue('months'), 'months')
-      .subtract(1, 'days')
-      .endOf('day');
-
-    if (days) {
-      days.forEach((day) => {
-        const validDays = getDaysOfWeekBetweenDates(
-          startDate,
-          endDate,
-          day.dayOfWeek
-        );
-        totalDuration += validDays.length * parseFloat(day.duration);
-      });
-    }
-
-    const totalPrice = totalDuration * center.pricePerHour;
-
-    setTotalPriceAll(totalPrice);
-  };
-
   const onFinish = async (values) => {
     const startDate = form.getFieldValue('startDate').format('YYYY-MM-DD');
     const months = form.getFieldValue('months');
@@ -144,7 +99,6 @@ const BookingFixedByMonth = ({ id }) => {
     const bookingData = {
       centerId: id,
       courtId: values.pickCourt,
-      userId: '667040da47f6663015c9ac1a',
       scheduleType: ScheduleTypes.FIXED_MONTH_PACKAGE_PRICE,
       startDate,
       totalMonths: months,
@@ -154,14 +108,74 @@ const BookingFixedByMonth = ({ id }) => {
 
     // Send the bookingData to the backend
     try {
-      const data =
-        await createFixedPackageScheduleAPI.createFixedPackageSchedule(
-          bookingData
-        );
+      const data = await createFixedPackageScheduleAPI(bookingData);
+      console.log('API response data:', data); // Log API response data
+      if (
+        data &&
+        data.data &&
+        data.data.fixedPackageSchedule &&
+        data.data.fixedPackageSchedule._id
+      ) {
+        setBookingId(data.data.fixedPackageSchedule._id); // Store the new booking ID in state
+        console.log('booking ID:', data.data.fixedPackageSchedule._id);
+      } else {
+        console.error('Error: Response does not contain booking ID');
+      }
       console.log('Success MP:', data);
     } catch (error) {
       console.error('Error MP:', error);
     }
+  };
+
+  useEffect(() => {
+    const getFixedPackageSchedule = async (id) => {
+      try {
+        const response = await getFixedPackageScheduleByIdAPI(id);
+        const data = response.data.fixedPackageSchedule;
+        console.log('GET fixedPackageSchedule: ', data);
+        if (data && Array.isArray(data.bookings)) {
+          setTotalPrice(data.totalPrice);
+          setBookings(data.bookings);
+        } else {
+          console.error('Error: bookings is not an array or is missing');
+          setBookings([]); // Reset bookings to an empty array
+        }
+      } catch (error) {
+        console.error('Error fetching fixedPackageSchedule:', error);
+        setBookings([]); // Reset bookings to an empty array in case of error
+      }
+    };
+    if (bookingId) {
+      getFixedPackageSchedule(bookingId);
+    }
+  }, [bookingId]);
+
+  const cellRender = (value, info) => {
+    if (info.type === 'date') {
+      const date = value.format('YYYY-MM-DD');
+      const bookingsForDate = Array.isArray(bookings)
+        ? bookings.filter(
+            (booking) => dayjs(booking.date).format('YYYY-MM-DD') === date
+          )
+        : [];
+
+      return (
+        <div className='events'>
+          {bookingsForDate.map((booking) => (
+            <div
+              key={booking._id}
+              style={{ backgroundColor: 'gray', padding: '1.2rem' }}
+            >
+              <Badge
+                status='success'
+                text={`${booking.start} - ${booking.end}`}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return info.originNode;
   };
 
   const onAddDay = (add) => {
@@ -356,13 +370,8 @@ const BookingFixedByMonth = ({ id }) => {
             </Form.List>
 
             <Form.Item>
-              <Button
-                type='primary'
-                htmlType='submit'
-                onClick={estimatePrice}
-                block
-              >
-                Tính giá và thanh toán
+              <Button type='primary' htmlType='submit' block>
+                Tính giá
               </Button>
             </Form.Item>
           </Form>
@@ -371,13 +380,25 @@ const BookingFixedByMonth = ({ id }) => {
       <Col span={12}>
         <Card>
           <h3 style={{ marginTop: '20px' }}>Giá dự kiến</h3>
-          {totalPriceAll > 0 ? (
-            <Text strong>{formatPrice(totalPriceAll)}đ</Text>
+          {/* <h3 style={{ marginTop: '20px' }}>_ID:{bookingId}</h3> */}
+
+          {bookingId ? (
+            <div>
+              <Text strong>{bookingId}đ</Text>
+              <h2>
+                Tổng giá tiền:
+                {formatPrice(totalPrice)}
+              </h2>
+            </div>
           ) : (
             <Empty description='Chưa có thông tin giá' />
           )}
         </Card>
       </Col>
+      <Card>
+        <h3>Lịch đặt sân</h3>
+        <Calendar cellRender={cellRender} />
+      </Card>
     </Row>
   );
 };
