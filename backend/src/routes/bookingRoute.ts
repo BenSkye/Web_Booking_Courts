@@ -22,5 +22,8 @@ bookingRoute
 bookingRoute
   .route('/update-booking-byDay-decrease-price')
   .put(authController.protect, authController.restricTO('customer'), bookingController.UpdateBookingbyDayDecreasePrice)
+bookingRoute
+  .route('/completed-booking/:bookingId')
+  .get(authController.protect, authController.restricTO('manager'), bookingController.completedBooking)
 // bookingRoute.route('/check-booking-available').post(authController.protect, bookingController.checkBookingAvailable)
 export default bookingRoute

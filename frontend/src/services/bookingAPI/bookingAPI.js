@@ -65,3 +65,16 @@ export const getPersonalBookingAPI = async () => {
     return response.data;
   }
 };
+
+export const completeBookingAPI = async (bookingId) => {
+  const response = await fetchData(
+    `http://localhost:5050/api/v1/booking/completed-booking/${bookingId}`
+  );
+  console.log("Response:", response);
+  if (response.status === "fail") {
+    return response.data;
+  }
+  if (response.status === "success") {
+    return response.data;
+  }
+};

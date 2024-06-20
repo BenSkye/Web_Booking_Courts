@@ -196,6 +196,9 @@ const OrderDetails = () => {
                       <strong>Sân:</strong> {booking.courtNumber}
                     </Paragraph>
                     <Paragraph>
+                      <strong>Giá</strong> {booking?.price}
+                    </Paragraph>
+                    <Paragraph>
                       <strong>Trạng thái:</strong>{" "}
                       <span
                         style={{

@@ -90,5 +90,16 @@ class bookingController {
     }
     res.status(200).json(req.body)
   })
+  static completedBooking = catchAsync(async (req: any, res: any, next: any) => {
+    const bookingId = req.params.bookingId
+    const bookingServiceInstance = new bookingService()
+    const booking = await bookingServiceInstance.completedBooking(bookingId)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        booking
+      }
+    })
+  })
 }
 export default bookingController
