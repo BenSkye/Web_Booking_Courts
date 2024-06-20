@@ -74,7 +74,7 @@ class userRepository implements IUserRepository {
     const user = await User.findByIdAndUpdate(userId, updates, { new: true })
     return user
   }
-  async getAllUser(){
+  async getAllUser() {
     const listUser = await User.find()
     return listUser
   }

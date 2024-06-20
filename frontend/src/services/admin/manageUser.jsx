@@ -1,4 +1,3 @@
-// services/admin/manageUser.js
 import axios from 'axios';
 
 const getAllUsersAPI = async () => {
