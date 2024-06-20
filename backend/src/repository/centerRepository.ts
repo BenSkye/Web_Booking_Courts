@@ -24,15 +24,18 @@ interface ICenter {
 }
 
 interface ICenterRepository {
-  addCenter(center: ICenter): Promise<any>;
-  getAllCenters(): Promise<any[]>;
-  getCenterById(id: Schema.Types.ObjectId): Promise<any | null>;
-  getCenterStartandEndTime(query: object): Promise<any | null>;
-  getListCenter(query: object): Promise<any[]>;
-  getCenter(query: object): Promise<any | null>;
-  updateCenter(query: object, data: Partial<ICenter>): Promise<any | null>;
-  getAllSubscriptions(): Promise<any[]>;
+  addCenter(center: ICenter): Promise<any>
+  getAllCenters(): Promise<any[]>
+  getCenterById(id: any): Promise<any | null>
+  getCenterStartandEndTime(query: object): Promise<any | null>
+  getListCenter(query: object): Promise<any[]>
+  getCenter(query: object): Promise<any | null>
+  updateCenter(query: object, data: any): Promise<any | null>
+  getAllSubscriptions(): Promise<any[]>
+
   updateCenterInforById(id: any, data: any): Promise<any | null>
+
+  
 }
 
 class CenterRepository implements ICenterRepository {
@@ -65,47 +68,17 @@ class CenterRepository implements ICenterRepository {
       throw new Error(`Could not fetch center: ${(error as Error).message}`)
     }
   }
-
-  async getCenterStartandEndTime(query: object): Promise<any | null> {
-    try {
-      return await Center.findOne(query).select('openTime closeTime');
-    } catch (error) {
-      throw new Error(`Could not fetch center start and end time: ${(error as Error).message}`);
-    }
+  async getCenterStartandEndTime(query: object) {
+    return await Center.findOne(query).select('openTime closeTime')
   }
-
-  async getListCenter(query: object): Promise<any[]> {
-    try {
-      return await Center.find(query);
-    } catch (error) {
-      throw new Error(`Could not fetch list of centers: ${(error as Error).message}`);
-    }
+  async getListCenter(query: object) {
+    return await Center.find(query)
   }
-
-  async getCenter(query: object): Promise<any | null> {
-    try {
-      return await Center.findOne(query).populate('price');
-    } catch (error) {
-      throw new Error(`Could not fetch center: ${(error as Error).message}`);
-    }
+  async getCenter(query: any) {
+    return await Center.findOne(query).populate('price')
   }
-
-  async updateCenter(query: object, data: Partial<ICenter>): Promise<any | null> {
-    try {
-      return await Center.findOneAndUpdate(query, data, { new: true });
-    } catch (error) {
-      throw new Error(`Could not update center: ${(error as Error).message}`);
-    }
-  }
-
-  async getAllSubscriptions() {
-    try {
-      return await Center.find({ 'subscriptions.packageId': { $ne: null } })
-        .populate('subscriptions.packageId')
-        .exec()
-    } catch (error) {
-      throw new Error(`Could not fetch subscriptions: ${(error as Error).message}`);
-    }
+  async updateCenter(query: object, data: any) {
+    return await Center.findOneAndUpdate(query, data, { new: true })
   }
   async updateCenterInforById(id: any, data: any) {
     try {
@@ -118,6 +91,14 @@ class CenterRepository implements ICenterRepository {
       throw new Error(`Could not update center: ${(error as Error).message}`)
     }
   }
+  async getAllSubscriptions() {
+    try {
+      return await Center.find({ 'subscriptions.packageId': { $ne: null } })
+        .populate('subscriptions.packageId')
+        .exec()
+    } catch (error) {
+      throw new Error(`Could not fetch subscriptions: ${(error as Error).message}`);
+    }
 }
-
+}
 export default CenterRepository;

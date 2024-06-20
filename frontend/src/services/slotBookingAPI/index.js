@@ -97,3 +97,14 @@ export const getAvailableCourtForUpdateAPI = async (
     return {};
   }
 };
+export const getPriceFormStartToEnd = async (centerId, startTime, endTime) => {
+  const response = await fetchData(
+    `http://localhost:5050/api/v1/timeSlot/get-price-from-start-to-end/${centerId}/${startTime}/${endTime}`
+  );
+  if (response) {
+    return response.data;
+  } else {
+    console.error("Invalid data format:", response);
+    return {};
+  }
+};

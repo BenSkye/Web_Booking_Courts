@@ -1,4 +1,4 @@
-import { fetchData, postData } from "../fetchAPI";
+import { fetchData, postData, putData } from "../fetchAPI";
 import Cookies from "js-cookie";
 
 export const getBookingIndayCenterAPI = async (day, centerId) => {
@@ -16,6 +16,19 @@ export const getBookingIndayCenterAPI = async (day, centerId) => {
 export const checkBookingAvailablebyDayAPI = async (data) => {
   const response = await postData(
     "http://localhost:5050/api/v1/booking/create-booking-byday",
+    data
+  );
+  console.log("Response:", response);
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === 201) {
+    return response.data;
+  }
+};
+export const UpdateBookingIncreasePrice = async (data) => {
+  const response = await putData(
+    "http://localhost:5050/api/v1/booking/update-booking-byDay-increase-price",
     data
   );
   console.log("Response:", response);

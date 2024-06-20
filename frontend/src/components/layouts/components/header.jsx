@@ -210,46 +210,45 @@ export default function HeaderLayout() {
       ? itemsCustomer
       : itemsAdmin;
 
- const menuItemsUser = [
-  {
-    key: "1",
-    label: "Tìm sân",
-    path: "/",
-  },
-  { key: "2", label: "Giới thiệu", path: "/aboutUs" },
-  // { key: "3", label: "Đăng kí đối tác", path: "/partner" },
-  { key: "3", label: "Đăng kí giải", path: "/tournament" },
-  // { key: "5", label: "Đăng kí gói", path: "/registerPackageCourt" },
-];
-const menuItemsManager = [
-  { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
-  { key: "2", label: "Lịch hoạt động", path: "/courtManage/ManagerCalendar" },
-  {
-    key: "3",
-    label: "Yêu cầu tổ chức giải",
-    path: "/courtManage/RequestToOrganizeATournament",
-  },
-  { key: "4", label: "Quản lý sân", path: "/courtManage" },
-  {
-    key: "5",
-    label: "Đặt sân trực tiếp",
-    path: "/courtManage/BookingCourtDirectly",
-  },
-  { key: "6", label: "Đăng ký sân", path: "/courtManage/partner" },
-];
-const menuItemsAdmin = [
-  { key: "1", label: "Tổng quan", path: "/admin/Dashboard" },
-  { key: "2", label: "Quản lý sân", path: "/admin/manageCenter" },
-  { key: "3", label: "Quản lý người dùng", path: "/admin/UserManagement" },
-  { key: "4", label: "Quản lý người chủ sân", path: "/admin/ManagerManagement" },
+  const menuItemsUser = [
+    {
+      key: "1",
+      label: "Tìm sân",
+      path: "/",
+    },
+    { key: "2", label: "Giới thiệu", path: "/aboutUs" },
+    { key: "3", label: "Đăng kí giải", path: "/tournament" },
+  ];
+  const menuItemsManager = [
+    { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
+    { key: "2", label: "Lịch hoạt động", path: "/courtManage/ManagerCalendar" },
+    {
+      key: "3",
+      label: "Yêu cầu tổ chức giải",
+      path: "/courtManage/RequestToOrganizeATournament",
+    },
+    { key: "4", label: "Quản lý sân", path: "/courtManage" },
+    {
+      key: "5",
+      label: "Đặt sân trực tiếp",
+      path: "/courtManage/BookingCourtDirectly",
+    },
+    
+    { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
+  ];
+  const menuItemsAdmin = [
+    { key: "1", label: "Tổng quan", path: "/admin/Dashboard" },
+    { key: "2", label: "Quản lý sân", path: "/admin/manageCenter" },
+    { key: "3", label: "Quản lý người dùng", path: "/admin/UserManagement" },
+    { key: "4", label: "Quản lý người chủ sân", path: "/admin/ManagerManagement" },
 
-];
-const menuItems =
-user?.role === "manager"
-  ? menuItemsManager
-  : user?.role === "admin"
-  ? menuItemsAdmin
-  : menuItemsUser;
+  ];
+  const menuItems =
+    user?.role === "manager"
+      ? menuItemsManager
+      : user?.role === "admin"
+      ? menuItemsAdmin
+      : menuItemsUser;
 
  
 

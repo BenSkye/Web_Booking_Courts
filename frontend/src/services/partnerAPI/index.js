@@ -103,6 +103,7 @@ export async function getPersonalActiveCenter() {
   }
 }
 
+//lấy ra cho chủ sân những status đã xác nhận, hoàn thành, hết hạn
 export async function getBookingByCenterIdAndDay(centerId, date) {
   try {
     const response = await fetchData(

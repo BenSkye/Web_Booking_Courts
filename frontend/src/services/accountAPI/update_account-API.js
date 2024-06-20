@@ -7,6 +7,7 @@ const Updateuser = async (userName, userPhone, avatar) => {
     avatar: avatar,
   });
   console.log("response", response);
+
   if (response && response.data) {
     return response.data;
   }

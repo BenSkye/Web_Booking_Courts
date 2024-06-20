@@ -17,11 +17,7 @@ export default function CourtManage() {
       const token = Cookies.get("jwtToken");
       try {
         const result = await getFormDataAPI(token);
-        if (
-          result.status === "success" &&
-          result.data &&
-          Array.isArray(result.data.center)
-        ) {
+        if (result.status === "success" && result.data && Array.isArray(result.data.center)) {
           setFormData(result.data.center);
         } else {
           console.error("Unexpected data format: ", result);
@@ -97,7 +93,7 @@ export default function CourtManage() {
                   </Button>
                 </Link>
                 {data.status === "accepted" && (
-                  <Link to={`/courtManage/registerPackageCourt`}>
+                  <Link to={`/courtManage/registerPackageCourt/${data._id}`}>
                     <Button type="primary" block style={{ backgroundColor: "orange", borderColor: "orange" }}>
                       Mua gói cho sân
                     </Button>
@@ -105,7 +101,7 @@ export default function CourtManage() {
                 )}
                 {data.status === "active" && (
                   <div>
-                    <Link to={`/courtManage/registerPackageCourt`}>
+                    <Link to={`/courtManage/registerPackageCourt/${data._id}`}>
                       <Button type="primary" block style={{ backgroundColor: "orange", borderColor: "orange", marginBottom: "10px" }}>
                         Gia hạn gói
                       </Button>

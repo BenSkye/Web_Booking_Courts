@@ -14,8 +14,10 @@ interface ICenterService {
   selectPackage(centerId: string, packageId: string, userId: string): Promise<any>
   changeCenterStatusAccept(centerId: string): Promise<any>
   getPersonalActiveCenters(userId: string): Promise<any>
-  getAllSubscriptions():  Promise<any>
   updateCenterInforById(id: string, data: any, userId: string): Promise<any>
+  getAllSubscriptions():  Promise<any>
+
+
 }
 
 class centerService implements ICenterService {
@@ -101,13 +103,14 @@ class centerService implements ICenterService {
     if (center.status.includes('pending')) {
       throw new AppError('Can not set Package now', 409)
     }
-    const centerPackage = await centerPackageRepository.getCenterPackage({ _id: packageid })
+    const centerPackageRepositoryInstance = new centerPackageRepository()
+    const centerPackage = await centerPackageRepositoryInstance.getCenterPackage({ _id: packageid })
     if (!centerPackage) {
       throw new AppError('Can not found centerPackage', 404)
     }
     let latestSubscription
     if (center.subscriptions.length > 0) {
-      latestSubscription = center.subscriptions.reduce((latest: { expiryDate: number }, subscription: { expiryDate: number }) => {
+      latestSubscription = center.subscriptions.reduce((latest, subscription) => {
           return latest.expiryDate > subscription.expiryDate ? latest : subscription
       })
     }
@@ -181,6 +184,7 @@ class centerService implements ICenterService {
     const ListCenter = await centerRepositoryInstance.getListCenter({ managerId: userId, status: 'active' })
     return ListCenter
   }
+  
   async getAllSubscriptions(){
     try {
       const centerRepositoryInstance = new centerRepository()
@@ -203,5 +207,6 @@ class centerService implements ICenterService {
     const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
     return updatedCenter
 }
+
 }
 export default centerService

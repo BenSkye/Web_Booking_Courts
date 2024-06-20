@@ -151,6 +151,7 @@ class centerController {
       }
     })
   })
+ 
 }
 
 export default centerController;

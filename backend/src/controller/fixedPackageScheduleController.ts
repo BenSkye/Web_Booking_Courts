@@ -3,9 +3,10 @@ import catchAsync from '~/utils/catchAsync'
 
 class fixedPackageScheduleController {
   static addFixedPackageSchedule = catchAsync(async (req: any, res: any, next: any) => {
+    const userId = req.user._id
     const fixedPackageScheduleServiceInstance = new fixedPackageScheduleService()
-    const fixedPackageSchedule = await fixedPackageScheduleServiceInstance.addFixedPackageSchedule(req.body)
-    res.status(200).json({
+    const fixedPackageSchedule = await fixedPackageScheduleServiceInstance.addFixedPackageSchedule(userId, req.body)
+    res.status(201).json({
       status: 'success',
       data: {
         fixedPackageSchedule
