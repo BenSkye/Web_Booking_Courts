@@ -29,6 +29,7 @@ const UpdatePassword = () => {
       values.newPassword,
       values.confirmPassword
     );
+    console.log("result 32", result);
     if (result && result.status === "fail") {
       message.error(result.message);
       navigate("/login");

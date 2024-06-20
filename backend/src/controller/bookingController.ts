@@ -49,5 +49,37 @@ class bookingController {
       }
     })
   })
+  static UpdateBookingbyDayIncreasePrice = catchAsync(async (req: any, res: any, next: any) => {
+    const bookingServiceInstance = new bookingService()
+    const userId = req.user._id
+    const paymentResult = await bookingServiceInstance.UpdateBookingbyDayIncreasePrice(req.body, userId)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        paymentResult
+      }
+    })
+  })
+  static UpdateBookingbyDayDecreasePrice = catchAsync(async (req: any, res: any, next: any) => {
+    const bookingServiceInstance = new bookingService()
+    const userId = req.user._id
+    const result = await bookingServiceInstance.UpdateBookingbyDayDecreasePrice(req.body, userId)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        result
+      }
+    })
+  })
+
+  static callbackPayUpdateBookingByDay = catchAsync(async (req: any, res: any, next: any) => {
+    console.log('MoMo Callback:', req.body) // Nhật ký thêm để gỡ lỗi chi tiết
+
+    const bookingServiceInstance = new bookingService()
+    if (req.body) {
+      const result = bookingServiceInstance.callbackPayUpdateBookingByDay(req.body)
+    }
+    res.status(200).json(req.body)
+  })
 }
 export default bookingController

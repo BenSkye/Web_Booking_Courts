@@ -15,6 +15,8 @@ interface IbookingService {
   checkAllSlotsAvailability(listBooking: [any]): Promise<boolean>
   createBooking(data: any, userId: string): Promise<any>
   getPersonalBooking(userId: string): Promise<any>
+  UpdateBookingbyDayIncreasePrice(data: any, userId: string): Promise<any>
+  UpdateBookingbyDayDecreasePrice(data: any, userId: string): Promise<any>
 }
 class bookingService implements IbookingService {
   async createBookingbyDay(listBooking: any, userId: string) {
@@ -23,7 +25,7 @@ class bookingService implements IbookingService {
       throw new AppError('Xin lỗi slot đã được đặt hoặc đang được đặt, kiểm tra lại booking', 400)
     }
     //chuyển hướng tới payment nhận response từ payment
-    const orderId = 'RacketRise' + new Date().getTime()
+    const orderId = 'RR' + new Date().getTime()
     const InvoiceServiceInstance = new InvoiceService()
     let totalprice = 0
     const newInvoice = await InvoiceServiceInstance.addInvoiceBookingbyDay(totalprice, userId, orderId)
@@ -53,7 +55,7 @@ class bookingService implements IbookingService {
     const center = await centerServiceInstance.getCenterById(centerId)
     const orderInfo = 'Thanh toán đặt sân' + center.centerName + bookingDetail.join(',')
     const callbackUrl = '/api/v1/booking/callback-pay-booking-by-day'
-    const paymentResult = await momoService.createPayment(orderInfo, totalprice, orderId, centerId, callbackUrl)
+    const paymentResult = await momoService.createPayment(orderInfo, totalprice, orderId, centerId, callbackUrl, '')
     return paymentResult
   }
 
@@ -76,10 +78,10 @@ class bookingService implements IbookingService {
         slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
       }
 
-      const available = await timeSlotRepositoryInstance.checkTimeSlotAvailable(slot)
-      if (!available) {
-        throw new AppError('Slot not available', 400)
-      }
+      // const available = await timeSlotRepositoryInstance.checkTimeSlotAvailable(slot)
+      // if (!available) {
+      //   throw new AppError('Slot not available', 400)
+      // }
       slotAvailable.push({ ...slot })
       slot.start = slot.end
     }
@@ -125,7 +127,7 @@ class bookingService implements IbookingService {
 
   async changeBookingStatusAfterPaySuccess(bookingId: string) {
     const booking = await bookingRepository.getBookingbyId(bookingId)
-    console.log('booking', booking)
+    console.log('bookingAfterSuccess', booking)
     if (!booking) {
       throw new AppError('Booking not found', 404)
     }
@@ -159,7 +161,7 @@ class bookingService implements IbookingService {
 
   async changeBookingStatusAfterPayFail(bookingId: string) {
     const booking = await bookingRepository.getBookingbyId(bookingId)
-    console.log('booking', booking)
+    console.log('bookingAfterPayFail', booking)
     if (!booking) {
       throw new AppError('Booking not found', 404)
     }
@@ -229,7 +231,7 @@ class bookingService implements IbookingService {
         const bookings = await bookingRepository.getListBooking({
           courtId: court._id,
           date: date,
-          status: 'confirmed'
+          status: ['confirmed', 'completed', 'expired'] //lấy ra cho chủ sân những status đã xác nhận, hoàn thành, hết hạn
         })
         const bookingsWithUser = await Promise.all(
           bookings.map(async (booking: any) => {
@@ -259,8 +261,9 @@ class bookingService implements IbookingService {
 
   async getPersonalBooking(userId: string) {
     const bookings = await bookingRepository.getListBooking({ userId })
+    const activeBookings = bookings.filter((booking) => booking.status !== 'disable')
     const bookingWithCenterAndCourt = await Promise.all(
-      bookings.map(async (booking: any) => {
+      activeBookings.map(async (booking: any) => {
         const centerRepositoryInstance = new centerRepository()
         const center = await centerRepositoryInstance.getCenterById(booking.centerId)
         const courtRepositoryInstance = new courtRepository()
@@ -308,6 +311,226 @@ class bookingService implements IbookingService {
         }
       })
     )
+  }
+
+  async UpdateBookingbyDayIncreasePrice(data: any, userId: string) {
+    if (data.oldPrice >= data.updateBooking.price) {
+      throw new AppError('Giá mới không thể thấp hơn hoặc bằng giá cũ', 400)
+    }
+    console.log('userId', userId)
+    console.log('data.updateBooking.userI', data.updateBooking.userId)
+    if (userId.toString() !== data.updateBooking.userId) {
+      throw new AppError('Bạn không có quyền thay đổi booking này', 403)
+    }
+    const updateBooking = data.updateBooking
+    const oldBooking = await bookingRepository.getBookingbyId(updateBooking._id)
+    if (!oldBooking) {
+      throw new AppError('Booking not found', 404)
+    }
+    const centerId = updateBooking.centerId.toString()
+    const centerServiceInstance = new centerService()
+    const center = await centerServiceInstance.getCenterById(centerId)
+    const bookingDetail = `${updateBooking.date} (${updateBooking.start} - ${updateBooking.end})`
+    const orderInfo = 'Thanh toán sửa giờ chơi' + center.centerName + bookingDetail
+    const callbackUrl = '/api/v1/booking/callback-pay-update-booking-by-day'
+
+    const orderId = 'RRU' + new Date().getTime()
+    const InvoiceServiceInstance = new InvoiceService()
+    let totalprice = 0
+    const newInvoice = await InvoiceServiceInstance.addInvoiceUpdateBookingbyDay(totalprice, userId, orderId)
+    totalprice = updateBooking.price - data.oldPrice
+
+    const booking = {
+      centerId: updateBooking.centerId,
+      courtId: updateBooking.courtId,
+      date: updateBooking.date,
+      start: updateBooking.start,
+      end: updateBooking.end,
+      invoiceId: newInvoice._id
+    }
+
+    const newbooking = await this.createBookingForUpdate(booking, userId, oldBooking.start, oldBooking.end)
+    const InvoiceRepositoryInstance = new InvoiceRepository()
+    const updateInvoice = await InvoiceRepositoryInstance.updateInvoice({ _id: newInvoice._id }, { price: totalprice })
+    const extraData = JSON.stringify({ oldBookingId: updateBooking._id })
+    const paymentResult = await momoService.createPayment(
+      orderInfo,
+      totalprice,
+      orderId,
+      centerId,
+      callbackUrl,
+      extraData
+    )
+    return paymentResult
+  }
+
+  async createBookingForUpdate(data: any, userId: string, oldStart: string, oldEnd: string) {
+    const slot = {
+      courtId: data.courtId,
+      date: data.date,
+      start: data.start,
+      end: data.start,
+      oldStart: oldStart,
+      oldEnd: oldEnd
+    }
+
+    const slotAvailable = []
+    const timeSlotRepositoryInstance = new timeSlotRepository()
+
+    while (new Date(`1970-01-01T${slot.end}:00`) < new Date(`1970-01-01T${data.end}:00`)) {
+      const [hour, minute] = slot.start.split(':')
+      if (minute === '00') {
+        slot.end = `${hour}:30`
+      } else {
+        slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
+      }
+
+      const available = await timeSlotRepositoryInstance.checkTimeSlotAvailableForUpdate(slot)
+      if (!available) {
+        throw new AppError('Slot not available', 400)
+      }
+      slotAvailable.push({ ...slot })
+      slot.start = slot.end
+    }
+    const booking = { ...data, userId: userId, status: 'pending' }
+    const newBooking = await bookingRepository.createBooking(booking)
+    console.log('slotAvailable', slotAvailable)
+    // Cập nhật trạng thái của các slot thành "booking"
+    await Promise.all(
+      slotAvailable.map(async (slot) => {
+        await timeSlotRepositoryInstance.updateSlotStatus(slot, 'booking')
+      })
+    )
+    return newBooking
+  }
+
+  async callbackPayUpdateBookingByDay(reqBody: any) {
+    console.log('vao dc callback update', reqBody)
+    const extraData = JSON.parse(reqBody.extraData)
+    const invoiceServiceInstance = new InvoiceService()
+    if (reqBody.resultCode === 0) {
+      const oldBooking = await bookingRepository.getBooking({ _id: extraData.oldBookingId })
+      if (oldBooking) {
+        const slot = {
+          courtId: oldBooking.courtId.toString(),
+          date: oldBooking.date,
+          start: oldBooking.start,
+          end: oldBooking.start
+        }
+        const slotAvailable = []
+        const timeSlotRepositoryInstance = new timeSlotRepository()
+        while (new Date(`1970-01-01T${slot.end}:00`) < new Date(`1970-01-01T${oldBooking.end}:00`)) {
+          const [hour, minute] = slot.start.split(':')
+          if (minute === '00') {
+            slot.end = `${hour}:30`
+          } else {
+            slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
+          }
+          slotAvailable.push({ ...slot })
+          slot.start = slot.end
+        }
+        // Cập nhật trạng thái của các slot thành "booked"
+        await Promise.all(
+          slotAvailable.map(async (slot) => {
+            await timeSlotRepositoryInstance.updateSlotStatus(slot, 'available')
+          })
+        )
+        oldBooking.status = 'disable'
+        console.log('oldBooking', oldBooking)
+        bookingRepository.updateBooking({ _id: oldBooking._id }, { status: oldBooking.status })
+      }
+      const invoice = await invoiceServiceInstance.paidIvoice(reqBody.orderId)
+      if (!invoice) {
+        throw new AppError('lỗi cập nhật invoice', 401)
+      }
+      const newBooking = await bookingRepository.getBooking({ invoiceId: invoice._id })
+      if (newBooking) {
+        await this.changeBookingStatusAfterPaySuccess(newBooking._id.toString())
+      }
+      return { status: 'success' }
+    } else if (reqBody.resultCode !== 0) {
+      const oldBooking = await bookingRepository.getBooking({ _id: extraData.oldBookingId })
+      const invoice = await invoiceServiceInstance.getInvoicesByInvoiceID(reqBody.orderId)
+      const newBooking = await bookingRepository.getBooking({ invoiceId: invoice._id })
+      if (newBooking) {
+        await this.changeBookingStatusAfterPayFail(newBooking._id.toString())
+      }
+      if (!oldBooking) {
+        throw new AppError('khong tim thay old booking', 401)
+      }
+      await invoiceServiceInstance.deleteInvoiceById(invoice._id)
+      const slot = {
+        courtId: oldBooking.courtId.toString(),
+        date: oldBooking.date,
+        start: oldBooking.start,
+        end: oldBooking.start
+      }
+      const slotAvailable = []
+      const timeSlotRepositoryInstance = new timeSlotRepository()
+      while (new Date(`1970-01-01T${slot.end}:00`) < new Date(`1970-01-01T${oldBooking.end}:00`)) {
+        const [hour, minute] = slot.start.split(':')
+        if (minute === '00') {
+          slot.end = `${hour}:30`
+        } else {
+          slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
+        }
+        slotAvailable.push({ ...slot })
+        slot.start = slot.end
+      }
+      // Cập nhật trạng thái của các slot thành "booked"
+      await Promise.all(
+        slotAvailable.map(async (slot) => {
+          await timeSlotRepositoryInstance.updateSlotStatus(slot, 'booked')
+        })
+      )
+      return { status: 'fail' }
+    }
+
+    // const invoiceServiceInstance = new InvoiceService()
+    // if (reqBody.resultCode !== 0) {
+    //   console.log('vao fail')
+    //   const invoice = await invoiceServiceInstance.getInvoicesByInvoiceID(reqBody.orderId)
+    //   const Booking = await bookingRepository.getBooking({ invoiceId: invoice._id })
+    //   await Promise.all(
+    //     listBooking.map(async (booking: any) => {
+    //       await this.changeBookingStatusAfterPayFail(booking._id)
+    //     })
+    //   )
+    //   await invoiceServiceInstance.deleteInvoiceById(invoice._id)
+    //   return { status: 'fail' }
+    // }
+
+    // const invoice = await invoiceServiceInstance.paidIvoice(reqBody.orderId)
+    // if (!invoice) {
+    //   throw new AppError('Invoice not found', 404)
+    // }
+    // const listBooking = await bookingRepository.getListBooking({ invoiceId: invoice._id })
+    // await Promise.all(
+    //   listBooking.map(async (booking: any) => {
+    //     await this.changeBookingStatusAfterPaySuccess(booking._id)
+    //   })
+    // )
+  }
+
+  async UpdateBookingbyDayDecreasePrice(data: any, userId: string) {
+    if (data.oldPrice < data.updateBooking.price) {
+      throw new AppError('Giá mới không thể cao hơn giá cũ', 400)
+    }
+    if (userId.toString() !== data.updateBooking.userId) {
+      throw new AppError('Bạn không có quyền thay đổi booking này', 403)
+    }
+    const updateBooking = data.updateBooking
+    const oldBooking = await bookingRepository.getBookingbyId(updateBooking._id)
+    if (!oldBooking) {
+      throw new AppError('Booking not found', 404)
+    }
+    const booking = {
+      centerId: updateBooking.centerId,
+      courtId: updateBooking.courtId,
+      date: updateBooking.date,
+      start: updateBooking.start,
+      end: updateBooking.end
+    }
   }
 }
 export default bookingService
