@@ -56,6 +56,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   useEffect(() => {
     console.log("availableCourts", availableCourts);
   }, [availableCourts]);
+
   const handleSelectedDay = (date) => {
     const dateObject = new Date(date);
     const utcDateObject = new Date(
@@ -74,6 +75,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   const getAvailableDuration = async (centerId, date, startTime) => {
     const data = await getAvailableDurationAPI(centerId, date, startTime);
     let maxDuration = data.maxDuration;
+    // if (maxDuration < duration) setDuration(null);
     let listduration = [];
     while (maxDuration > 0) {
       console.log("maxDuration", maxDuration);
@@ -90,7 +92,11 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
       startTime,
       duration
     );
-    setAvailableCourts(data.courtFree);
+    if (data.courtFree === null) {
+      setAvailableCourts([]);
+    } else {
+      setAvailableCourts(data.courtFree);
+    }
   };
 
   useEffect(() => {

@@ -17,7 +17,6 @@ const VNPayPaymentForm = ({ listBooking, totalPrice, setCurrentStep }) => {
       console.log("Received values:", values);
       const result = await checkBookingAvailablebyDayAPI({
         listBooking,
-        totalPrice,
       });
       if (result && result.status === "fail") {
         if (

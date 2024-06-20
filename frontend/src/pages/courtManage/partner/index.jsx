@@ -217,7 +217,7 @@ const CenterForm = () => {
               price: values.normalPrice,
               startTime: openTime,
               endTime: closeTime,
-              scheduleType: "Giờ bình thường",
+              scheduleType: "NP",
             },
           ];
 
@@ -226,7 +226,7 @@ const CenterForm = () => {
               price: values.goldenPrice,
               startTime: values.startTimeGolden.format("HH:mm"),
               endTime: values.endTimeGolden.format("HH:mm"),
-              scheduleType: "Giờ vàng",
+              scheduleType: "GP",
             });
           }
 
@@ -235,7 +235,7 @@ const CenterForm = () => {
               price: values.byMonthPrice,
               startTime: openTime,
               endTime: closeTime,
-              scheduleType: "Đặt lịch cố định theo tháng",
+              scheduleType: "MP",
             });
           }
 
@@ -244,7 +244,7 @@ const CenterForm = () => {
               price: values.buyPackagePrice,
               startTime: openTime,
               endTime: closeTime,
-              scheduleType: "Mua gói giờ chơi",
+              scheduleType: "PP",
             });
           }
         }
@@ -289,7 +289,11 @@ const CenterForm = () => {
           </Button>
         )}
         {current === steps.length - 1 && (
-          <Button type="primary" onClick={handleSubmit} disabled={isSubmitDisabled}>
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+            disabled={isSubmitDisabled}
+          >
             Xác nhận thông tin và tạo sân
           </Button>
         )}

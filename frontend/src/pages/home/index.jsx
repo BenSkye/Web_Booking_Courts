@@ -27,7 +27,7 @@ export default function Home() {
         data = data.map((center) => ({
           ...center,
           pricePerHour: center.price.find(
-            (price) => price.scheduleType === "normalPrice"
+            (price) => price.scheduleType === "NP"
           )?.price,
         }));
         setCenters(data);
