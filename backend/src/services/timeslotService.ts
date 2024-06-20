@@ -10,6 +10,7 @@ interface ITimeSlotService {
   getCourtByFreeSlot(centerId: string, date: string, start: string, duration: number): Promise<any[] | null>
   getPriceFormStartoEnd(centerId: string, start: string, end: string): Promise<number | null>
   checkAndUpdateTimeSlots(): Promise<any>
+  // getFreeStartTimeByCenterAndDateByMonth(centerId: string, date: string): Promise<any[]>
   getFreeStartTimeByCenterAndDateForUpdate(
     centerId: string,
     date: string,
