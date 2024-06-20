@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AccountSettingsForm from "../accountInformation/index";
 import UpdatePassword from "../updatePassword/index";
 import { Link } from "react-router-dom";
@@ -15,12 +14,49 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
-
+import { useLocation } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 
 const ProfileAccount = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey, setSelectedKey] = useState("1"); // State để lưu trạng thái liên kết được chọn
+  const location = useLocation();
+  const path = location.pathname;
+  console.log("path", path);
+  let defaultKey;
+  switch (path) {
+    case "/user/my-account":
+      defaultKey = "1";
+      break;
+    case "/user/update-password":
+      defaultKey = "2";
+      break;
+    case "/user/booking-court":
+      defaultKey = "3";
+      break;
+    // Add more cases as needed
+    default:
+      defaultKey = "1";
+  }
+  const [selectedKey, setSelectedKey] = useState(defaultKey);
+  useEffect(() => {
+    switch (path) {
+      case "/user/my-account":
+        setSelectedKey("1");
+        break;
+      case "/user/update-password":
+        setSelectedKey("2");
+        break;
+      case "/user/booking-court":
+        setSelectedKey("3");
+        break;
+      case "/user/bill":
+        setSelectedKey("5");
+        break;
+      // Add more cases as needed
+      default:
+        setSelectedKey("1");
+    }
+  }, [path]);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -30,7 +66,7 @@ const ProfileAccount = () => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" , maxWidth: "100%" }}>
+    <Layout style={{ minHeight: "100vh", maxWidth: "100%" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu
@@ -40,7 +76,7 @@ const ProfileAccount = () => {
           style={{ marginTop: "60px" }}
           onClick={handleClick}
         >
-            <Button
+          <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
@@ -48,27 +84,26 @@ const ProfileAccount = () => {
               fontSize: "16px",
               width: 64,
               height: 64,
-              color: "#fff"
+              color: "#fff",
             }}
           />
           <Menu.Item key="1" icon={<UserOutlined />}>
-          <Link to="/user/my-account"></Link>
-          Tài khoản của tôi
-         
+            <Link to="/user/my-account"></Link>
+            Tài khoản của tôi
           </Menu.Item>
           <Menu.Item key="2" icon={<LockOutlined />}>
-          <Link to="/user/update-password"></Link>
+            <Link to="/user/update-password"></Link>
             Cập nhật mật khẩu
           </Menu.Item>
           <Menu.Item key="3" icon={<BookOutlined />}>
-          <Link to="/user/booking-court"></Link>
+            <Link to="/user/booking-court"></Link>
             Đặt sân
           </Menu.Item>
           <Menu.Item key="4" icon={<PlayCircleOutlined />}>
             Số giờ chơi
           </Menu.Item>
           <Menu.Item key="5" icon={<FileTextOutlined />}>
-          <Link to="/user/bill"></Link>
+            <Link to="/user/bill"></Link>
             Hóa đơn
           </Menu.Item>
         </Menu>
@@ -94,15 +129,15 @@ const ProfileAccount = () => {
             // justifyContent: "flex-start",
           }}
         >
-          {selectedKey === "1" && (
-            
-              <AccountSettingsForm />
-            
-          )}
+          {selectedKey === "1" && <AccountSettingsForm />}
           {selectedKey === "2" && <UpdatePassword />}
-          {selectedKey === "3" && <BookingCourt/>}
+          {selectedKey === "3" && <BookingCourt />}
           {selectedKey === "4" && <h1>Game Content</h1>}
-          {selectedKey === "5" && <h1><OrderDetails/></h1>}
+          {selectedKey === "5" && (
+            <h1>
+              <OrderDetails />
+            </h1>
+          )}
         </Content>
       </Layout>
     </Layout>

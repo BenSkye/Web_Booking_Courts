@@ -14,6 +14,9 @@ bookingRoute
   .route('/get-personal-booking')
   .get(authController.protect, authController.restricTO('customer'), bookingController.getPersonalBooking)
 bookingRoute
+  .route('/get-booking-by-invoiceId/:invoiceId')
+  .get(authController.protect, authController.restricTO('customer'), bookingController.getBookingByInvoiceId)
+bookingRoute
   .route('/update-booking-byDay-increase-price')
   .put(authController.protect, authController.restricTO('customer'), bookingController.UpdateBookingbyDayIncreasePrice)
 bookingRoute

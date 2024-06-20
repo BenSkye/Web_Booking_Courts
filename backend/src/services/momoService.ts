@@ -7,12 +7,13 @@ class momoService {
     orderId: string,
     centerId: string,
     callbackUrl: string,
-    extraData: string
+    extraData: string,
+    redirect: string
   ) {
     const accessKey = process.env.MOMO_ACCESS_TOKEN
     const secretKey = process.env.MOMO_SECRET_KEY
     const partnerCode = 'MOMO'
-    const redirectUrl = process.env.MOMO_REDIRECT_URL
+    const redirectUrl = process.env.MOMO_REDIRECT_URL + redirect
     const ipnUrl = process.env.MOMO_IPN_URL_HOSTING + callbackUrl
     console.log('ipnUrl', ipnUrl)
     const requestType = 'captureWallet'

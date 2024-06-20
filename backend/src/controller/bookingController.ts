@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express'
 import bookingService from '~/services/bookingService'
 import centerService from '~/services/centerService'
 import InvoiceService from '~/services/invoiceService'
-import momoService from '~/services/momoService'
 import AppError from '~/utils/appError'
 import catchAsync from '~/utils/catchAsync'
 
@@ -71,7 +70,17 @@ class bookingController {
       }
     })
   })
-
+  static getBookingByInvoiceId = catchAsync(async (req: any, res: any, next: any) => {
+    const invoiceId = req.params.invoiceId
+    const bookingServiceInstance = new bookingService()
+    const bookings = await bookingServiceInstance.getBookingByInvoiceId(invoiceId)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        bookings
+      }
+    })
+  })
   static callbackPayUpdateBookingByDay = catchAsync(async (req: any, res: any, next: any) => {
     console.log('MoMo Callback:', req.body) // Nhật ký thêm để gỡ lỗi chi tiết
 
