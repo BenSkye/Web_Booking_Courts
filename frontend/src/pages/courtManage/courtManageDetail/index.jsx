@@ -103,7 +103,7 @@ const CourtManageDetail = () => {
                 <List.Item>
                   <Row gutter={16} style={{ width: "100%" }}>
                     <Col span={6}>
-                      <b>Giá tiền:</b> {item.price}
+                      <b>Giá tiền:</b> {item.price + " VND"}
                     </Col>
                     <Col span={6}>
                       <b>Giờ bắt đầu:</b> {item.startTime}

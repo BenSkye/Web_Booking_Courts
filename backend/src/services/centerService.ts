@@ -183,16 +183,36 @@ class centerService implements ICenterService {
   }
   async updateCenterInforById(centerId: string, data: any, userId: string) {
     const centerRepositoryInstance = new centerRepository()
-    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId})
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId })
     if (!center) {
       throw new AppError(`Center not found`, 404)
     }
+    const oldcourtCount = center.courtCount
     // if (center.managerId.toString() !== userId) {
     //   throw new AppError('You are not authorized to perform this action', 403)
     // }
     Object.assign(center, data)
     const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
-    return updatedCenter
+
+    if (!updatedCenter) {
+      throw new Error('Updated center is null')
+    }
+
+    // Add new courts
+    const newCourts = []
+
+    for (let i = oldcourtCount; i < updatedCenter.courtCount; i++) {
+      console.log('iiiiii', i)
+      const court = {
+        courtNumber: i + 1,
+        centerId: updatedCenter._id
+      }
+      const courtRepositoryInstance = new courtRepository()
+      const newCourt = await courtRepositoryInstance.addCourt(court)
+      newCourts.push(newCourt)
+    }
+
+    return { updatedCenter, newCourts }
   }
 }
 export default centerService
