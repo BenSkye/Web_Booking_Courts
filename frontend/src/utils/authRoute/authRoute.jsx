@@ -1,10 +1,10 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
 import { Spin } from "antd";
 import AuthContext from "../../services/authAPI/authProvideAPI";
 
+// eslint-disable-next-line react/prop-types
 const ProtectedRoute = ({ children, roles }) => {
   const [thisUser, setThisUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,24 +44,37 @@ const ProtectedRoute = ({ children, roles }) => {
   }
 
   if (thisUser) {
+    // eslint-disable-next-line react/prop-types
     if (roles.includes("guest")) {
-      if (thisUser.role === "manager" || thisUser.role === "admin") {
+      if (thisUser.role === "manager" ) {
         return <Navigate to="/no-access" />;
+      }
+      if (thisUser.role === "admin" ) {
+        return <Navigate to="/admin/Dashboard" />;
       }
       return children;
     }
+    // eslint-disable-next-line react/prop-types
+  
+    // eslint-disable-next-line react/prop-types
+  
+   
+    // eslint-disable-next-line react/prop-types
     if (!roles.includes(thisUser.role)) {
       return <Navigate to="/no-access" />;
     }
     return children;
+    
   }
   if (thisUser === null) {
+    // eslint-disable-next-line react/prop-types
     if (roles.includes("guest")) {
       return children;
     } else {
       return <Navigate to="/no-access" />;
     }
   }
+ 
   return children;
 };
 

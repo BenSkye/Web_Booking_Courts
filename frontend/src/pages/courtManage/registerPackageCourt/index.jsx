@@ -5,6 +5,7 @@ import "antd/dist/reset.css";
 import getAllCenterPackage from "../../../services/packageAPI/packageAPI";
 import { getFormDataAPI } from "../../../services/partnerAPI/index";
 import Cookies from "js-cookie";
+import { Navigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -14,6 +15,7 @@ const RegisterPackageCourt = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [courtExists, setCourtExists] = useState(true);
+  const [courtStatusValid, setCourtStatusValid] = useState(true);
 
   useEffect(() => {
     const fetchCourtAndPackages = async () => {
@@ -23,6 +25,10 @@ const RegisterPackageCourt = () => {
         const court = courtData.data.center.find((c) => c._id === id);
         if (!court) {
           setCourtExists(false);
+          return;
+        }
+        if (court.status !== "accepted" && court.status !== "active" && court.status !== "expired") {
+          setCourtStatusValid(false);
           return;
         }
         const result = await getAllCenterPackage(token);
@@ -46,12 +52,16 @@ const RegisterPackageCourt = () => {
     fetchCourtAndPackages();
   }, [id]);
 
-  if (loading) {
-    return <Spin tip="Loading..." />;
-  }
-
   if (!courtExists) {
     return <h1>Sân không tồn tại</h1>;
+  }
+
+  if (!courtStatusValid) {
+    return <Navigate to="/no-access" />;
+  }
+
+  if (loading) {
+    return <Spin tip="Loading..." />;
   }
 
   if (error) {

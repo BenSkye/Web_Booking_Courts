@@ -30,7 +30,7 @@ class fixedPackageScheduleRepository implements IFixedPackageScheduleRepository 
 
   async getFixedPackageScheduleById(id: any) {
     try {
-      const fixedPackageSchedule = await FixedPackageSchedule.findOne({ _id: id })
+      const fixedPackageSchedule = await FixedPackageSchedule.findOne({ _id: id }).populate('bookings')
       if (!fixedPackageSchedule) {
         throw new Error(`FixedPackageSchedule with id ${id} not found`)
       }

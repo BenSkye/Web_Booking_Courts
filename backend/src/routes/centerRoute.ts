@@ -36,4 +36,6 @@ centerRoute
 centerRoute
   .route('/centers/:centerId/change-status-accepted')
   .get(authController.protect, authController.restricTO('admin'), centerController.changeCenterStatusAccept)
+
+centerRoute.route('/admin/Dashboard').get(authController.protect, centerController.getAllSubscriptions)
 export default centerRoute

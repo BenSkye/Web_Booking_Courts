@@ -4,15 +4,14 @@ import centerRepository from '~/repository/centerRepository'
 import priceRepository from '~/repository/priceRepository'
 import moment from 'moment'
 interface IFixedPackageScheduleService {
-  addFixedPackageSchedule(fixedPackageSchedule: any): Promise<any>
+  addFixedPackageSchedule(userId: string, fixedPackageSchedule: any): Promise<any>
   getFixedPackageScheduleById(id: any): Promise<any | null>
   getFixedPackageSchedule(query: object): Promise<any | null>
 }
 
 class FixedPackageScheduleService implements IFixedPackageScheduleService {
-  async addFixedPackageSchedule(fixedPackageSchedule: any) {
-    const { centerId, courtId, userId, startDate, totalMonths, days } = fixedPackageSchedule
-
+  async addFixedPackageSchedule(userId: string, fixedPackageSchedule: any) {
+    const { centerId, courtId, startDate, totalMonths, days } = fixedPackageSchedule
     const fixedPackageScheduleRepositoryInstance = new fixedPackageScheduleRepository()
     const centerRepositoryInstance = new centerRepository()
     const priceRepositoryInstance = new priceRepository()
@@ -48,7 +47,7 @@ class FixedPackageScheduleService implements IFixedPackageScheduleService {
           const booking = await bookingRepository.createBooking({
             centerId,
             courtId,
-            userId,
+            userId: userId,
             date: playDate,
             start: startTime,
             end: endTime,
@@ -66,7 +65,8 @@ class FixedPackageScheduleService implements IFixedPackageScheduleService {
         bookings,
         totalPrice: totalHours * price.price,
         endDate: moment(startDate).add(totalMonths, 'months').toDate(),
-        playDates: allPlayDates
+        playDates: allPlayDates,
+        userId: userId
       }
 
       return fixedPackageScheduleRepositoryInstance.addFixedPackageSchedule(fixedPackageScheduleData)

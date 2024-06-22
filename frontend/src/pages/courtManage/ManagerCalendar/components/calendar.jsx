@@ -4,6 +4,12 @@ import { useParams } from "react-router-dom";
 import BookingDetail from "./bookingDetail";
 import { getBookingByCenterIdAndDay } from "../../../../services/partnerAPI";
 
+const STATUS_MAPPING = {
+  confirmed: { color: "cyan", text: "Đã thanh toán" },
+  completed: { color: "green", text: "Hoàn thành" },
+  expired: { color: "lightgray", text: "Hết hạn" },
+};
+
 export default function CalendarSlot({ selectedDate, center }) {
   const generateSlots = (center) => {
     const slotsArray = [{ dataIndex: "court" }];
@@ -71,7 +77,12 @@ export default function CalendarSlot({ selectedDate, center }) {
                       margin: "0",
                       textAlign: "center",
                     }}
-                    color="cyan"
+                    bordered={false}
+                    color={
+                      STATUS_MAPPING[booking.status]
+                        ? STATUS_MAPPING[booking.status].color
+                        : "black"
+                    }
                   >
                     {" "}
                     {booking.start} - {booking.end}

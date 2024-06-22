@@ -49,14 +49,14 @@
 
 import { createContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { postData,patchData,putData } from "../fetchAPI";
+import { postData, patchData } from "../fetchAPI";
 import { jwtDecode } from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../../utils/firebase/firebase";
-import { signInSuccess } from "../../../redux/user/userSlice";
 import { Spin } from "antd";
 const AuthContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -102,8 +102,9 @@ export const AuthProvider = ({ children }) => {
     if (response.data.status === "fail") {
       return response.data;
     }
+    console.log("response.data", response.data);
     if (response && response.data) {
-      const token = response.data.token;
+      const token = response.data.data.token;
       console.log(token);
       if (token) {
         Cookies.set("jwtToken", token, { expires: 60 });
@@ -192,11 +193,11 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <div>
-    <AuthContext.Provider value={{ user, login, logout, handleGoogleClick,changePass }}>
-      {children}
-    </AuthContext.Provider>
-
-    
+      <AuthContext.Provider
+        value={{ user, login, logout, handleGoogleClick, changePass }}
+      >
+        {children}
+      </AuthContext.Provider>
     </div>
   );
 };

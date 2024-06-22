@@ -14,8 +14,17 @@ import {
 import moment from "moment";
 import { getPersonalBookingAPI } from "../../../services/bookingAPI/bookingAPI";
 import UpdateBooking from "./components/updateBooking";
+import CartBooking from "./components/cartBooking";
 
 const { Paragraph } = Typography;
+
+const STATUS_MAPPING = {
+  pending: { color: "orange", text: "Chưa thanh toán" },
+  confirmed: { color: "green", text: "Đã thanh toán" },
+  cancelled: { color: "red", text: "Đã hủy" },
+  expired: { color: "#A9A9A9", text: "Hết hạn" },
+};
+
 const BookingCourt = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
@@ -24,10 +33,13 @@ const BookingCourt = () => {
   const [selectedDateBookings, setSelectedDateBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [Bookings, setBookings] = useState([]);
+  const [newBooking, setNewBooking] = useState(null);
+
   const getPersonalBooking = async () => {
     const data = await getPersonalBookingAPI();
     console.log("data:", data);
     setBookings(data.bookings);
+
     setIsLoading(false);
   };
   useEffect(() => {
@@ -55,6 +67,7 @@ const BookingCourt = () => {
   const handleUpdateCancel = () => {
     setIsUpdateModalVisible(false);
     setSelectedBookingForUpdate(null);
+    setNewBooking(null);
   };
 
   const handleEditClick = (booking) => {
@@ -83,6 +96,9 @@ const BookingCourt = () => {
       </div>
     ) : null;
   };
+  const handleUpdateBooking = (newBooking) => {
+    setNewBooking(newBooking);
+  };
 
   return (
     <div>
@@ -108,7 +124,7 @@ const BookingCourt = () => {
                   <Card>
                     <List.Item.Meta
                       title={booking.centerName}
-                      description={`${booking.centerAddress} - Sân: ${booking.courtNumber}`}
+                      description={`${booking.centerAddress} `}
                     />
                     <Row gutter={[16, 16]}>
                       <Col xs={24} sm={12}>
@@ -131,22 +147,13 @@ const BookingCourt = () => {
                       <strong>Trạng thái:</strong>{" "}
                       <span
                         style={{
-                          color:
-                            booking.status === "pending"
-                              ? "orange"
-                              : booking.status === "confirmed"
-                              ? "green"
-                              : booking.status === "cancelled"
-                              ? "red"
-                              : "black",
+                          color: STATUS_MAPPING[booking.status]
+                            ? STATUS_MAPPING[booking.status].color
+                            : "black",
                         }}
                       >
-                        {booking.status === "pending"
-                          ? "Chưa thanh toán"
-                          : booking.status === "confirmed"
-                          ? "Đã thanh toán"
-                          : booking.status === "cancelled"
-                          ? "Đã hủy"
+                        {STATUS_MAPPING[booking.status]
+                          ? STATUS_MAPPING[booking.status].text
                           : "Không xác định"}
                       </span>
                     </Paragraph>
@@ -171,8 +178,22 @@ const BookingCourt = () => {
           visible={isUpdateModalVisible}
           onCancel={handleUpdateCancel}
           footer={null}
+          width={700}
         >
-          <UpdateBooking oldBooking={selectedBookingForUpdate} />
+          <Row>
+            <Col xs={24} md={15}>
+              <UpdateBooking
+                oldBooking={selectedBookingForUpdate}
+                newBooking={handleUpdateBooking}
+              />
+            </Col>
+            <Col xs={24} md={9}>
+              <CartBooking
+                oldBooking={selectedBookingForUpdate}
+                newBooking={newBooking}
+              />
+            </Col>
+          </Row>
         </Modal>
       )}
     </div>

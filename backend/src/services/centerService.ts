@@ -15,6 +15,7 @@ interface ICenterService {
   changeCenterStatusAccept(centerId: string): Promise<any>
   getPersonalActiveCenters(userId: string): Promise<any>
   updateCenterInforById(id: string, data: any, userId: string): Promise<any>
+  getAllSubscriptions(): Promise<any>
 }
 
 class centerService implements ICenterService {
@@ -188,11 +189,12 @@ class centerService implements ICenterService {
       throw new AppError(`Center not found`, 404)
     }
     const oldcourtCount = center.courtCount
-    // if (center.managerId.toString() !== userId) {
-    //   throw new AppError('You are not authorized to perform this action', 403)
-    // }
+
+    // Set the status to 'pending' before updating
+    data.status = 'pending'
+
     Object.assign(center, data)
-    const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
+    const updatedCenter = await centerRepositoryInstance.updateCenterInforById({ _id: centerId }, center)
 
     if (!updatedCenter) {
       throw new Error('Updated center is null')
@@ -213,6 +215,15 @@ class centerService implements ICenterService {
     }
 
     return { updatedCenter, newCourts }
+  }
+  async getAllSubscriptions() {
+    try {
+      const centerRepositoryInstance = new centerRepository()
+      const centers = await centerRepositoryInstance.getAllSubscriptions()
+      return centers
+    } catch (error) {
+      throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
+    }
   }
 }
 export default centerService
