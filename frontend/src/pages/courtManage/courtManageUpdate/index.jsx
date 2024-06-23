@@ -12,6 +12,7 @@ const CourtManageUpdate = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fileList, setFileList] = useState([]);
+  const [initialCourtCount, setInitialCourtCount] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +20,9 @@ const CourtManageUpdate = () => {
       try {
         const result = await getCenterByIdAPI(id, token);
         form.setFieldsValue(result.data.center);
+        
+        // Lưu giá trị cũ của courtCount
+        setInitialCourtCount(result.data.center.courtCount);
 
         // Chuyển đổi hình ảnh thành file list
         if (result.data.center.images) {
@@ -26,7 +30,7 @@ const CourtManageUpdate = () => {
             result.data.center.images.map((url, index) => ({
               uid: index,
               name: `image-${index}`,
-              status: 'done',
+              status: "done",
               url,
             }))
           );
@@ -54,16 +58,25 @@ const CourtManageUpdate = () => {
 
   const showConfirm = (values) => {
     Modal.confirm({
-      title: 'Xác nhận cập nhật',
-      content: 'Bạn có chắc chắn muốn cập nhật thông tin trung tâm này?',
-      okText: 'Cập nhật',
-      cancelText: 'Hủy',
+      title: "Xác nhận cập nhật",
+      content: "Bạn có chắc chắn muốn cập nhật thông tin trung tâm này?",
+      okText: "Cập nhật",
+      cancelText: "Hủy",
       onOk: () => onFinish(values),
     });
   };
 
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList);
+  };
+
+  const validateCourtCount = (_, value) => {
+    if (value < initialCourtCount) {
+      return Promise.reject(
+        new Error("Số lượng sân đấu không được giảm so với dữ liệu cũ.")
+      );
+    }
+    return Promise.resolve();
   };
 
   if (loading) {
@@ -77,11 +90,7 @@ const CourtManageUpdate = () => {
   }
 
   return (
-    <Form
-      form={form}
-      onFinish={(values) => showConfirm(values)}
-      layout="vertical"
-    >
+    <Form form={form} onFinish={(values) => showConfirm(values)} layout="vertical">
       <h1>Cập nhật sân đấu của bạn</h1>
       <Form.Item name="centerName" label="Tên trung tâm">
         <Input />
@@ -89,7 +98,11 @@ const CourtManageUpdate = () => {
       <Form.Item name="location" label="Địa chỉ trung tâm">
         <Input />
       </Form.Item>
-      <Form.Item name="courtCount" label="Số lượng sân đấu">
+      <Form.Item
+        name="courtCount"
+        label="Số lượng sân đấu"
+        rules={[{ validator: validateCourtCount }]}
+      >
         <Input type="number" />
       </Form.Item>
       <Form.Item name="rule" label="Quy định sử dụng sân">
