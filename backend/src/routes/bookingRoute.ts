@@ -25,5 +25,9 @@ bookingRoute
 bookingRoute
   .route('/completed-booking/:bookingId')
   .get(authController.protect, authController.restricTO('manager'), bookingController.completedBooking)
+bookingRoute
+  .route('/cancelled-booking/:bookingId')
+  .get(authController.protect, authController.restricTO('customer'), bookingController.cancelledBooking)
+
 // bookingRoute.route('/check-booking-available').post(authController.protect, bookingController.checkBookingAvailable)
 export default bookingRoute

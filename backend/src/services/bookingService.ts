@@ -18,7 +18,7 @@ interface IbookingService {
   UpdateBookingbyDayIncreasePrice(data: any, userId: string): Promise<any>
   UpdateBookingbyDayDecreasePrice(data: any, userId: string): Promise<any>
   getBookingByInvoiceId(invoiceId: string): Promise<any>
-  completedBooking(bookingId: string): Promise<any>
+  completedBooking(bookingId: string, userId: string): Promise<any>
 }
 class bookingService implements IbookingService {
   async createBookingbyDay(listBooking: any, userId: string) {
@@ -599,6 +599,27 @@ class bookingService implements IbookingService {
       throw new AppError('Không thể xác nhận booking trước giờ chơi', 400)
     }
     booking.status = 'completed'
+    return bookingRepository.updateBooking({ _id: booking._id }, { status: booking.status })
+  }
+
+  async cancelledBooking(bookingId: string, userId: string) {
+    const booking = await bookingRepository.getBooking({ _id: bookingId, userId: userId })
+    if (!booking) {
+      throw new AppError('Booking not found', 404)
+    }
+
+    const bookingStartDate = new Date(booking.date)
+    const currentDate = new Date()
+
+    // Tính toán khoảng cách giữa ngày hiện tại và ngày bắt đầu booking
+    const diffTime = bookingStartDate.getTime() - currentDate.getTime()
+    const diffHours = diffTime / (1000 * 3600)
+
+    // Nếu khoảng cách nhỏ hơn 24 giờ, không cho phép hủy
+    if (diffHours < 24) {
+      throw new AppError('Không thể hủy booking 1 ngày trước khi chơi', 400)
+    }
+    booking.status = 'cancelled'
     return bookingRepository.updateBooking({ _id: booking._id }, { status: booking.status })
   }
 }

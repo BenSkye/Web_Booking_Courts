@@ -101,5 +101,17 @@ class bookingController {
       }
     })
   })
+  static cancelledBooking = catchAsync(async (req: any, res: any, next: any) => {
+    const bookingId = req.params.bookingId
+    const userId = req.user._id
+    const bookingServiceInstance = new bookingService()
+    const booking = await bookingServiceInstance.cancelledBooking(bookingId, userId)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        booking
+      }
+    })
+  })
 }
 export default bookingController
