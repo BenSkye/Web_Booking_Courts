@@ -6,8 +6,8 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IPlayPackage extends Document {
   userId: Schema.Types.ObjectId;
   centerId: Schema.Types.ObjectId;
-  totalHours: number;
-  remainingHours: number;
+  hour: number;
+  price: number;
 
 }
 
@@ -23,14 +23,18 @@ const playPackageSchema = new Schema(
       ref: 'Center',
       required: true
     },
-    totalHours: {
+    hour: {
       type: Number,
       required: true
     },
-    remainingHours: {
+    price: {
       type: Number,
       required: true
     },
+    invoiceId: {
+      type: Schema.Types.ObjectId,
+
+    }
 
   },
   { timestamps: true }

@@ -51,4 +51,18 @@ export const getPersonalBookingAPI = async () => {
   if (response.status === "success") {
     return response.data;
   }
+
+
 };
+export const addPlayPackage = async () => {
+  const response = await fetchData(
+    "http://localhost:5050/api/v1/playPackage"
+  );
+  console.log("Response:", response);
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === "success") {
+    return response.data;
+  }
+}

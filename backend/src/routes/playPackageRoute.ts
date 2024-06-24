@@ -3,7 +3,7 @@ import PlayPackageController from '~/controller/playPackageController';
 
 const playPackageRoute = Router();
 
-playPackageRoute.route('/').get(PlayPackageController.createPlayPackage);
+playPackageRoute.route('/').post(PlayPackageController.createOrUpdatePlayPackage);
 
 
 export default playPackageRoute;

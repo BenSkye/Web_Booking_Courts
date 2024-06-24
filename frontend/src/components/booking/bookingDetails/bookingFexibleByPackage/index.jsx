@@ -1,17 +1,7 @@
 import { useState } from 'react';
 import { Card, Button, InputNumber } from 'antd';
-
+import { Link } from 'react-router-dom';
 const BookingFlexibleByPackage = ({ id, onSelectPackage }) => {
-  const [hours, setHours] = useState(10); // Số giờ mặc định
-  const pricePerHour = 10; // Giá tiền mỗi giờ
-
-  const handleHoursChange = (value) => {
-    setHours(value);
-  };
-
-  const handlePackageSelect = () => {
-    onSelectPackage(hours); // Gọi callback và truyền số giờ đã chọn
-  };
 
   return (
     <div>
@@ -24,9 +14,11 @@ const BookingFlexibleByPackage = ({ id, onSelectPackage }) => {
           defaultValue={hours}
           onChange={handleHoursChange}
         />
-        <Button type='primary' onClick={handlePackageSelect}>
-          Chọn gói
-        </Button>
+        <Link to={``}>
+          <Button type='primary' onClick={handlePackageSelect}>
+            Chọn gói
+          </Button>
+        </Link>
       </Card>
     </div>
   );
