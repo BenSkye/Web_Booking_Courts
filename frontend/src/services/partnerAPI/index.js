@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { fetchData } from "../fetchAPI";
-const apiBaseUrl = process.env.API_BASE_URL;
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const submitForm = async (formValues, token) => {
   try {
-    const response = await fetch("http://localhost:5050/api/v1/center", {
+    const response = await fetch(`${apiBaseUrl}/center`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,7 +30,7 @@ export const submitForm = async (formValues, token) => {
 export const getFormDataAPI = async (token) => {
   try {
     const response = await fetch(
-      "http://localhost:5050/api/v1/center/my-centers",
+      `${apiBaseUrl}/center/my-centers`,
       {
         method: "GET",
         headers: {
@@ -53,7 +54,7 @@ export const getFormDataAPI = async (token) => {
 export async function getCenterByIdAPI(centerId, token) {
   try {
     const response = await fetch(
-      `http://localhost:5050/api/v1/center/my-centers/${centerId}`,
+      `${apiBaseUrl}/center/my-centers/${centerId}`,
       {
         method: "GET",
         headers: {
@@ -78,7 +79,7 @@ export async function getCenterByIdAPI(centerId, token) {
 export async function getPersonalActiveCenter() {
   try {
     const response = await fetchData(
-      "http://localhost:5050/api/v1/center/my-active-centers"
+      `${apiBaseUrl}/center/my-active-centers`
     );
     console.log("Response:", response);
     if (response.status === "success") {
@@ -95,7 +96,7 @@ export async function getPersonalActiveCenter() {
 export async function getBookingByCenterIdAndDay(centerId, date) {
   try {
     const response = await fetchData(
-      `http://localhost:5050/api/v1/booking/get-booking-by-day-and-center?centerId=${centerId}&date=${date}`
+      `${apiBaseUrl}/booking/get-booking-by-day-and-center?centerId=${centerId}&date=${date}`
     );
     console.log("Response:", response);
     if (response.status === "success") {

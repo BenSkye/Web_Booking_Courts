@@ -1,8 +1,8 @@
 import { fetchData } from "@/services/fetchAPI";
-
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const getListCourtsByCenterId_API = async (id) => {
   const data = await fetchData(
-    `http://localhost:5050/api/v1/court/get-court-by-centerId/${id}`
+    `${apiBaseUrl}/court/get-court-by-centerId/${id}`
   );
   if (data.status === "success" && Array.isArray(data.data.courts)) {
     return data.data.courts; // Return the courts array if the data format is correct
