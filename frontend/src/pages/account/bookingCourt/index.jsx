@@ -11,7 +11,6 @@ import {
   Spin,
   Typography,
 } from "antd";
-import moment from "moment";
 import { getPersonalBookingAPI } from "../../../services/bookingAPI/bookingAPI";
 import UpdateBooking from "./components/updateBooking";
 import CartBooking from "./components/cartBooking";
@@ -45,6 +44,9 @@ const BookingCourt = () => {
   useEffect(() => {
     getPersonalBooking();
   }, []);
+  useEffect(() => {
+    console.log("selectedDateBookings", selectedDateBookings);
+  }, [selectedDateBookings]);
 
   const onSelect = (value) => {
     const selectedDate = value.toDate();
