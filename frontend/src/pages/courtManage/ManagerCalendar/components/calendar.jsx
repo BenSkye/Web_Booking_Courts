@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Modal, Spin, Tag, Tooltip } from "antd";
 import { useParams } from "react-router-dom";
 import BookingDetail from "./bookingDetail";
@@ -120,7 +120,8 @@ export default function CalendarSlot({ selectedDate, center }) {
   const [Booking, setBooking] = useState();
   const [bookingInDay, setBookingInDay] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [scrollPosition, setScrollPosition] = useState({ left: 0, top: 0 });
+  const tableRef = useRef(null);
   const showModal = (booking) => {
     setBooking(booking);
     setIsModalOpen(true);
@@ -139,9 +140,18 @@ export default function CalendarSlot({ selectedDate, center }) {
       2,
       "0"
     )}T00:00:00.000Z`;
+    console.log("ISO Date:", isoDate);
     const listBooking = await getBookingByCenterIdAndDay(center._id, isoDate);
     setBookingInDay(listBooking.bookingsIncourt);
     setLoading(false);
+  };
+
+  const handleBookingComplete = (updatedBooking) => {
+    if (updatedBooking.status === "completed") {
+      setLoading(true);
+      getBooking();
+    }
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -153,6 +163,22 @@ export default function CalendarSlot({ selectedDate, center }) {
     getBooking();
     console.log("Booking in day:", bookingInDay);
   }, [selectedDate, center]);
+
+  useEffect(() => {
+    if (tableRef.current) {
+      tableRef.current.scrollLeft = scrollPosition.left;
+      tableRef.current.scrollTop = scrollPosition.top;
+    }
+  }, [dataSource]);
+
+  const handleScroll = () => {
+    if (tableRef.current) {
+      setScrollPosition({
+        left: tableRef.current.scrollLeft,
+        top: tableRef.current.scrollTop,
+      });
+    }
+  };
 
   if (loading) return <Spin size="large" />;
   return (
@@ -166,7 +192,11 @@ export default function CalendarSlot({ selectedDate, center }) {
           }
         `}
       </style>
-      <div style={{ width: "100%", overflowX: "auto" }}>
+      <div
+        style={{ width: "100%", overflowX: "auto" }}
+        ref={tableRef}
+        onScroll={handleScroll}
+      >
         <table>
           <thead>
             <tr>
@@ -191,7 +221,7 @@ export default function CalendarSlot({ selectedDate, center }) {
         footer={null}
         onCancel={handleOk}
       >
-        <BookingDetail Booking={Booking} />
+        <BookingDetail Booking={Booking} onComplete={handleBookingComplete} />
       </Modal>
     </>
   );

@@ -17,6 +17,8 @@ interface IbookingService {
   getPersonalBooking(userId: string): Promise<any>
   UpdateBookingbyDayIncreasePrice(data: any, userId: string): Promise<any>
   UpdateBookingbyDayDecreasePrice(data: any, userId: string): Promise<any>
+  getBookingByInvoiceId(invoiceId: string): Promise<any>
+  completedBooking(bookingId: string, userId: string): Promise<any>
 }
 class bookingService implements IbookingService {
   async createBookingbyDay(listBooking: any, userId: string) {
@@ -39,6 +41,7 @@ class bookingService implements IbookingService {
           booking.end
         )
         if (PricePerBooking) {
+          booking.price = PricePerBooking
           totalprice += PricePerBooking
         }
         const newbooking = await this.createBooking(booking, userId)
@@ -55,7 +58,16 @@ class bookingService implements IbookingService {
     const center = await centerServiceInstance.getCenterById(centerId)
     const orderInfo = 'Thanh toán đặt sân' + center.centerName + bookingDetail.join(',')
     const callbackUrl = '/api/v1/booking/callback-pay-booking-by-day'
-    const paymentResult = await momoService.createPayment(orderInfo, totalprice, orderId, centerId, callbackUrl, '')
+    const redirect = '/user/bill'
+    const paymentResult = await momoService.createPayment(
+      orderInfo,
+      totalprice,
+      orderId,
+      centerId,
+      callbackUrl,
+      '',
+      redirect
+    )
     return paymentResult
   }
 
@@ -289,7 +301,7 @@ class bookingService implements IbookingService {
 
   async checkAndUpdateBooking() {
     const currentTime = new Date()
-    currentTime.setMinutes(currentTime.getMinutes() + 30) //sau 30 phut không checkin thì chuyển sang hết hạn
+    // currentTime.setMinutes(currentTime.getMinutes() + 30) //sau 30 phut không checkin thì chuyển sang hết hạn
     const hours = currentTime.getHours()
     let minutes = currentTime.getMinutes()
 
@@ -306,7 +318,7 @@ class bookingService implements IbookingService {
     const listBooking = await bookingRepository.getListBooking({ date: now.toISOString(), status: 'confirmed' })
     await Promise.all(
       listBooking.map(async (booking) => {
-        if (booking.start <= formattedTime) {
+        if (booking.end <= formattedTime) {
           await bookingRepository.updateBooking({ _id: booking._id }, { status: 'expired' })
         }
       })
@@ -353,13 +365,16 @@ class bookingService implements IbookingService {
     const InvoiceRepositoryInstance = new InvoiceRepository()
     const updateInvoice = await InvoiceRepositoryInstance.updateInvoice({ _id: newInvoice._id }, { price: totalprice })
     const extraData = JSON.stringify({ oldBookingId: updateBooking._id })
+    const redirect = '/user/booking-court'
+
     const paymentResult = await momoService.createPayment(
       orderInfo,
       totalprice,
       orderId,
       centerId,
       callbackUrl,
-      extraData
+      extraData,
+      redirect
     )
     return paymentResult
   }
@@ -392,7 +407,9 @@ class bookingService implements IbookingService {
       slotAvailable.push({ ...slot })
       slot.start = slot.end
     }
-    const booking = { ...data, userId: userId, status: 'pending' }
+    const timeSlotServiceInstance = new timeSlotService()
+    const PricePerBooking = await timeSlotServiceInstance.getPriceFormStartoEnd(data.centerId, data.start, data.end)
+    const booking = { ...data, price: PricePerBooking, userId: userId, status: 'pending' }
     const newBooking = await bookingRepository.createBooking(booking)
     console.log('slotAvailable', slotAvailable)
     // Cập nhật trạng thái của các slot thành "booking"
@@ -531,6 +548,79 @@ class bookingService implements IbookingService {
       start: updateBooking.start,
       end: updateBooking.end
     }
+  }
+
+  async getBookingByInvoiceId(invoiceId: string) {
+    console.log('invoiceId', invoiceId)
+    const listBooking = await bookingRepository.getListBooking({ invoiceId: invoiceId })
+    const bookingWithCenterAndCourt = await Promise.all(
+      listBooking.map(async (booking: any) => {
+        const centerRepositoryInstance = new centerRepository()
+        const center = await centerRepositoryInstance.getCenterById(booking.centerId)
+        const courtRepositoryInstance = new courtRepository()
+        const court = await courtRepositoryInstance.getCourt({ _id: booking.courtId })
+        if (!center || !court) {
+          return {
+            ...booking._doc,
+            centerName: 'Trung tâm không tồn tại',
+            centerAddress: 'Trung tâm không tồn tại',
+            courtNumber: 'Sân không tồn tại'
+          }
+        }
+        return {
+          ...booking._doc,
+          centerName: center.centerName,
+          centerAddress: center.location,
+          courtNumber: court.courtNumber
+        }
+      })
+    )
+    return bookingWithCenterAndCourt
+  }
+
+  async completedBooking(bookingId: string) {
+    const booking = await bookingRepository.getBookingbyId(bookingId)
+    if (!booking) {
+      throw new AppError('Booking not found', 404)
+    }
+    const currentTime = new Date()
+    const hours = currentTime.getHours()
+    let minutes = currentTime.getMinutes()
+
+    // Round down to the nearest half hour
+    minutes = Math.floor(minutes / 30) * 30
+
+    // Format hours and minutes as 2 digits
+    const formattedHours = hours < 10 ? '0' + hours : hours
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes
+
+    const formattedTime = `${formattedHours}:${formattedMinutes}`
+    if (booking.start >= formattedTime || booking.end <= formattedTime) {
+      throw new AppError('Không thể xác nhận booking trước giờ chơi', 400)
+    }
+    booking.status = 'completed'
+    return bookingRepository.updateBooking({ _id: booking._id }, { status: booking.status })
+  }
+
+  async cancelledBooking(bookingId: string, userId: string) {
+    const booking = await bookingRepository.getBooking({ _id: bookingId, userId: userId })
+    if (!booking) {
+      throw new AppError('Booking not found', 404)
+    }
+
+    const bookingStartDate = new Date(booking.date)
+    const currentDate = new Date()
+
+    // Tính toán khoảng cách giữa ngày hiện tại và ngày bắt đầu booking
+    const diffTime = bookingStartDate.getTime() - currentDate.getTime()
+    const diffHours = diffTime / (1000 * 3600)
+
+    // Nếu khoảng cách nhỏ hơn 24 giờ, không cho phép hủy
+    if (diffHours < 24) {
+      throw new AppError('Không thể hủy booking 1 ngày trước khi chơi', 400)
+    }
+    booking.status = 'cancelled'
+    return bookingRepository.updateBooking({ _id: booking._id }, { status: booking.status })
   }
 }
 export default bookingService
