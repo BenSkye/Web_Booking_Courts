@@ -191,7 +191,7 @@ class centerService implements ICenterService {
       throw new AppError('Can not update center infor when center is active', 409)
     }
 
-    let listPriceId: any[] = []
+    const listPriceId: any[] = []
     if (data.price) {
       const PriceList = data.price
       const priceRepositoryInstance = new priceRepository()
