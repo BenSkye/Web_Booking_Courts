@@ -32,28 +32,25 @@ interface ICenterRepository {
   getCenter(query: object): Promise<any | null>
   updateCenter(query: object, data: any): Promise<any | null>
   getAllSubscriptions(): Promise<any[]>
-
   updateCenterInforById(id: any, data: any): Promise<any | null>
-
-  
 }
 
 class CenterRepository implements ICenterRepository {
   async addCenter(center: ICenter): Promise<any> {
     try {
-      const newCenter = new Center(center);
-      return await newCenter.save();
+      const newCenter = new Center(center)
+      return await newCenter.save()
     } catch (error) {
-      throw new Error(`Could not add center: ${(error as Error).message}`);
+      throw new Error(`Could not add center: ${(error as Error).message}`)
     }
   }
 
   async getAllCenters(): Promise<any[]> {
     try {
-      const centers = await Center.find().populate('price');
-      return centers;
+      const centers = await Center.find().populate('price')
+      return centers
     } catch (error) {
-      throw new Error(`Could not fetch centers: ${(error as Error).message}`);
+      throw new Error(`Could not fetch centers: ${(error as Error).message}`)
     }
   }
 
@@ -80,6 +77,15 @@ class CenterRepository implements ICenterRepository {
   async updateCenter(query: object, data: any) {
     return await Center.findOneAndUpdate(query, data, { new: true })
   }
+  async getAllSubscriptions() {
+    try {
+      return await Center.find({ 'subscriptions.packageId': { $ne: null } })
+        .populate('subscriptions.packageId')
+        .exec()
+    } catch (error) {
+      throw new Error(`Could not fetch subscriptions: ${(error as Error).message}`)
+    }
+  }
   async updateCenterInforById(id: any, data: any) {
     try {
       const center = await Center.findByIdAndUpdate(id, data, { new: true })
@@ -91,14 +97,5 @@ class CenterRepository implements ICenterRepository {
       throw new Error(`Could not update center: ${(error as Error).message}`)
     }
   }
-  async getAllSubscriptions() {
-    try {
-      return await Center.find({ 'subscriptions.packageId': { $ne: null } })
-        .populate('subscriptions.packageId')
-        .exec()
-    } catch (error) {
-      throw new Error(`Could not fetch subscriptions: ${(error as Error).message}`);
-    }
 }
-}
-export default CenterRepository;
+export default CenterRepository

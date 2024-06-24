@@ -34,50 +34,6 @@ const CustomForm = ({
       >
         <InputNumber min={10000} />
       </Form.Item>
-      {/* <Form.Item
-        label="Giờ bắt đầu (giờ chơi bình thường)"
-        name="startTimeNormal"
-        rules={[{ required: true, message: "Hãy chọn giờ bắt đầu!" }]}
-      >
-        <TimePicker
-          format={"HH:mm"}
-          disabledHours={() =>
-            getDisabledHours(
-              form.getFieldValue("openTime"),
-              form.getFieldValue("closeTime")
-            )
-          }
-          disabledMinutes={(selectedHour) =>
-            getDisabledMinutes(
-              selectedHour,
-              form.getFieldValue("openTime"),
-              form.getFieldValue("closeTime")
-            )
-          }
-        />
-      </Form.Item> */}
-      {/* <Form.Item
-        label="Giờ kết thúc (giờ chơi bình thường)"
-        name="endTimeNormal"
-        rules={[{ required: true, message: "Hãy chọn giờ kết thúc!" }]}
-      >
-        <TimePicker
-          format={"HH:mm"}
-          disabledHours={() =>
-            getDisabledHours(
-              form.getFieldValue("openTime"),
-              form.getFieldValue("closeTime")
-            )
-          }
-          disabledMinutes={(selectedHour) =>
-            getDisabledMinutes(
-              selectedHour,
-              form.getFieldValue("openTime"),
-              form.getFieldValue("closeTime")
-            )
-          }
-        />
-      </Form.Item> */}
 
       <Form.Item>
         <Checkbox onChange={handleCheckboxChange}>Có giờ vàng</Checkbox>

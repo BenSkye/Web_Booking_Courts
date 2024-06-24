@@ -28,9 +28,9 @@ const services = [
   { value: "Tủ đựng đồ cá nhân", label: "Tủ đựng đồ cá nhân", icon: <FaLock /> },
 ];
 
-const ServicesAndAmenities = () => (
+const ServicesAndAmenities = ({ selectedServices = [] }) => (
   <Form.Item label="Dịch Vụ và Tiện Ích">
-    <Form.Item name="services" label="Dịch Vụ">
+    <Form.Item name="services" initialValue={selectedServices} label="Dịch Vụ">
       <Checkbox.Group>
         <Row gutter={[16, 16]}>
           {services.map((service) => (

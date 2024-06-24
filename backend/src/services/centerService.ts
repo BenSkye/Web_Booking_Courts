@@ -15,9 +15,7 @@ interface ICenterService {
   changeCenterStatusAccept(centerId: string): Promise<any>
   getPersonalActiveCenters(userId: string): Promise<any>
   updateCenterInforById(id: string, data: any, userId: string): Promise<any>
-  getAllSubscriptions():  Promise<any>
-
-
+  getAllSubscriptions(): Promise<any>
 }
 
 class centerService implements ICenterService {
@@ -111,7 +109,7 @@ class centerService implements ICenterService {
     let latestSubscription
     if (center.subscriptions.length > 0) {
       latestSubscription = center.subscriptions.reduce((latest, subscription) => {
-          return latest.expiryDate > subscription.expiryDate ? latest : subscription
+        return latest.expiryDate > subscription.expiryDate ? latest : subscription
       })
     }
     let activationDate = new Date()
@@ -183,9 +181,90 @@ class centerService implements ICenterService {
     const centerRepositoryInstance = new centerRepository()
     const ListCenter = await centerRepositoryInstance.getListCenter({ managerId: userId, status: 'active' })
     return ListCenter
+    
   }
-  
-  async getAllSubscriptions(){
+  async updateCenterInforById(centerId: string, data: any, userId: string) {
+    const centerRepositoryInstance = new centerRepository()
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId })
+
+    if (center && center.status.includes('active')) {
+      throw new AppError('Can not update center infor when center is active', 409)
+    }
+
+    const listPriceId: any[] = []
+    if (data.price) {
+      const PriceList = data.price
+      const priceRepositoryInstance = new priceRepository()
+      const promises = PriceList.map(async (price: any) => {
+        const existingPrice = await priceRepositoryInstance.getPrice({
+          centerId: centerId,
+          scheduleType: price.scheduleType
+        })
+
+        let updatePrice
+        if (existingPrice) {
+          // Nếu tồn tại, cập nhật giá trị
+          updatePrice = await priceRepositoryInstance.updatePrice(
+            { centerId: centerId, scheduleType: price.scheduleType },
+            price
+          )
+        } else {
+          // Nếu không tồn tại, tạo mới
+          price = { ...price, centerId: centerId }
+          updatePrice = await priceRepositoryInstance.addPrice(price)
+        }
+        console.log('updatePrice', updatePrice)
+        if (updatePrice) {
+          listPriceId.push(updatePrice._id)
+        }
+        return updatePrice
+      })
+      await Promise.all(promises)
+    }
+
+    if (!center) {
+      throw new AppError(`Center not found`, 404)
+    }
+
+    const oldcourtCount = center.courtCount
+
+    // Set the status to 'pending' before updating
+    data.status = 'pending'
+    console.log('listPriceId', listPriceId)
+    if (listPriceId.length > 0) {
+      data.price = listPriceId
+    } else {
+      delete data.price // Xóa trường price nếu không có giá trị mới
+    }
+    console.log('data999', data)
+
+    Object.assign(center, data)
+    console.log('center999', center)
+
+    const updatedCenter = await centerRepositoryInstance.updateCenterInforById({ _id: centerId }, center)
+
+    if (!updatedCenter) {
+      throw new Error('Updated center is null')
+    }
+
+    // Add new courts
+    const newCourts = []
+
+    for (let i = oldcourtCount; i < updatedCenter.courtCount; i++) {
+      console.log('iiiiii', i)
+      const court = {
+        courtNumber: i + 1,
+        centerId: updatedCenter._id
+      }
+      const courtRepositoryInstance = new courtRepository()
+      const newCourt = await courtRepositoryInstance.addCourt(court)
+      newCourts.push(newCourt)
+    }
+
+    return { updatedCenter, newCourts }
+  }
+
+  async getAllSubscriptions() {
     try {
       const centerRepositoryInstance = new centerRepository()
       const centers = await centerRepositoryInstance.getAllSubscriptions()
@@ -194,19 +273,5 @@ class centerService implements ICenterService {
       throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
     }
   }
-  async updateCenterInforById(centerId: string, data: any, userId: string) {
-    const centerRepositoryInstance = new centerRepository()
-    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId})
-    if (!center) {
-      throw new AppError(`Center not found`, 404)
-    }
-    // if (center.managerId.toString() !== userId) {
-    //   throw new AppError('You are not authorized to perform this action', 403)
-    // }
-    Object.assign(center, data)
-    const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
-    return updatedCenter
-}
-
 }
 export default centerService

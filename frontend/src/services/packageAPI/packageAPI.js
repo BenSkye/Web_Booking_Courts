@@ -1,9 +1,9 @@
 import axios from "axios";
-
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const getAllCenterPackage = async (token) => {
   try {
     const response = await axios.get(
-      "http://localhost:5050/api/v1/centerpackage/getAllCenterPackage",
+      `${apiBaseUrl}/centerpackage/getAllCenterPackage`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

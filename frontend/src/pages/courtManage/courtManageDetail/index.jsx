@@ -1,15 +1,77 @@
 import React, { useEffect, useState } from "react";
-import { Descriptions, Image, List, Spin, Alert, Card, Row, Col, Button } from "antd";
-import { useParams } from "react-router-dom";
+import {
+  Descriptions,
+  Image,
+  List,
+  Spin,
+  Alert,
+  Card,
+  Row,
+  Col,
+  Button,
+} from "antd";
+import { useParams, Link } from "react-router-dom";
 import { getCenterByIdAPI } from "../../../services/partnerAPI";
 import Cookies from "js-cookie";
-import { Link } from "react-router-dom";
+import {
+  FaCar,
+  FaHome,
+  FaWifi,
+  FaStore,
+  FaRestroom,
+  FaCoffee,
+  FaTools,
+  FaUser,
+  FaFirstAid,
+  FaShower,
+  FaLock,
+} from "react-icons/fa";
+
 const scheduleTypeMapping = {
   NP: "Giờ bình thường",
   GP: "Giờ vàng",
   MP: "Đặt lịch cố định theo tháng",
   PP: "Mua gói giờ chơi",
 };
+
+const services = [
+  { value: "Bãi đỗ xe", label: "Bãi đỗ xe", icon: <FaCar /> },
+  { value: "Phòng thay đồ", label: "Phòng thay đồ", icon: <FaHome /> },
+  { value: "Wifi miễn phí", label: "Wifi miễn phí", icon: <FaWifi /> },
+  {
+    value: "Quầy bán/thuê đồ thể thao",
+    label: "Quầy bán/thuê đồ thể thao",
+    icon: <FaStore />,
+  },
+  { value: "Nhà vệ sinh", label: "Nhà vệ sinh", icon: <FaRestroom /> },
+  {
+    value: "Quầy bán đồ ăn nhẹ và nước uống",
+    label: "Quầy bán đồ ăn nhẹ và nước uống",
+    icon: <FaCoffee />,
+  },
+  {
+    value: "Dịch vụ cho thuê dụng cụ",
+    label: "Dịch vụ cho thuê dụng cụ",
+    icon: <FaTools />,
+  },
+  {
+    value: "Dịch vụ huấn luyện",
+    label: "Dịch vụ huấn luyện",
+    icon: <FaUser />,
+  },
+  {
+    value: "Dịch vụ sơ cứu, massage",
+    label: "Dịch vụ sơ cứu, massage",
+    icon: <FaFirstAid />,
+  },
+  { value: "Phòng tắm", label: "Phòng tắm", icon: <FaShower /> },
+  {
+    value: "Tủ đựng đồ cá nhân",
+    label: "Tủ đựng đồ cá nhân",
+    icon: <FaLock />,
+  },
+];
+
 const CourtManageDetail = () => {
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -54,6 +116,10 @@ const CourtManageDetail = () => {
     );
   }
 
+  const selectedServices = services.filter((service) =>
+    data.services.includes(service.value)
+  );
+
   return (
     <div>
       <h1>Chi tiết về sân đấu của bạn</h1>
@@ -87,11 +153,27 @@ const CourtManageDetail = () => {
             />
           ))}
         </Descriptions.Item>
+        <Descriptions.Item label="Hình ảnh giấy phép kinh doanh">
+          {data.imagesLicense.map((image, index) => (
+            <Image
+              key={index}
+              width={200}
+              height={200}
+              src={image}
+              style={{ marginRight: 8 }}
+            />
+          ))}
+        </Descriptions.Item>
         <Descriptions.Item label="Dịch vụ">
-          <List
-            dataSource={data.services}
-            renderItem={(item) => <List.Item>{item}</List.Item>}
-          />
+          <Row gutter={[16, 16]}>
+            {selectedServices.map((service) => (
+              <Col span={8} key={service.value}>
+                <Card style={{ textAlign: "center" }}>
+                  {service.icon} {service.label}
+                </Card>
+              </Col>
+            ))}
+          </Row>
         </Descriptions.Item>
       </Descriptions>
       <Row gutter={16} style={{ marginTop: "20px" }}>
@@ -103,7 +185,7 @@ const CourtManageDetail = () => {
                 <List.Item>
                   <Row gutter={16} style={{ width: "100%" }}>
                     <Col span={6}>
-                      <b>Giá tiền:</b> {item.price}
+                      <b>Giá tiền:</b> {item.price + " VND"}
                     </Col>
                     <Col span={6}>
                       <b>Giờ bắt đầu:</b> {item.startTime}
@@ -122,7 +204,11 @@ const CourtManageDetail = () => {
         </Col>
       </Row>
       <Link to={`/courtManage/update/${data._id}`}>
-        <Button type="default" block style={{ marginBottom: "10px",backgroundColor: "orange" }}>
+        <Button
+          type="default"
+          block
+          style={{ marginBottom: "10px", backgroundColor: "orange" }}
+        >
           Cập nhật thông tin
         </Button>
       </Link>
