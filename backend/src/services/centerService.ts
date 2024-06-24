@@ -181,50 +181,61 @@ class centerService implements ICenterService {
     const centerRepositoryInstance = new centerRepository()
     const ListCenter = await centerRepositoryInstance.getListCenter({ managerId: userId, status: 'active' })
     return ListCenter
+    
   }
   async updateCenterInforById(centerId: string, data: any, userId: string) {
     const centerRepositoryInstance = new centerRepository()
     const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId })
+
     if (center && center.status.includes('active')) {
       throw new AppError('Can not update center infor when center is active', 409)
     }
-    const PriceList = data.price
-    const priceRepositoryInstance = new priceRepository()
+
     let listPriceId: any[] = []
-    const promises = PriceList.map(async (price: any) => {
-      const existingPrice = await priceRepositoryInstance.getPrice({
-        centerId: centerId,
-        scheduleType: price.scheduleType
+    if (data.price) {
+      const PriceList = data.price
+      const priceRepositoryInstance = new priceRepository()
+      const promises = PriceList.map(async (price: any) => {
+        const existingPrice = await priceRepositoryInstance.getPrice({
+          centerId: centerId,
+          scheduleType: price.scheduleType
+        })
+
+        let updatePrice
+        if (existingPrice) {
+          // Nếu tồn tại, cập nhật giá trị
+          updatePrice = await priceRepositoryInstance.updatePrice(
+            { centerId: centerId, scheduleType: price.scheduleType },
+            price
+          )
+        } else {
+          // Nếu không tồn tại, tạo mới
+          price = { ...price, centerId: centerId }
+          updatePrice = await priceRepositoryInstance.addPrice(price)
+        }
+        console.log('updatePrice', updatePrice)
+        if (updatePrice) {
+          listPriceId.push(updatePrice._id)
+        }
+        return updatePrice
       })
-      let updatePrice
-      if (existingPrice) {
-        // Nếu tồn tại, cập nhật giá trị
-        updatePrice = await priceRepositoryInstance.updatePrice(
-          { centerId: centerId, scheduleType: price.scheduleType },
-          price
-        )
-      } else {
-        // Nếu không tồn tại, tạo mới
-        price = { ...price, centerId: centerId }
-        updatePrice = await priceRepositoryInstance.addPrice(price)
-      }
-      console.log('updatePrice', updatePrice)
-      if (updatePrice) {
-        listPriceId.push(updatePrice._id)
-      }
-      return updatePrice
-    })
-    const results = await Promise.all(promises)
-   
+      await Promise.all(promises)
+    }
+
     if (!center) {
       throw new AppError(`Center not found`, 404)
     }
+
     const oldcourtCount = center.courtCount
 
     // Set the status to 'pending' before updating
     data.status = 'pending'
     console.log('listPriceId', listPriceId)
-    data.price = listPriceId
+    if (listPriceId.length > 0) {
+      data.price = listPriceId
+    } else {
+      delete data.price // Xóa trường price nếu không có giá trị mới
+    }
     console.log('data999', data)
 
     Object.assign(center, data)
@@ -252,6 +263,7 @@ class centerService implements ICenterService {
 
     return { updatedCenter, newCourts }
   }
+
   async getAllSubscriptions() {
     try {
       const centerRepositoryInstance = new centerRepository()
