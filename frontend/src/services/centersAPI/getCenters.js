@@ -1,8 +1,10 @@
 import { fetchData } from "@/services/fetchAPI";
 import axios from "axios";
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const getAllCenterAPI = async () => {
   try {
-    const response = await fetch("http://localhost:5050/api/v1/center");
+    const response = await fetch(`${apiBaseUrl}/center`);
     const responseData = await response.json();
     console.log("Data from API:", responseData);
     if (responseData.status === "success") {
@@ -18,7 +20,7 @@ export const getAllCenterAPI = async () => {
 };
 
 export const getCenterByIdAPI = async (id) => {
-  const data = await fetchData(`http://localhost:5050/api/v1/center/${id}`);
+  const data = await fetchData(`${apiBaseUrl}/center/${id}`);
   if (data) {
     return data;
   } else {
@@ -32,7 +34,7 @@ export const getAPriceByCenterIdAPIAndScheduleType = async (
   scheduleType
 ) => {
   const data = await fetchData(
-    `http://localhost:5050/api/v1/price/center/${id}/schedule-type/${scheduleType}`
+    `${apiBaseUrl}/price/center/${id}/schedule-type/${scheduleType}`
   );
   if (data.status === "success" && data.data.price) {
     return data.data.price;
@@ -44,7 +46,7 @@ export const getAPriceByCenterIdAPIAndScheduleType = async (
 
 export async function updateCenter(centerId, data, token) {
   try {
-    const url = `http://localhost:5050/api/v1/center/my-centers/update/${centerId}`;
+    const url = `${apiBaseUrl}/center/my-centers/update/${centerId}`;
     const response = await axios.put(url, data, {
       headers: {
         "Content-Type": "application/json",

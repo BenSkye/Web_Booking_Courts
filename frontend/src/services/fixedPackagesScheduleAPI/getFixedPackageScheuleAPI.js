@@ -1,7 +1,8 @@
 import { fetchData } from '../fetchAPI';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const getFixedPackageScheduleByIdAPI = async (packageId) => {
   return await fetchData(
-    `http://localhost:5050/api/v1/fixed-package-schedule/${packageId}`
+    `${apiBaseUrl}/fixed-package-schedule/${packageId}`
   );
 };
