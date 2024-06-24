@@ -70,6 +70,7 @@ const OrderDetails = () => {
   };
 
   const handleCancel = () => {
+    setListBooking([]);
     setIsModalVisible(false);
   };
 
@@ -196,7 +197,11 @@ const OrderDetails = () => {
                       <strong>Sân:</strong> {booking.courtNumber}
                     </Paragraph>
                     <Paragraph>
-                      <strong>Giá</strong> {booking?.price}
+                      <strong>Giá:</strong>{" "}
+                      {Number(booking?.price).toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
                     </Paragraph>
                     <Paragraph>
                       <strong>Trạng thái:</strong>{" "}
