@@ -75,7 +75,7 @@ const ReviewStep = ({ formValues }) => {
                 <List.Item>
                   <Descriptions column={1} bordered>
                     <Descriptions.Item label="Giá tiền">
-                      {item.price}
+                      {item.price + " VND"}
                     </Descriptions.Item>
                     <Descriptions.Item label="Giờ bắt đầu">
                       {item.startTime}

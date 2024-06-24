@@ -42,24 +42,6 @@ const BookingFixedByMonth = ({ id }) => {
   const [bookings, setBookings] = useState([]); // State to store the bookings
   const [totalPrice, setTotalPrice] = useState(0);
 
-  const calculateEndDate = () => {
-    const startDate = form.getFieldValue('startDate');
-    const months = form.getFieldValue('months');
-    if (startDate && months) {
-      const daysInMonth = moment(startDate)
-        .add(months, 'months')
-        .subtract(1, 'days')
-        .endOf('day');
-      const remainingDays = daysInMonth.diff(startDate, 'days') + 1;
-      const numMonths = Math.floor(remainingDays / 30);
-      const endDate = moment(startDate)
-        .add(numMonths, 'months')
-        .subtract(1, 'days')
-        .endOf('day');
-      setEndDate(endDate);
-    }
-  };
-
   useEffect(() => {
     const getCenter = async (id) => {
       const data = await getCenterByIdAPI(id);
@@ -134,6 +116,7 @@ const BookingFixedByMonth = ({ id }) => {
         const data = response.data.fixedPackageSchedule;
         console.log('GET fixedPackageSchedule: ', data);
         if (data && Array.isArray(data.bookings)) {
+          setEndDate(data.endDate);
           setTotalPrice(data.totalPrice);
           setBookings(data.bookings);
         } else {
@@ -160,12 +143,9 @@ const BookingFixedByMonth = ({ id }) => {
         : [];
 
       return (
-        <div className='events'>
+        <div className='events' style={{ backgroundColor: 'gray' }}>
           {bookingsForDate.map((booking) => (
-            <div
-              key={booking._id}
-              style={{ backgroundColor: 'gray', padding: '1.2rem' }}
-            >
+            <div key={booking._id}>
               <Badge
                 status='success'
                 text={`${booking.start} - ${booking.end}`}
@@ -210,7 +190,7 @@ const BookingFixedByMonth = ({ id }) => {
 
   return (
     <Row gutter={[16, 16]} justify='center'>
-      <Col span={12}>
+      <Col span={10}>
         <Card>
           <div style={{ marginBottom: '1.2rem' }}>
             <h2>Đặt lịch cố định theo tháng</h2>
@@ -266,7 +246,6 @@ const BookingFixedByMonth = ({ id }) => {
                         .endOf('day')
                     ))
                 }
-                onChange={() => calculateEndDate()}
                 format='DD-MM-YYYY'
               />
             </Form.Item>
@@ -276,10 +255,7 @@ const BookingFixedByMonth = ({ id }) => {
               label='Số tháng'
               rules={[{ required: true, message: 'Vui lòng chọn số tháng!' }]}
             >
-              <Select
-                placeholder='Số tháng'
-                onChange={() => calculateEndDate()}
-              >
+              <Select placeholder='Số tháng'>
                 <Option value={1}>1 tháng</Option>
                 <Option value={2}>2 tháng</Option>
                 <Option value={3}>3 tháng</Option>
@@ -288,7 +264,7 @@ const BookingFixedByMonth = ({ id }) => {
 
             <Form.Item label='Ngày kết thúc'>
               <Input
-                value={endDate ? endDate.format('DD-MM-YYYY') : ''}
+                value={endDate ? moment(endDate).format('DD-MM-YYYY') : ''}
                 disabled
               />
             </Form.Item>
@@ -309,6 +285,7 @@ const BookingFixedByMonth = ({ id }) => {
                         rules={[
                           { required: true, message: 'Vui lòng chọn thứ!' },
                         ]}
+                        style={{ width: '10rem' }}
                       >
                         <Select
                           placeholder='Chọn thứ'
@@ -377,28 +354,25 @@ const BookingFixedByMonth = ({ id }) => {
           </Form>
         </Card>
       </Col>
-      <Col span={12}>
+      <Col span={14}>
         <Card>
           <h3 style={{ marginTop: '20px' }}>Giá dự kiến</h3>
           {/* <h3 style={{ marginTop: '20px' }}>_ID:{bookingId}</h3> */}
 
           {bookingId ? (
-            <div>
+            <>
               <Text strong>{bookingId}đ</Text>
               <h2>
                 Tổng giá tiền:
                 {formatPrice(totalPrice)}
               </h2>
-            </div>
+              <Calendar cellRender={cellRender} />
+            </>
           ) : (
             <Empty description='Chưa có thông tin giá' />
           )}
         </Card>
       </Col>
-      <Card>
-        <h3>Lịch đặt sân</h3>
-        <Calendar cellRender={cellRender} />
-      </Card>
     </Row>
   );
 };

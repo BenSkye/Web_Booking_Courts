@@ -1,21 +1,10 @@
 import { fetchData, postData, putData } from "../fetchAPI";
 import Cookies from "js-cookie";
-
-export const getBookingIndayCenterAPI = async (day, centerId) => {
-  const data = await fetchData(
-    "https://664b5118a300e8795d452247.mockapi.io/centers"
-  );
-  if (Array.isArray(data)) {
-    return data; // Đảm bảo trả về mảng
-  } else {
-    console.error("Invalid data format:", data);
-    return [];
-  }
-};
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const getBookingByInvoiceIdAPI = async (invoiceId) => {
   const response = await fetchData(
-    `http://localhost:5050/api/v1/booking/get-booking-by-invoiceId/${invoiceId}`
+    `${apiBaseUrl}/booking/get-booking-by-invoiceId/${invoiceId}`
   );
   console.log("Response:", response);
   if (response.data.status === "fail") {
@@ -28,7 +17,7 @@ export const getBookingByInvoiceIdAPI = async (invoiceId) => {
 
 export const checkBookingAvailablebyDayAPI = async (data) => {
   const response = await postData(
-    "http://localhost:5050/api/v1/booking/create-booking-byday",
+    `${apiBaseUrl}/booking/create-booking-byday`,
     data
   );
   console.log("Response:", response);
@@ -41,7 +30,7 @@ export const checkBookingAvailablebyDayAPI = async (data) => {
 };
 export const UpdateBookingIncreasePrice = async (data) => {
   const response = await putData(
-    "http://localhost:5050/api/v1/booking/update-booking-byDay-increase-price",
+    `${apiBaseUrl}/booking/update-booking-byDay-increase-price`,
     data
   );
   console.log("Response:", response);
@@ -55,7 +44,7 @@ export const UpdateBookingIncreasePrice = async (data) => {
 
 export const getPersonalBookingAPI = async () => {
   const response = await fetchData(
-    "http://localhost:5050/api/v1/booking/get-personal-booking"
+    `${apiBaseUrl}/booking/get-personal-booking`
   );
   console.log("Response:", response);
   if (response.data.status === "fail") {
@@ -68,7 +57,7 @@ export const getPersonalBookingAPI = async () => {
 
 export const completeBookingAPI = async (bookingId) => {
   const response = await fetchData(
-    `http://localhost:5050/api/v1/booking/completed-booking/${bookingId}`
+    `${apiBaseUrl}/booking/completed-booking/${bookingId}`
   );
   console.log("Response:", response);
   if (response.status === "fail") {

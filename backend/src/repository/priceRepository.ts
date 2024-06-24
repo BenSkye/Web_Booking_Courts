@@ -12,6 +12,7 @@ interface IPriceRepository {
   addPrice(price: IPrice): Promise<any>
   getPrices(query: object): Promise<any[]>
   getPrice(query: object): Promise<any | null>
+  updatePrice(query: object, data: object): Promise<any>
 }
 class priceRepository implements IPriceRepository {
   async addPrice(price: IPrice) {
@@ -29,6 +30,10 @@ class priceRepository implements IPriceRepository {
   }
   async getPriceByCenterIdAndScheduleType(centerId: any, scheduleType: any) {
     return await Price.findOne({ centerId, scheduleType })
+  }
+  async updatePrice(query: object, data: object) {
+    const updatePrice= await Price.findOneAndUpdate(query, data, { new: true })
+    return updatePrice
   }
 }
 export default priceRepository
