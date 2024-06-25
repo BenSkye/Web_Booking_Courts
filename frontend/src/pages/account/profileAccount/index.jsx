@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import AccountSettingsForm from "../accountInformation/index";
@@ -111,13 +110,18 @@ const ProfileAccount = () => {
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
             border: "2px solid #d9d9d9",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          {selectedKey === "1" && <AccountSettingsForm />}
-          {selectedKey === "2" && <UpdatePassword />}
-          {selectedKey === "3" && isCustomer && <BookingCourt />}
-          {selectedKey === "4" && isCustomer && <h1>Số giờ chơi</h1>}
-          {selectedKey === "5" && <OrderDetails />}
+          <div style={{ width: "100%", maxWidth: "800px" }}>
+            {selectedKey === "1" && <AccountSettingsForm />}
+            {selectedKey === "2" && <UpdatePassword />}
+            {selectedKey === "3" && isCustomer && <BookingCourt />}
+            {selectedKey === "4" && isCustomer && <h1>Số giờ chơi</h1>}
+            {selectedKey === "5" && <OrderDetails />}
+          </div>
         </Content>
       </Layout>
     </Layout>

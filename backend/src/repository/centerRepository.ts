@@ -32,10 +32,8 @@ interface ICenterRepository {
   getCenter(query: object): Promise<any | null>
   updateCenter(query: object, data: any): Promise<any | null>
   getAllSubscriptions(): Promise<any[]>
-
   updateCenterInforById(id: any, data: any): Promise<any | null>
-
-  
+  changeCenterStatus(id: any, status: string): Promise<any | null>
 }
 
 class CenterRepository implements ICenterRepository {
@@ -50,7 +48,7 @@ class CenterRepository implements ICenterRepository {
 
   async getAllCenters(): Promise<any[]> {
     try {
-      const centers = await Center.find().populate('price');
+      const centers = await Center.find().populate('price').populate('subscriptions.packageId')
       return centers;
     } catch (error) {
       throw new Error(`Could not fetch centers: ${(error as Error).message}`);
@@ -68,18 +66,23 @@ class CenterRepository implements ICenterRepository {
       throw new Error(`Could not fetch center: ${(error as Error).message}`)
     }
   }
+  
   async getCenterStartandEndTime(query: object) {
     return await Center.findOne(query).select('openTime closeTime')
   }
+  
   async getListCenter(query: object) {
     return await Center.find(query)
   }
+  
   async getCenter(query: any) {
     return await Center.findOne(query).populate('price')
   }
+  
   async updateCenter(query: object, data: any) {
     return await Center.findOneAndUpdate(query, data, { new: true })
   }
+  
   async updateCenterInforById(id: any, data: any) {
     try {
       const center = await Center.findByIdAndUpdate(id, data, { new: true })
@@ -91,6 +94,7 @@ class CenterRepository implements ICenterRepository {
       throw new Error(`Could not update center: ${(error as Error).message}`)
     }
   }
+  
   async getAllSubscriptions() {
     try {
       return await Center.find({ 'subscriptions.packageId': { $ne: null } })
@@ -99,6 +103,20 @@ class CenterRepository implements ICenterRepository {
     } catch (error) {
       throw new Error(`Could not fetch subscriptions: ${(error as Error).message}`);
     }
+  }
+  
+  async changeCenterStatus(id: any, status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected') {
+    try {
+      const center = await Center.findById(id)
+      if (!center) {
+        throw new Error(`Center with id ${id} not found`)
+      }
+      center.status = status
+      return await center.save()
+    } catch (error) {
+      throw new Error(`Could not change center status: ${(error as Error).message}`)
+    }
+  }
 }
-}
+
 export default CenterRepository;

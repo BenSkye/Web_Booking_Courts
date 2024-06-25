@@ -15,9 +15,8 @@ interface ICenterService {
   changeCenterStatusAccept(centerId: string): Promise<any>
   getPersonalActiveCenters(userId: string): Promise<any>
   updateCenterInforById(id: string, data: any, userId: string): Promise<any>
-  getAllSubscriptions():  Promise<any>
-
-
+  getAllSubscriptions(): Promise<any>
+  changeCenterStatus(centerId: string, status: string): Promise<any>
 }
 
 class centerService implements ICenterService {
@@ -111,7 +110,7 @@ class centerService implements ICenterService {
     let latestSubscription
     if (center.subscriptions.length > 0) {
       latestSubscription = center.subscriptions.reduce((latest, subscription) => {
-          return latest.expiryDate > subscription.expiryDate ? latest : subscription
+        return latest.expiryDate > subscription.expiryDate ? latest : subscription
       })
     }
     let activationDate = new Date()
@@ -184,8 +183,8 @@ class centerService implements ICenterService {
     const ListCenter = await centerRepositoryInstance.getListCenter({ managerId: userId, status: 'active' })
     return ListCenter
   }
-  
-  async getAllSubscriptions(){
+
+  async getAllSubscriptions() {
     try {
       const centerRepositoryInstance = new centerRepository()
       const centers = await centerRepositoryInstance.getAllSubscriptions()
@@ -196,7 +195,7 @@ class centerService implements ICenterService {
   }
   async updateCenterInforById(centerId: string, data: any, userId: string) {
     const centerRepositoryInstance = new centerRepository()
-    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId})
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId })
     if (!center) {
       throw new AppError(`Center not found`, 404)
     }
@@ -206,7 +205,18 @@ class centerService implements ICenterService {
     Object.assign(center, data)
     const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
     return updatedCenter
-}
+  }
+  async changeCenterStatus(centerId: string, status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected') {
+    const centerRepositoryInstance = new centerRepository()
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId })
 
+    if (!center) {
+      throw new AppError('Center not found', 404)
+    }
+
+    center.status = status
+    const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
+    return updatedCenter
+  }
 }
 export default centerService
