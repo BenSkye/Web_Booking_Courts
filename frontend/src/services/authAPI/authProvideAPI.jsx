@@ -54,6 +54,7 @@ import { jwtDecode } from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../../utils/firebase/firebase";
 import { Spin } from "antd";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const AuthContext = createContext();
 
 // eslint-disable-next-line react/prop-types
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await postData("http://localhost:5050/api/v1/auth/login", {
+    const response = await postData(`${apiBaseUrl}/auth/login`, {
       userEmail: email,
       password: password,
     });
@@ -92,7 +93,7 @@ export const AuthProvider = ({ children }) => {
 
   const changePass = async (oldPassword, newPassword, confirmPassword) => {
     const response = await patchData(
-      "http://localhost:5050/api/v1/auth/change-password",
+      `${apiBaseUrl}/auth/change-password`,
       {
         oldPassword: oldPassword,
         newPassword: newPassword,
@@ -124,7 +125,7 @@ export const AuthProvider = ({ children }) => {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken(); // Get the JWT token
 
-      const res = await fetch("http://localhost:5050/api/v1/auth/google", {
+      const res = await fetch(`${apiBaseUrl}/auth/google`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

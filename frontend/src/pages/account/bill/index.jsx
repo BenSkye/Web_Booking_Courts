@@ -1,23 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Image, Modal, Row, Col, Spin, Empty } from "antd";
+import {
+  Card,
+  Button,
+  Image,
+  Modal,
+  Row,
+  Col,
+  Spin,
+  Empty,
+  List,
+  Typography,
+} from "antd";
 import moment from "moment";
 import { getPersonalInvoiceAPI } from "../../../services/invoiceAPI/invoiceAPI";
-
-const generateInvoiceCode = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = `0${now.getMonth() + 1}`.slice(-2);
-  const day = `0${now.getDate()}`.slice(-2);
-  const hours = `0${now.getHours()}`.slice(-2);
-  const minutes = `0${now.getMinutes()}`.slice(-2);
-  const seconds = `0${now.getSeconds()}`.slice(-2);
-  return `INV-${year}${month}${day}-${hours}${minutes}${seconds}`;
+import { getBookingByInvoiceIdAPI } from "../../../services/bookingAPI/bookingAPI";
+const { Paragraph } = Typography;
+const invoiceForMapping = {
+  BBD: "Đặt lịch theo ngày",
+  UBBD: "Sửa giờ chơi",
+  // Thêm các ánh xạ khác nếu cần
 };
-
+const STATUS_MAPPING = {
+  pending: { color: "orange", text: "Chưa thanh toán" },
+  confirmed: { color: "green", text: "Đã thanh toán" },
+  cancelled: { color: "red", text: "Đã hủy" },
+  expired: { color: "#A9A9A9", text: "Hết hạn" },
+};
 const OrderDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [invoices, setInvoices] = useState([]);
+  const [listBooking, setListBooking] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const getInvoices = async () => {
@@ -31,10 +44,21 @@ const OrderDetails = () => {
   useEffect(() => {
     getInvoices();
   }, []);
+  useEffect(() => {
+    console.log("listBooking:", listBooking.length);
+  }, [listBooking]);
+
+  const getBookingByInvoiceId = async (invoiceId) => {
+    const result = await getBookingByInvoiceIdAPI(invoiceId);
+    console.log("bookings:", result.bookings);
+    setListBooking(result.bookings);
+  };
 
   useEffect(() => {
-    console.log("Invoices:", invoices);
-  }, [invoices]);
+    if (selectedInvoice) {
+      getBookingByInvoiceId(selectedInvoice._id);
+    }
+  }, [selectedInvoice]);
 
   const showModal = (invoice) => {
     setSelectedInvoice(invoice);
@@ -135,46 +159,102 @@ const OrderDetails = () => {
           </Card>
         ))
       )}
-      {selectedInvoice && (
-        <Modal
-          title="Chi tiết hóa đơn"
-          visible={isModalVisible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          width={800}
-        >
-          <p>Mã hóa đơn: {selectedInvoice.invoiceID}</p>
-          <p>Tên: {selectedInvoice.name}</p>
-          <p>Số điện thoại: {selectedInvoice.phone}</p>
-          <p>Địa chỉ sân: {selectedInvoice.description}</p>
-          <p>
-            Giá:{" "}
-            {Number(selectedInvoice.price).toLocaleString("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            })}
-          </p>
-          <div>
-            <p>
-              Hình thức đặt sân:{" "}
-              {selectedInvoice.invoiceFor === "BBD"
-                ? "Đặt lịch theo ngày"
-                : selectedInvoice.invoiceFor}
-            </p>
-            <p>
-              Ngày thanh toán:{" "}
-              {selectedInvoice.createdAt
-                ? new Date(selectedInvoice.createdAt).toLocaleDateString(
-                    "vi-VN"
-                  )
-                : "N/A"}
-            </p>
-            <p>
-              Giờ thanh toán:{" "}
-              {moment(selectedInvoice.createdAt).format("HH:mm")}
-            </p>
-          </div>
-        </Modal>
+      {listBooking.length > 0 && (
+        <>
+          <Modal
+            title="Chi tiết hóa đơn"
+            visible={isModalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={null}
+          >
+            <List
+              itemLayout="vertical"
+              dataSource={listBooking}
+              renderItem={(booking) => (
+                <List.Item key={booking._id}>
+                  <Card>
+                    <List.Item.Meta
+                      title={booking.centerName}
+                      description={`${booking.centerAddress} `}
+                    />
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24} sm={12}>
+                        <Paragraph>
+                          <strong>Ngày chơi:</strong>{" "}
+                          {new Date(booking.date).toLocaleDateString("en-US")}
+                        </Paragraph>
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        <Paragraph>
+                          <strong>Giờ chơi:</strong> {booking.start} -{" "}
+                          {booking.end}
+                        </Paragraph>
+                      </Col>
+                    </Row>
+                    <Paragraph>
+                      <strong>Sân:</strong> {booking.courtNumber}
+                    </Paragraph>
+                    <Paragraph>
+                      <strong>Giá</strong> {booking?.price}
+                    </Paragraph>
+                    <Paragraph>
+                      <strong>Trạng thái:</strong>{" "}
+                      <span
+                        style={{
+                          color: STATUS_MAPPING[booking.status]
+                            ? STATUS_MAPPING[booking.status].color
+                            : "black",
+                        }}
+                      >
+                        {STATUS_MAPPING[booking.status]
+                          ? STATUS_MAPPING[booking.status].text
+                          : "Không xác định"}
+                      </span>
+                    </Paragraph>
+                    {/* {booking.status === "confirmed" && (
+                      <Button
+                        type="primary"
+                        onClick={() => handleEditClick(booking)}
+                      >
+                        Sửa giờ chơi
+                      </Button>
+                    )} */}
+                  </Card>
+                </List.Item>
+              )}
+            />
+            <div>
+              <p>Mã hóa đơn: {selectedInvoice.invoiceID}</p>
+              <p>
+                Giá:{" "}
+                {Number(selectedInvoice.price).toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </p>
+              <div>
+                <p>
+                  Hóa đơn :{" "}
+                  {invoiceForMapping[selectedInvoice.invoiceFor] ||
+                    selectedInvoice.invoiceFor}
+                </p>
+                <p>
+                  Ngày thanh toán:{" "}
+                  {selectedInvoice.createdAt
+                    ? new Date(selectedInvoice.createdAt).toLocaleDateString(
+                        "vi-VN"
+                      )
+                    : "N/A"}
+                </p>
+                <p>
+                  Giờ thanh toán:{" "}
+                  {moment(selectedInvoice.createdAt).format("HH:mm")}
+                </p>
+              </div>
+            </div>
+          </Modal>
+        </>
       )}
     </div>
   );
