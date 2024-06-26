@@ -6,6 +6,7 @@ import MyLocationMap from '@/utils/map';
 import { getCenterByIdAPI } from '@/services/centersAPI/getCenters';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 
+
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
@@ -15,15 +16,19 @@ function Detail() {
   const [center, setCenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-
+  const [manager, setManager] = useState(null);
   const pricingData = location.state?.pricingData || [];
 
   useEffect(() => {
     const fetchCenterData = async () => {
       try {
         const data = await getCenterByIdAPI(id);
-        console.log('datafe', data);
+
         setCenter(data.data.center);
+
+
+
+
       } catch (error) {
         console.error('Error fetching center data:', error);
       } finally {
@@ -65,26 +70,16 @@ function Detail() {
           <div style={{ textAlign: 'center', marginBottom: 24 }}>
             {center.images && center.images.length > 0 ? (
               <Carousel autoplay>
-                {center.images && center.images.length > 0 ? (
-                  center.images.map((image, index) => (
-                    <div key={index} style={{ width: '100%', height: '500px', overflow: 'hidden' }}>
-                      <img
-                        src={image}
-                        alt={`Image ${index}`}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        onError={(e) => handleImageError(e)}
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <div style={{ width: '100%', height: '500px', overflow: 'hidden' }}>
+                {center.images.map((image, index) => (
+                  <div key={index} style={{ width: '100%', height: '500px', overflow: 'hidden' }}>
                     <img
-                      src='https://via.placeholder.com/800x500'
-                      alt='No Image'
-                      style={{ borderRadius: '10px', width: '100%', height: '100%', objectFit: 'cover' }}
+                      src={image}
+                      alt={`Image ${index}`}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => handleImageError(e)}
                     />
                   </div>
-                )}
+                ))}
               </Carousel>
             ) : (
               <img
@@ -102,7 +97,7 @@ function Detail() {
             <Space direction="vertical" size="middle">
               <Space direction="vertical">
                 <Text strong>Chủ sân:</Text>
-                <Text>{center.managerName || 'N/A'}</Text>
+                <Text>{manager}</Text>
               </Space>
               <Space direction="vertical">
                 <Text strong>Số điện thoại:</Text>
@@ -113,7 +108,7 @@ function Detail() {
               </Space>
               <Space direction="vertical">
                 <Text strong>Email:</Text>
-                <Text>{center.managerEmail || 'N/A'}</Text>
+                <Text>{ }</Text>
               </Space>
               <Space direction="vertical">
                 <Text strong>Địa chỉ:</Text>
@@ -136,10 +131,17 @@ function Detail() {
                   <Card>
                     <Row justify="space-between">
                       <Col>
-                        <Text> {price.scheduleType === 'NP' ? 'Giờ thường' :
-                          price.scheduleType === 'GP' ? 'Giờ vàng' :
-                            price.scheduleType === 'PP' ? 'Giờ cố định' :
-                              price.scheduleType === 'MP' ? 'Giờ theo tháng' : price.scheduleType}</Text>
+                        <Text>
+                          {price.scheduleType === 'NP'
+                            ? 'Giờ thường'
+                            : price.scheduleType === 'GP'
+                              ? 'Giờ vàng'
+                              : price.scheduleType === 'PP'
+                                ? 'Giờ cố định'
+                                : price.scheduleType === 'MP'
+                                  ? 'Giờ theo tháng'
+                                  : price.scheduleType}
+                        </Text>
                       </Col>
                       <Col>
                         <Text>{price.price}</Text>
