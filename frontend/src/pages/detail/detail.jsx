@@ -55,9 +55,9 @@ function Detail() {
     fetchCenterData();
   }, [id]);
 
-  const handleRevealPhone = () => {
+  const handleRevealPhone = (phoneNumber) => {
     const hiddenPhoneNumber = document.getElementById("hidden-phone-number");
-    hiddenPhoneNumber.innerText = "0978210***";
+    hiddenPhoneNumber.innerText = phoneNumber;
   };
 
   const handleOpenModal = () => {
@@ -155,23 +155,26 @@ function Detail() {
             <Space direction="vertical" size="middle">
               <Space direction="vertical">
                 <Text strong>Chủ sân:</Text>
-                <Text>{center.managerName || "N/A"}</Text>
+                <Text>{center.managerId.userName || "N/A"}</Text>
               </Space>
               <Space direction="vertical">
                 <Text strong>Số điện thoại:</Text>
-                <Button type="primary" onClick={handleRevealPhone}>
+                <Button
+                  type="primary"
+                  onClick={() => handleRevealPhone(center.managerId.userPhone)}
+                >
                   <PhoneOutlined /> Bấm để hiện số
                 </Button>
                 <Text id="hidden-phone-number">Ẩn số</Text>
               </Space>
               <Space direction="vertical">
                 <Text strong>Email:</Text>
-                <Text>{center.managerEmail || "N/A"}</Text>
+                <Text>{center.managerId.userEmail || "N/A"}</Text>
               </Space>
-              <Space direction="vertical">
+              {/* <Space direction="vertical">
                 <Text strong>Địa chỉ:</Text>
                 <Text>{center.location || "Loading..."}</Text>
-              </Space>
+              </Space> */}
             </Space>
           </Card>
         </Col>

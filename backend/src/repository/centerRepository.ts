@@ -72,7 +72,7 @@ class CenterRepository implements ICenterRepository {
     return await Center.find(query)
   }
   async getCenter(query: any) {
-    return await Center.findOne(query).populate('price')
+    return await Center.findOne(query).populate('price managerId')
   }
   async updateCenter(query: object, data: any) {
     return await Center.findOneAndUpdate(query, data, { new: true })
