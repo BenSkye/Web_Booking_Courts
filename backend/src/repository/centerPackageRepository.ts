@@ -21,5 +21,6 @@ class centerPackageRepository implements ICenterRepository {
   async getAllCenterPackage() {
     return await CenterPackage.find()
   }
+ 
 }
 export default centerPackageRepository

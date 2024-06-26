@@ -15,7 +15,9 @@ export default function UpdateBooking({ oldBooking, newBooking }) {
   console.log("oldBooking", oldBooking);
   const dateFormat = "YYYY-MM-DD";
 
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date(oldBooking.date).toISOString().slice(0, 10)
+  );
   const [currentStep, setCurrentStep] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [timeOptions, setTimeOptions] = useState([]);
@@ -119,11 +121,15 @@ export default function UpdateBooking({ oldBooking, newBooking }) {
       !selectedDate ||
       !startTime ||
       !duration ||
-      (startTime === oldBooking.start && duration === oldDurationRef.current)
+      (selectedDate == new Date(oldBooking.date).toISOString().slice(0, 10) &&
+        startTime === oldBooking.start &&
+        duration === oldDurationRef.current)
     ) {
       setAvailableCourts([]);
       return;
     }
+    console.log("selectedDate", selectedDate);
+    console.log("oldBooking.date ", oldBooking.date);
     getAvailableCourt(oldBooking.centerId, selectedDate, startTime, duration);
   }, [selectedDate, startTime, duration]);
 

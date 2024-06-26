@@ -79,3 +79,17 @@ export const completeBookingAPI = async (bookingId) => {
   }
 }
 
+
+
+export const cancelBookingAPI = async (bookingId) => {
+  const response = await fetchData(
+    `http://localhost:5050/api/v1/booking/cancelled-booking/${bookingId}`
+  );
+  console.log("Response:", response);
+  if (response.status === "fail") {
+    return response;
+  }
+  if (response.status === "success") {
+    return response;
+  }
+};

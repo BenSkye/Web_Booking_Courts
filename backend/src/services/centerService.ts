@@ -16,6 +16,8 @@ interface ICenterService {
   getPersonalActiveCenters(userId: string): Promise<any>
   updateCenterInforById(id: string, data: any, userId: string): Promise<any>
   getAllSubscriptions(): Promise<any>
+  changeCenterStatus(centerId: string, status: string): Promise<any>
+
 }
 
 class centerService implements ICenterService {
@@ -272,6 +274,19 @@ class centerService implements ICenterService {
     } catch (error) {
       throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
     }
+  }
+  
+  async changeCenterStatus(centerId: string, status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected') {
+    const centerRepositoryInstance = new centerRepository()
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId })
+
+    if (!center) {
+      throw new AppError('Center not found', 404)
+    }
+
+    center.status = status
+    const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
+    return updatedCenter
   }
 }
 export default centerService
