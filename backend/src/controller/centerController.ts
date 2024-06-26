@@ -18,7 +18,7 @@ class centerController {
   });
 
   static getAllCenters = catchAsync(async (req: any, res: any, next: any) => {
-    const centerServiceInstance = new centerService();
+    const centerServiceInstance = new centerService()
     const centers = await centerServiceInstance.getAllCenters();
     res.status(200).json({
       status: 'success',
@@ -101,6 +101,25 @@ class centerController {
     });
   });
 
+  static changeCenterStatus = catchAsync(async (req: any, res: any, next: any) => {
+    const { centerId } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return next(new AppError('Status is required', 400));
+    }
+
+    const centerServiceInstance = new centerService();
+    const updatedCenter = await centerServiceInstance.changeCenterStatus(centerId, status);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        center: updatedCenter
+      }
+    });
+  });
+
   static getAllSubscriptions = catchAsync(async (req: any, res: any, next: any) => {
     const centerServiceInstance = new centerService();
     const centers = await centerServiceInstance.getAllSubscriptions();
@@ -136,7 +155,6 @@ class centerController {
     });
   });
 
-
   static updateCenterInforById = catchAsync(async (req: any, res: any, next: any) => {
     const userId = req.user._id
     const centerServiceInstance = new centerService()
@@ -151,7 +169,6 @@ class centerController {
       }
     })
   })
- 
 }
 
 export default centerController;
