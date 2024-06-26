@@ -47,8 +47,9 @@ class CenterRepository implements ICenterRepository {
 
   async getAllCenters(): Promise<any[]> {
     try {
-      const centers = await Center.find().populate('price')
-      return centers
+      const centers = await Center.find().populate('price').populate('subscriptions.packageId')
+      return centers;
+   
     } catch (error) {
       throw new Error(`Could not fetch centers: ${(error as Error).message}`)
     }
@@ -65,15 +66,19 @@ class CenterRepository implements ICenterRepository {
       throw new Error(`Could not fetch center: ${(error as Error).message}`)
     }
   }
+  
   async getCenterStartandEndTime(query: object) {
     return await Center.findOne(query).select('openTime closeTime')
   }
+  
   async getListCenter(query: object) {
     return await Center.find(query)
   }
+  
   async getCenter(query: any) {
     return await Center.findOne(query).populate('price')
   }
+  
   async updateCenter(query: object, data: any) {
     return await Center.findOneAndUpdate(query, data, { new: true })
   }
