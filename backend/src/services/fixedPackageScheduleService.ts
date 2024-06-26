@@ -1,8 +1,10 @@
+import moment from 'moment'
 import fixedPackageScheduleRepository from '~/repository/fixedPackageScheduleRepository'
 import bookingRepository from '~/repository/bookingRepository'
 import centerRepository from '~/repository/centerRepository'
 import priceRepository from '~/repository/priceRepository'
-import moment from 'moment'
+import { PRICE_BY_MONTH } from '~/config/constant'
+
 interface IFixedPackageScheduleService {
   addFixedPackageSchedule(userId: string, fixedPackageSchedule: any): Promise<any>
   getFixedPackageScheduleById(id: any): Promise<any | null>
@@ -21,11 +23,7 @@ class FixedPackageScheduleService implements IFixedPackageScheduleService {
       if (!center) {
         throw new Error(`Center with id ${centerId} not found`)
       }
-
-      const price = await priceRepositoryInstance.getPriceByCenterIdAndScheduleType(
-        centerId,
-        fixedPackageSchedule.scheduleType
-      )
+      const price = await priceRepositoryInstance.getPriceByCenterIdAndScheduleType(centerId, PRICE_BY_MONTH)
       if (!price) {
         throw new Error(
           `Price for center with id ${centerId} and schedule type ${fixedPackageSchedule.scheduleType} not found`
@@ -33,7 +31,7 @@ class FixedPackageScheduleService implements IFixedPackageScheduleService {
       }
 
       const bookings = []
-      let totalHours = 0
+      let totalPrice = 0
       const allPlayDates = [] // Khai báo mảng để chứa tất cả playDates
 
       for (const day of days) {
@@ -52,18 +50,18 @@ class FixedPackageScheduleService implements IFixedPackageScheduleService {
             start: startTime,
             end: endTime,
             status: 'pending',
-            bookingType: 'byMonth'
+            bookingType: 'byMonth',
+            price: price.price * duration
           })
           bookings.push(booking._id)
-
-          totalHours += duration
+          totalPrice += price.price * duration
         }
       }
 
       const fixedPackageScheduleData = {
         ...fixedPackageSchedule,
         bookings,
-        totalPrice: totalHours * price.price,
+        totalPrice,
         endDate: moment(startDate).add(totalMonths, 'months').toDate(),
         playDates: allPlayDates,
         userId: userId

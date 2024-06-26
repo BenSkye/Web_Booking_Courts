@@ -14,10 +14,20 @@ bookingRoute
   .route('/get-personal-booking')
   .get(authController.protect, authController.restricTO('customer'), bookingController.getPersonalBooking)
 bookingRoute
+  .route('/get-booking-by-invoiceId/:invoiceId')
+  .get(authController.protect, authController.restricTO('customer'), bookingController.getBookingByInvoiceId)
+bookingRoute
   .route('/update-booking-byDay-increase-price')
   .put(authController.protect, authController.restricTO('customer'), bookingController.UpdateBookingbyDayIncreasePrice)
 bookingRoute
   .route('/update-booking-byDay-decrease-price')
   .put(authController.protect, authController.restricTO('customer'), bookingController.UpdateBookingbyDayDecreasePrice)
+bookingRoute
+  .route('/completed-booking/:bookingId')
+  .get(authController.protect, authController.restricTO('manager'), bookingController.completedBooking)
+bookingRoute
+  .route('/cancelled-booking/:bookingId')
+  .get(authController.protect, authController.restricTO('customer'), bookingController.cancelledBooking)
+
 // bookingRoute.route('/check-booking-available').post(authController.protect, bookingController.checkBookingAvailable)
 export default bookingRoute

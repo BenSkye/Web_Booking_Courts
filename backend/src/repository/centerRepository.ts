@@ -1,5 +1,6 @@
 import { Schema } from 'mongoose'
 import Center from '~/models/centerModel'
+
 interface ISubscription {
   packageId: Schema.Types.ObjectId
   activationDate: Date
@@ -30,14 +31,21 @@ interface ICenterRepository {
   getListCenter(query: object): Promise<any[]>
   getCenter(query: object): Promise<any | null>
   updateCenter(query: object, data: any): Promise<any | null>
+  getAllSubscriptions(): Promise<any[]>
   updateCenterInforById(id: any, data: any): Promise<any | null>
 }
-class centerRepository implements ICenterRepository {
-  async addCenter(center: ICenter) {
-    const newcenter = new Center(center)
-    return newcenter.save()
+
+class CenterRepository implements ICenterRepository {
+  async addCenter(center: ICenter): Promise<any> {
+    try {
+      const newCenter = new Center(center)
+      return await newCenter.save()
+    } catch (error) {
+      throw new Error(`Could not add center: ${(error as Error).message}`)
+    }
   }
-  async getAllCenters() {
+
+  async getAllCenters(): Promise<any[]> {
     try {
       const centers = await Center.find().populate('price')
       return centers
@@ -45,6 +53,7 @@ class centerRepository implements ICenterRepository {
       throw new Error(`Could not fetch centers: ${(error as Error).message}`)
     }
   }
+
   async getCenterById(id: any) {
     try {
       const center = await Center.findOne(id)
@@ -68,7 +77,15 @@ class centerRepository implements ICenterRepository {
   async updateCenter(query: object, data: any) {
     return await Center.findOneAndUpdate(query, data, { new: true })
   }
-
+  async getAllSubscriptions() {
+    try {
+      return await Center.find({ 'subscriptions.packageId': { $ne: null } })
+        .populate('subscriptions.packageId')
+        .exec()
+    } catch (error) {
+      throw new Error(`Could not fetch subscriptions: ${(error as Error).message}`)
+    }
+  }
   async updateCenterInforById(id: any, data: any) {
     try {
       const center = await Center.findByIdAndUpdate(id, data, { new: true })
@@ -81,4 +98,4 @@ class centerRepository implements ICenterRepository {
     }
   }
 }
-export default centerRepository
+export default CenterRepository

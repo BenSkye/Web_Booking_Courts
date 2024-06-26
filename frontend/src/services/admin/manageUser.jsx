@@ -1,9 +1,9 @@
-// services/admin/manageUser.js
 import axios from 'axios';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const getAllUsersAPI = async () => {
   try {
-    const response = await axios.get('http://localhost:5050/api/v1/user/admin/manage_people');
+    const response = await axios.get(`${apiBaseUrl}/user/admin/manage_people`);
     // Chuyển đổi dữ liệu nếu cần thiết
     const users = response.data.map(user => ({
       ...user,

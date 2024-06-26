@@ -48,7 +48,7 @@ const centerSchema = new Schema(
           _id: false,
           packageId: {
             type: Schema.Types.ObjectId,
-            ref: 'Package',
+            ref: 'CenterPackage',
             required: true
           },
           activationDate: {

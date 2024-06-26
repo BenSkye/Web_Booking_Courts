@@ -1,9 +1,10 @@
 import { fetchData } from "../fetchAPI";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const PersonalInformation = async () => {
   try {
     const response = await fetchData(
-      "http://localhost:5050/api/v1/user/personal-information"
+      `${apiBaseUrl}/user/personal-information`
     );
     console.log("Data from API:", response);
     if (response.status === "success") {

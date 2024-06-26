@@ -4,6 +4,7 @@ import cors from 'cors'
 import cron from 'node-cron'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
+import compression from 'compression'
 import AppError from './utils/appError'
 import errorHandler from './controller/errorController'
 import authRoute from './routes/authRoute'
@@ -12,6 +13,7 @@ import centerPackageRoute from './routes/centerPackageRoute'
 import bookingRoute from './routes/bookingRoute'
 import timeslotRoute from './routes/timeslotRoute'
 import priceRoute from './routes/priceRoute'
+// import momoRoute from './routes/momoRoute'
 import courtRoute from './routes/courtRoute'
 
 import playPackageRoute from './routes/playPackageRoute'
@@ -25,6 +27,7 @@ dotenv.config()
 
 const app = express()
 app.use(morgan('dev'))
+app.use(compression())
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))

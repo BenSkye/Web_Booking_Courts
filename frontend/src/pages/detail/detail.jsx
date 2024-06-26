@@ -136,7 +136,10 @@ function Detail() {
                   <Card>
                     <Row justify="space-between">
                       <Col>
-                        <Text>{price.scheduleType}</Text>
+                        <Text> {price.scheduleType === 'NP' ? 'Giờ thường' :
+                          price.scheduleType === 'GP' ? 'Giờ vàng' :
+                            price.scheduleType === 'PP' ? 'Giờ cố định' :
+                              price.scheduleType === 'MP' ? 'Giờ theo tháng' : price.scheduleType}</Text>
                       </Col>
                       <Col>
                         <Text>{price.price}</Text>
