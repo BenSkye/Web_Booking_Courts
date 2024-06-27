@@ -11,12 +11,13 @@ import { Request, Response, NextFunction } from 'express';
 
 
 class PlayPackageController {
-    static createOrUpdatePlayPackage = async (req: Request, res: Response, next: NextFunction) => {
+    static createOrUpdatePlayPackage = async (req: any, res: any, next: any) => {
         try {
             const playPackage = req.body; // Nhận playPackage từ request body
-
+            console.log("req.user", req.user)
+            const userId = req.user._id.toString()
             const playPackageService = new PlayPackageService();
-            const result = await playPackageService.createOrUpdatePlayPackage(playPackage);
+            const result = await playPackageService.createOrUpdatePlayPackage(userId, playPackage);
 
             res.status(result.status === 'success' ? 200 : 201).json(result);
         } catch (error) {

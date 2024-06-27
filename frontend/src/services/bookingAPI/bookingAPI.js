@@ -2,6 +2,7 @@ import { fetchData, postData, putData } from "../fetchAPI";
 import Cookies from "js-cookie";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${apiBaseUrl}/playPackage`;
+import { postData } from '../fetchAPI/index'
 
 export const getBookingByInvoiceIdAPI = async (invoiceId) => {
   const response = await fetchData(
@@ -60,7 +61,7 @@ export const getPersonalBookingAPI = async () => {
 
 export const addPlayPackage = async (playPackageData) => {
   try {
-    const response = await axios.post(API_URL, playPackageData);
+    const response = await postData(`${apiBaseUrl}/playPackage`, playPackageData);
     return response.data;
   } catch (error) {
     throw error.response.data;

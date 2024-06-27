@@ -40,7 +40,7 @@ function Detail() {
 
   const handleRevealPhone = () => {
     const hiddenPhoneNumber = document.getElementById('hidden-phone-number');
-    hiddenPhoneNumber.innerText = '0978210***';
+    hiddenPhoneNumber.innerText = center.managerId.userPhone;
   };
 
   const handleOpenModal = () => {
@@ -97,7 +97,7 @@ function Detail() {
             <Space direction="vertical" size="middle">
               <Space direction="vertical">
                 <Text strong>Chủ sân:</Text>
-                <Text>{manager}</Text>
+                <Text>{center.managerId.userName}</Text>
               </Space>
               <Space direction="vertical">
                 <Text strong>Số điện thoại:</Text>
@@ -108,12 +108,9 @@ function Detail() {
               </Space>
               <Space direction="vertical">
                 <Text strong>Email:</Text>
-                <Text>{ }</Text>
+                <Text>{center.managerId.userEmail}</Text>
               </Space>
-              <Space direction="vertical">
-                <Text strong>Địa chỉ:</Text>
-                <Text>{center.location || 'Loading...'}</Text>
-              </Space>
+
             </Space>
           </Card>
         </Col>

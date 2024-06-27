@@ -20,9 +20,10 @@ interface IPlayPackageInput {
 
 class PlayPackageService {
 
-    public async createOrUpdatePlayPackage(playPackage: IPlayPackageInput) {
+    public async createOrUpdatePlayPackage(userId: any, playPackage: IPlayPackageInput) {
         try {
-            const { userId, centerId, hour } = playPackage;
+            console.log("useId", userId)
+            const { centerId, hour } = playPackage;
             const priceRepositoryInstance = new priceRepository();
             const invoiceRepositoryInstance = new InvoiceRepository();
 

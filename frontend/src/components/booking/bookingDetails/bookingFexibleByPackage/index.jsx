@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import { addPlayPackage } from '../../../../services/bookingAPI/bookingAPI'; // Adjust the path as necessary
 
 const BookingFlexibleByPackage = ({ id, onSelectPackage, pricePerHour }) => {
-  const [hours, setHours] = useState(1); // Initial state for number of hours, starting with 1 hour
+  const [hours, setHours] = useState(10); // Initial state for number of hours, starting with 1 hour
 
   const handleSelectPackage = async () => {
     try {
-      const response = await addPlayPackage({ userId: 'userId', centerId: 'centerId', hour: hours });
+      const response = await addPlayPackage({ centerId: 'centerId', hour: hours });
       console.log("addPlayPackage Response:", response);
 
       if (response.status === 'success') {
