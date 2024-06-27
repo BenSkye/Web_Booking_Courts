@@ -2,7 +2,7 @@ import { fetchData, postData, putData } from "../fetchAPI";
 import Cookies from "js-cookie";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${apiBaseUrl}/playPackage`;
-import { postData } from '../fetchAPI/index'
+
 
 export const getBookingByInvoiceIdAPI = async (invoiceId) => {
   const response = await fetchData(
