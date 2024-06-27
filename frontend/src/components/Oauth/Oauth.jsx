@@ -1,15 +1,15 @@
-import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
-import { app } from '../../utils/firebase/firebase';
-import { useDispatch } from 'react-redux';
-import { signInSuccess } from '../../../redux/user/userSlice';
-import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import AuthContext from '../../services/authAPI/authProvideAPI';
+import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
+import { app } from "../../utils/firebase/firebase";
+import { useDispatch } from "react-redux";
+import { signInSuccess } from "../../../redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../../services/authAPI/authProvideAPI";
 
 export default function OAuth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {handleGoogleClick} = useContext(AuthContext);
+  const { handleGoogleClick } = useContext(AuthContext);
   // const handleGoogleClick = async () => {
   //   try {
   //     const provider = new GoogleAuthProvider();
@@ -41,23 +41,23 @@ export default function OAuth() {
       dispatch(signInSuccess(data));
       navigate("/");
     } else {
-      console.log("Email hoặc mật khẩu không đúng!")
+      console.log("Email hoặc mật khẩu không đúng!");
     }
-  }
+  };
   return (
     <button
-      type='button'
+      type="button"
       onClick={() => handleSignInGG()}
-      className='logingoogle' 
+      className="logingoogle"
       style={{
-         width: "270px",
-         height: "33px",
-         backgroundColor: "#fff",
-         color: "black",
-         borderRadius: "5px"
+        width: "270px",
+        height: "33px",
+        backgroundColor: "#fff",
+        color: "black",
+        borderRadius: "5px",
       }}
     >
-      Continue with google
+      Đăng nhập bằng Google{" "}
     </button>
   );
 }

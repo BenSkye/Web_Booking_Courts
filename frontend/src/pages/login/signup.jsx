@@ -122,6 +122,10 @@ export default function SignUp() {
             name="phoneNumber"
             rules={[
               { required: true, message: "Please input your phone number!" },
+              {
+                pattern: /^(\+84|0)(3|5|7|8|9|1[2|6|8|9])+([0-9]{8})\b/,
+                message: "Invalid phone number, must be a Vietnamese number!",
+              },
             ]}
           >
             <Input />
@@ -154,7 +158,7 @@ export default function SignUp() {
                 width: "100%",
               }}
             >
-              Register
+              Đăng ký
             </Button>
           </Form.Item>
         </Form>
