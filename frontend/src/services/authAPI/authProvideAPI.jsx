@@ -99,20 +99,10 @@ export const AuthProvider = ({ children }) => {
         setUser(decodedToken);
       }
 
-      const { email, displayName } = result.user;
+      
 
       // Send welcome email as part of the Google sign-in process
-      const emailResponse = await fetch(`${apiBaseUrl}/auth/google`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, name: displayName })
-      });
-
-      if (!emailResponse.ok) {
-        console.error('Failed to send welcome email');
-      }
+      
 
       console.log(data.data.user?._id);
       setUser({

@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer'
 
 // Hàm tạo transporter sử dụng thông tin đăng nhập Gmail
 const createTransporter = () => {
@@ -8,26 +8,29 @@ const createTransporter = () => {
       user: 'racketrise@gmail.com',
       pass: 'fkts jfru krox axrb' // Thay bằng app password nếu cần thiết
     }
-  });
-};
+  })
+}
 
 // Hàm gửi email chào mừng
-export const sendWelcomeEmail = async (email: string, name: string, password: string): Promise<void> => {
-  const transporter = createTransporter();
+class sendEmailSerVice {
+  static async sendEmail(email: string, mailOption: any) {
+    const transporter = createTransporter()
 
-  const mailOptions = {
-    from: 'racketrise@gmail.com',
-    to: email,
-    subject: 'Welcome!',
-    text: `Welcome ${name}! Your password is: ${password}`, // Thêm mật khẩu vào nội dung email
-    html: `<p>Welcome ${name}!<br/>Your password is: <strong>${password}</strong></p>` // HTML có thể format mật khẩu để nổi bật hơn
-  };
+    const mailOptions = {
+      from: 'racketrise@gmail.com',
+      to: email,
+      subject: mailOption.subject,
+      text: mailOption.text, // Thêm mật khẩu vào nội dung email
+      html: mailOption.html // HTML có thể format mật khẩu để nổi bật hơn
+    }
 
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${email}`);
-  } catch (error) {
-    console.error('Error sending email:', error);
-    throw error; // Handle or propagate the error as needed
+    try {
+      await transporter.sendMail(mailOptions)
+      console.log(`Email sent to ${email}`)
+    } catch (error) {
+      console.error('Error sending email:', error)
+      throw error // Handle or propagate the error as needed
+    }
   }
-};
+}
+export default sendEmailSerVice

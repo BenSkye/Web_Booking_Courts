@@ -7,7 +7,7 @@ import { signInSuccess } from '../../../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AuthContext from '../../services/authAPI/authProvideAPI';
-import sendWelcomeEmail from '../../../../backend/src/services/sendEmailService'
+
 export default function OAuth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,10 +20,10 @@ export default function OAuth() {
       navigate("/");
 
       // Extract email and name from data
-      const { mail, name,password } = data.data.user;
+      // const { mail, name,password } = data.data.user;
 
       // Send welcome email
-      await sendWelcomeEmail(mail, name,password);
+      
     } else {
       console.log("Email hoặc mật khẩu không đúng!");
     }

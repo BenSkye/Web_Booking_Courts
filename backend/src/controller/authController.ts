@@ -1,4 +1,5 @@
 import authService from '~/services/authService';
+import sendEmailSerVice from '~/services/sendEmailService';
 import AppError from '~/utils/appError';
 import catchAsync from '~/utils/catchAsync';
 
@@ -108,7 +109,6 @@ class authController {
     }
 
     const { user, token } = await authServiceInstance.googleLogin(email, name, photo);
-    await authServiceInstance.sendWelcomeEmail(email, name, password); // Gửi email chào mừng với password
 
     res
       .cookie('access_token', token, {

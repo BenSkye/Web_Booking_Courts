@@ -610,8 +610,6 @@ class bookingService implements IbookingService {
 
     const bookingStartDate = new Date(booking.date)
     const currentDate = new Date()
-
-    // Tính toán khoảng cách giữa ngày hiện tại và ngày bắt đầu booking
     const diffTime = bookingStartDate.getTime() - currentDate.getTime()
     const diffHours = diffTime / (1000 * 3600)
 
@@ -619,7 +617,39 @@ class bookingService implements IbookingService {
     if (diffHours < 24) {
       throw new AppError('Không thể hủy booking 1 ngày trước khi chơi', 400)
     }
+    // Đặt giờ, phút, giây, và mili giây về 0 để chỉ so sánh ngày
+    bookingStartDate.setHours(0, 0, 0, 0)
+    currentDate.setHours(0, 0, 0, 0)
+
+    // So sánh ngày hiện tại và ngày bắt đầu booking
+    if (bookingStartDate.getTime() === currentDate.getTime()) {
+      throw new AppError('Không thể hủy booking trong ngày', 400)
+    }
     booking.status = 'cancelled'
+    const slot = {
+      courtId: booking.courtId.toString(),
+      date: booking.date,
+      start: booking.start,
+      end: booking.start
+    }
+    const slotAvailable = []
+    const timeSlotRepositoryInstance = new timeSlotRepository()
+    while (new Date(`1970-01-01T${slot.end}:00`) < new Date(`1970-01-01T${booking.end}:00`)) {
+      const [hour, minute] = slot.start.split(':')
+      if (minute === '00') {
+        slot.end = `${hour}:30`
+      } else {
+        slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
+      }
+      slotAvailable.push({ ...slot })
+      slot.start = slot.end
+    }
+    // Cập nhật trạng thái của các slot thành "booked"
+    await Promise.all(
+      slotAvailable.map(async (slot) => {
+        await timeSlotRepositoryInstance.updateSlotStatus(slot, 'available')
+      })
+    )
     return bookingRepository.updateBooking({ _id: booking._id }, { status: booking.status })
   }
 }
