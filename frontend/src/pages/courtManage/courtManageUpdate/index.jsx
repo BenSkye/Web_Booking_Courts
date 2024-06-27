@@ -14,7 +14,7 @@ import {
   TimePicker,
 } from "antd";
 import moment from "moment";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { getCenterByIdAPI } from "../../../services/partnerAPI";
 import { updateCenter } from "../../../services/centersAPI/getCenters";
 import Cookies from "js-cookie";
@@ -30,7 +30,7 @@ const CourtManageUpdate = () => {
   const [initialCourtCount, setInitialCourtCount] = useState(null);
   const [priceData, setPriceData] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
-
+  const [courtStatusValid, setCourtStatusValid] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       const token = Cookies.get("jwtToken");
@@ -45,6 +45,15 @@ const CourtManageUpdate = () => {
         // Lưu giá trị cũ của courtCount
         setInitialCourtCount(result.data.center.courtCount);
 
+        if (
+          result.data.center.status !== "accepted" &&
+          result.data.center.status !== "pending" &&
+          result.data.center.status !== "rejected" &&
+          result.data.center.status !== "expired"
+        ) {
+          setCourtStatusValid(false);
+          return;
+        }
         // Chuyển đổi hình ảnh thành file list
         if (result.data.center.images) {
           setFileList(
@@ -73,6 +82,9 @@ const CourtManageUpdate = () => {
     fetchData();
   }, [id, form]);
 
+  if (!courtStatusValid) {
+    return <Navigate to="/no-access" />;
+  }
   const onFinish = async (values) => {
     const token = Cookies.get("jwtToken");
     const formattedValues = {

@@ -13,15 +13,19 @@ const Login = () => {
   const { login } = useContext(AuthContext);
 
   const onFinish = async (values) => {
-    const user = await login(values.email, values.password);
-    if (user) {
-      console.log(user);
-      if (user.role === 'manager') {
-        navigate('/courtManage');
+    try {
+      const user = await login(values.email, values.password);
+      if (user) {
+        console.log(user);
+        if (user.role === 'manager') {
+          navigate('/courtManage');
+        } else {
+          navigate('/');
+        }
       } else {
-        navigate('/');
+        message.error("Email hoặc mật khẩu không đúng!");
       }
-    } else {
+    } catch (error) {
       message.error("Email hoặc mật khẩu không đúng!");
     }
   };
