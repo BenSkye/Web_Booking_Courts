@@ -610,7 +610,13 @@ class bookingService implements IbookingService {
 
     const bookingStartDate = new Date(booking.date)
     const currentDate = new Date()
+    const diffTime = bookingStartDate.getTime() - currentDate.getTime()
+    const diffHours = diffTime / (1000 * 3600)
 
+    // Nếu khoảng cách nhỏ hơn 24 giờ, không cho phép hủy
+    if (diffHours < 24) {
+      throw new AppError('Không thể hủy booking 1 ngày trước khi chơi', 400)
+    }
     // Đặt giờ, phút, giây, và mili giây về 0 để chỉ so sánh ngày
     bookingStartDate.setHours(0, 0, 0, 0)
     currentDate.setHours(0, 0, 0, 0)
