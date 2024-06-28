@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate  } from "react-router-dom";
 import LayoutMain from "@/components/layouts";
 import Home from "@/pages/home";
 import AboutUs from "@/components/dashboard/aboutUs";
@@ -22,6 +22,8 @@ import SignupPartner from "../pages/login/signupPartner";
 import BookingCourtDirectly from "../pages/BookingCourtDirectly/BookingCourtDirectly";
 import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/RequestToOrganizeATournament";
 import NoAccess from "../components/noAccess/noAccess";
+import NotFound404 from "../components/noAccess/notFound404";
+
 import ProtectedRoute from "../utils/authRoute/authRoute";
 import CourtManageUpdate from "../pages/courtManage/courtManageUpdate";
 
@@ -241,13 +243,14 @@ function Routing() {
           }
         />
         <Route path="/courtManage/partner" element={<Partner />} />
-        <Route path="" />
+        <Route path="*" element={<Navigate to="/not-found" />} />
       </Route>
 
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/signupPartner" element={<SignupPartner />} />
       <Route path="/no-access" element={<NoAccess />} />
+      <Route path="/not-found" element={<NotFound404 />} />
     </Routes>
   );
 }
