@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Card, Col, Row, Avatar, Button, Carousel } from "antd";
 import SearchBar from "@/pages/home/components/searchBar";
@@ -7,7 +7,15 @@ import NoImg from "@/assets/noImg.jpg";
 import { getAllCenterAPI } from "@/services/centersAPI/getCenters";
 import GetAllLocationCenter from "../../utils/getAllCenterMap";
 
+
 const { Meta } = Card;
+
+const introImages = [
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA17C5nrpu1r9ylXj4d8YUdDZt_oH0Psz0xQ&s",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA17C5nrpu1r9ylXj4d8YUdDZt_oH0Psz0xQ&s",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA17C5nrpu1r9ylXj4d8YUdDZt_oH0Psz0xQ&s",
+  // Add more images as needed
+];
 
 export default function Home() {
   const [centers, setCenters] = useState([]);
@@ -45,111 +53,133 @@ export default function Home() {
   };
 
   return (
-    <Row gutter={[16, 16]} style={{ margin: "0 auto", background: "#fff" }}>
-      <Col span={24}>
-        <GetAllLocationCenter locations={centers} />
+    <Row gutter={[32, 32]} style={{ margin: "0 auto", background: "#fff" }}>
+      <Col span={10} >
+        <Carousel autoplay style={{ width: "100%" }}>
+          {introImages.map((img, index) => (
+            <div key={index} style={{ width: "100%", height: "200px" }}>
+              <img
+                src={img}
+                alt={`Slide ${index + 1}`}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+                onError={handleImageError}
+              />
+            </div>
+          ))}
+        </Carousel>
       </Col>
-      <Col span={24}>
+
+      <Col span={24} style={{ marginTop: "20px" }}>
         <SearchBar />
       </Col>
 
-      {loading
-        ? [1, 2, 3, 4, 5, 6].map((key) => (
-          <Col key={key} xs={24} sm={12} lg={8}>
-            <CardLoader />
-          </Col>
-        ))
-        : centers.map((center) => (
-          <Col key={center.id} xs={24} sm={12} lg={8}>
-            <Card
-              hoverable
-              style={{ width: "100%" }}
-              cover={
-                <Carousel
-                  autoplay
+      {
+        loading
+          ? [1, 2, 3, 4, 5, 6].map((key) => (
+            <Col key={key} xs={24} sm={12} lg={8}>
+              <CardLoader />
+            </Col>
+          ))
+          : centers.map((center) => (
+            <Col key={center.id} xs={24} sm={12} lg={8}>
+              <Card
+                hoverable
+                style={{ width: "100%", border: "0.1px solid #e0e0e0" }} // Adjust border color and width here
+                cover={
+                  <Carousel
+                    autoplay
+                    style={{
+                      background: "#e1e8e3",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    {center.images.map((img, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          height: "100%",
+                          width: "100%",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <img
+                          alt={center.centerName}
+                          src={img}
+                          onError={handleImageError}
+                          style={{
+                            width: "100%",
+                            height: "250px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </Carousel>
+                }
+              >
+                <Meta
+                  avatar={
+                    <Avatar src="https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg" />
+                  }
+                  title={center.centerName}
+                  description={center.location}
+                />
+                <div
                   style={{
-                    background: "#e1e8e3",
-                    width: "100%",
-                    height: "100%",
+                    marginTop: 16,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: "8px",
                   }}
                 >
-                  {center.images.map((img, index) => (
-                    <div
-                      key={index}
+                  <Link
+                    to={`/detail/${center._id}`}
+                    state={{
+                      pricingData: center.price.map((price) => ({
+                        ...price,
+                        price: formatPrice(price.price),
+                      })),
+                    }}
+                  >
+                    <Button
                       style={{
-                        height: "100%",
-                        width: "100%",
-                        overflow: "hidden",
+                        height: "50px",
+                        width: "150px",
+                        fontSize: "18px",
                       }}
                     >
-                      <img
-                        alt={center.centerName}
-                        src={img}
-                        onError={handleImageError}
-                        style={{
-                          width: "100%",
-                          height: "250px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                  ))}
-                </Carousel>
-              }
-            >
-              <Meta
-                avatar={
-                  <Avatar src="https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg" />
-                }
-                title={center.centerName}
-                description={center.location}
-              />
-              <div
-                style={{
-                  marginTop: 16,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                  gap: "8px",
-                }}
-              >
-                <Link
-                  to={`/detail/${center._id}`}
-                  state={{
-                    pricingData: center.price.map((price) => ({
-                      ...price,
-                      price: formatPrice(price.price),
-                    })),
-                  }}
-                >
-                  <Button
-                    style={{
-                      height: "50px",
-                      width: "150px",
-                      fontSize: "18px",
-                    }}
-                  >
-                    Xem chi tiết
-                  </Button>
-                </Link>
-                <Link to={`/bookingdetail/${center._id}`}>
-                  <Button
-                    style={{
-                      height: "50px",
-                      width: "150px",
-                      fontSize: "18px",
-                      backgroundColor: "#1890ff", // Blue background
-                      color: "white", // White text color
-                    }}
-                    type="primary" // Set button type to primary for blue color
-                  >
-                    Đặt sân ngay
-                  </Button>
-                </Link>
-              </div>
-            </Card>
-          </Col>
-        ))}
-    </Row>
+                      Xem chi tiết
+                    </Button>
+                  </Link>
+                  <Link to={`/bookingdetail/${center._id}`}>
+                    <Button
+                      style={{
+                        height: "50px",
+                        width: "150px",
+                        fontSize: "18px",
+                        backgroundColor: "#1890ff", // Blue background
+                        color: "white", // White text color
+                      }}
+                      type="primary" // Set button type to primary for blue color
+                    >
+                      Đặt sân ngay
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            </Col>
+          ))
+      }
+
+      <Col span={24}>
+        <GetAllLocationCenter locations={centers} />
+      </Col>
+    </Row >
   );
 }

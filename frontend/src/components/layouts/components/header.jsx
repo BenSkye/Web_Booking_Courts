@@ -280,12 +280,11 @@ export default function HeaderLayout() {
             flex: 1,
             minWidth: 0,
             fontSize: "24px",
-            background: "#FFFFFF", // Nền trắng
-            color: "#1890ff", // Chữ màu xanh
+            background: "#003b95",
           }}
         >
           {menuItems?.map((item) => (
-            <Menu.Item key={item.key} style={{ color: "#1890ff" }}>
+            <Menu.Item key={item.key} style={{ color: "white" }}>
               <Link to={item.path}>{item.label}</Link>
             </Menu.Item>
           ))}
@@ -316,7 +315,7 @@ export default function HeaderLayout() {
               {/* Hiển thị tên người dùng */}
               <MdArrowDropDown
                 style={{ display: "flex", alignItems: "center" }}
-                color="#1890ff" // Mũi tên dropdown màu xanh
+                color="white"
                 size="30px"
               />
             </Space>

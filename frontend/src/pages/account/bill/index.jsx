@@ -61,6 +61,7 @@ const OrderDetails = () => {
   }, [selectedInvoice]);
 
   const showModal = (invoice) => {
+    console.log("invoice:", invoice);
     setSelectedInvoice(invoice);
     setIsModalVisible(true);
   };
@@ -71,6 +72,7 @@ const OrderDetails = () => {
 
   const handleCancel = () => {
     setListBooking([]);
+    setSelectedInvoice(null);
     setIsModalVisible(false);
   };
 

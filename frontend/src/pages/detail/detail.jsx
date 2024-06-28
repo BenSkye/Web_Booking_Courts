@@ -98,10 +98,13 @@ function Detail() {
               <Space direction="vertical">
                 <Text strong>Chủ sân:</Text>
                 <Text>{center.managerId.userName}</Text>
-              </Space>
+              </Space >
               <Space direction="vertical">
                 <Text strong>Số điện thoại:</Text>
-                <Button type="primary" onClick={handleRevealPhone}>
+                <Button
+                  type="primary"
+                  onClick={() => handleRevealPhone(center.managerId.userPhone)}
+                >
                   <PhoneOutlined /> Bấm để hiện số
                 </Button>
                 <Text id="hidden-phone-number">Ẩn số</Text>
@@ -109,12 +112,12 @@ function Detail() {
               <Space direction="vertical">
                 <Text strong>Email:</Text>
                 <Text>{center.managerId.userEmail}</Text>
-              </Space>
+              </Space >
 
-            </Space>
-          </Card>
-        </Col>
-      </Row>
+            </Space >
+          </Card >
+        </Col >
+      </Row >
 
       <Divider />
 
@@ -200,7 +203,7 @@ function Detail() {
           <Button type="primary" size="large">Đặt sân</Button>
         </Link>
       </div>
-    </Content>
+    </Content >
   );
 }
 
