@@ -4,7 +4,9 @@ const centerSchema = new Schema(
   {
     managerId: {
       type: Schema.Types.ObjectId,
+      ref: 'User',
       required: true
+
     },
     centerName: {
       type: String,
@@ -70,7 +72,7 @@ const centerSchema = new Schema(
           ref: 'Price',
           required: true
         }
-      ],
+      ]
     },
     status: {
       type: String,

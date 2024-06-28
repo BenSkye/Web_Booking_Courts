@@ -207,8 +207,8 @@ export default function HeaderLayout() {
     user?.role === "manager"
       ? itemsManager
       : user?.role === "customer"
-      ? itemsCustomer
-      : itemsAdmin;
+        ? itemsCustomer
+        : itemsAdmin;
 
   const menuItemsUser = [
     {
@@ -233,7 +233,7 @@ export default function HeaderLayout() {
       label: "Đặt sân trực tiếp",
       path: "/courtManage/BookingCourtDirectly",
     },
-    
+
     { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
   ];
   const menuItemsAdmin = [
@@ -247,10 +247,10 @@ export default function HeaderLayout() {
     user?.role === "manager"
       ? menuItemsManager
       : user?.role === "admin"
-      ? menuItemsAdmin
-      : menuItemsUser;
+        ? menuItemsAdmin
+        : menuItemsUser;
 
- 
+
 
   const [selectedKey, setSelectedKey] = useState("");
   const location = useLocation();
@@ -280,7 +280,7 @@ export default function HeaderLayout() {
             flex: 1,
             minWidth: 0,
             fontSize: "24px",
-            background: "#141414",
+            background: "#003b95",
           }}
         >
           {menuItems?.map((item) => (
