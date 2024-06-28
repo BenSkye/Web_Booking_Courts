@@ -26,7 +26,7 @@ const LayoutMain = () => {
           width: "100%",
           display: "flex",
           alignItems: "center",
-          background: "#141414",
+          background: "#003b95",
         }}
       >
         <HeaderLayout />
@@ -34,18 +34,17 @@ const LayoutMain = () => {
       <Content
         style={{
           flexGrow: 1,
-          padding: "0 30px",
+          padding: "20px 30px", // Điều chỉnh padding ở đây
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          marginTop: 10,
-          marginBottom: 10,
+          background: "#f5f5f5",
         }}
       >
         <div
           style={{
             padding: 24,
-            minHeight: 380,
+            minHeight: 200, // Điều chỉnh minHeight ở đây
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
           }}
@@ -64,4 +63,5 @@ const LayoutMain = () => {
     </Layout>
   );
 };
+
 export default LayoutMain;
