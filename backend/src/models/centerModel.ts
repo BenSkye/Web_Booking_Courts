@@ -6,6 +6,7 @@ const centerSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true
+
     },
     centerName: {
       type: String,
