@@ -183,7 +183,6 @@ class centerService implements ICenterService {
     const centerRepositoryInstance = new centerRepository()
     const ListCenter = await centerRepositoryInstance.getListCenter({ managerId: userId, status: 'active' })
     return ListCenter
-    
   }
   async updateCenterInforById(centerId: string, data: any, userId: string) {
     const centerRepositoryInstance = new centerRepository()

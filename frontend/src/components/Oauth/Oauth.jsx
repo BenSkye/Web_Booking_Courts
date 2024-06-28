@@ -1,12 +1,12 @@
 // eslint-disable-next-line no-unused-vars
-import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 // eslint-disable-next-line no-unused-vars
-import { app } from '../../utils/firebase/firebase';
-import { useDispatch } from 'react-redux';
-import { signInSuccess } from '../../../redux/user/userSlice';
-import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import AuthContext from '../../services/authAPI/authProvideAPI';
+import { app } from "../../utils/firebase/firebase";
+import { useDispatch } from "react-redux";
+import { signInSuccess } from "../../../redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../../services/authAPI/authProvideAPI";
 
 export default function OAuth() {
   const dispatch = useDispatch();
@@ -27,22 +27,21 @@ export default function OAuth() {
     } else {
       console.log("Email hoặc mật khẩu không đúng!");
     }
-  }
-
+  };
   return (
     <button
-      type='button'
-      onClick={handleSignInGG}
-      className='logingoogle' 
+      type="button"
+      onClick={() => handleSignInGG()}
+      className="logingoogle"
       style={{
-         width: "270px",
-         height: "33px",
-         backgroundColor: "#fff",
-         color: "black",
-         borderRadius: "5px"
+        width: "270px",
+        height: "33px",
+        backgroundColor: "#fff",
+        color: "black",
+        borderRadius: "5px",
       }}
     >
-      Continue with Google
+      Đăng nhập bằng Google{" "}
     </button>
   );
 }
