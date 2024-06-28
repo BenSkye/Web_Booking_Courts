@@ -121,7 +121,7 @@ function Routing() {
         <Route
           path="/user/bill"
           element={
-            <ProtectedRoute roles={["customer"]}>
+            <ProtectedRoute roles={["customer", "manager"]}>
               <ProfileAccount />
             </ProtectedRoute>
           }
@@ -232,7 +232,7 @@ function Routing() {
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/admin/ManagerManagement"
           element={
             <ProtectedRoute roles={["admin"]}>

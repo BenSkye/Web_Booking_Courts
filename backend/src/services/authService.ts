@@ -60,9 +60,9 @@ class authService implements IAuthService {
 
   async protect(token: string) {
     const userRepositoryInstance = new userRepository()
-    if (!token) {
-      throw new AppError('bạn chưa đăng nhập', 401)
-    }
+    // if (!token) {
+    //   throw new AppError('bạn chưa đăng nhập', 401)
+    // }
     const decoded: jwt.JwtPayload = jwt.verify(token, process.env.JWT_SECRET ?? '') as jwt.JwtPayload
     const currentUser = await userRepositoryInstance.findUser({ _id: decoded.id })
     if (!currentUser) {
