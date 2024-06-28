@@ -7,7 +7,6 @@ import NoImg from "@/assets/noImg.jpg";
 import { getAllCenterAPI } from "@/services/centersAPI/getCenters";
 import GetAllLocationCenter from "../../utils/getAllCenterMap";
 
-
 const { Meta } = Card;
 
 export default function Home() {
@@ -46,7 +45,7 @@ export default function Home() {
   };
 
   return (
-    <Row gutter={[16, 16]} style={{ margin: "0 auto" }}>
+    <Row gutter={[16, 16]} style={{ margin: "0 auto", background: "#fff" }}>
       <Col span={24}>
         <GetAllLocationCenter locations={centers} />
       </Col>
@@ -56,99 +55,101 @@ export default function Home() {
 
       {loading
         ? [1, 2, 3, 4, 5, 6].map((key) => (
-            <Col key={key} xs={24} sm={12} lg={8}>
-              <CardLoader />
-            </Col>
-          ))
+          <Col key={key} xs={24} sm={12} lg={8}>
+            <CardLoader />
+          </Col>
+        ))
         : centers.map((center) => (
-            <Col key={center.id} xs={24} sm={12} lg={8}>
-              <Card
-                hoverable
-                style={{ width: "100%" }}
-                cover={
-                  <Carousel
-                    autoplay
-                    style={{
-                      background: "#e1e8e3",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  >
-                    {center.images.map((img, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          height: "100%",
-                          width: "100%",
-                          overflow: "hidden",
-                        }}
-                      >
-                        <img
-                          alt={center.centerName}
-                          src={img}
-                          onError={handleImageError}
-                          style={{
-                            width: "100%",
-                            height: "250px",
-                            objectFit: "cover",
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </Carousel>
-                }
-              >
-                <Meta
-                  avatar={
-                    <Avatar src="https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg" />
-                  }
-                  title={center.centerName}
-                  description={center.location}
-                />
-                <div
+          <Col key={center.id} xs={24} sm={12} lg={8}>
+            <Card
+              hoverable
+              style={{ width: "100%" }}
+              cover={
+                <Carousel
+                  autoplay
                   style={{
-                    marginTop: 16,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    gap: "8px",
+                    background: "#e1e8e3",
+                    width: "100%",
+                    height: "100%",
                   }}
                 >
-                  <Link
-                    to={`/detail/${center._id}`}
-                    state={{
-                      pricingData: center.price.map((price) => ({
-                        ...price,
-                        price: formatPrice(price.price),
-                      })),
+                  {center.images.map((img, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <img
+                        alt={center.centerName}
+                        src={img}
+                        onError={handleImageError}
+                        style={{
+                          width: "100%",
+                          height: "250px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              }
+            >
+              <Meta
+                avatar={
+                  <Avatar src="https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg" />
+                }
+                title={center.centerName}
+                description={center.location}
+              />
+              <div
+                style={{
+                  marginTop: 16,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                }}
+              >
+                <Link
+                  to={`/detail/${center._id}`}
+                  state={{
+                    pricingData: center.price.map((price) => ({
+                      ...price,
+                      price: formatPrice(price.price),
+                    })),
+                  }}
+                >
+                  <Button
+                    style={{
+                      height: "50px",
+                      width: "150px",
+                      fontSize: "18px",
                     }}
                   >
-                    <Button
-                      style={{
-                        height: "50px",
-                        width: "150px",
-                        fontSize: "18px",
-                      }}
-                    >
-                      Xem chi tiết
-                    </Button>
-                  </Link>
-                  <Link to={`/bookingdetail/${center._id}`}>
-                    <Button
-                      style={{
-                        height: "50px",
-                        width: "150px",
-                        fontSize: "18px",
-                      }}
-                      type="primary"
-                    >
-                      Đặt sân ngay
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
-            </Col>
-          ))}
+                    Xem chi tiết
+                  </Button>
+                </Link>
+                <Link to={`/bookingdetail/${center._id}`}>
+                  <Button
+                    style={{
+                      height: "50px",
+                      width: "150px",
+                      fontSize: "18px",
+                      backgroundColor: "#1890ff", // Blue background
+                      color: "white", // White text color
+                    }}
+                    type="primary" // Set button type to primary for blue color
+                  >
+                    Đặt sân ngay
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+          </Col>
+        ))}
     </Row>
   );
 }

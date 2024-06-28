@@ -15,7 +15,9 @@ class PlayPackageController {
         try {
             const playPackage = req.body; // Nhận playPackage từ request body
             console.log("req.user", req.user)
+
             const userId = req.user._id.toString()
+            console.log("useId123", userId)
             const playPackageService = new PlayPackageService();
             const result = await playPackageService.createOrUpdatePlayPackage(userId, playPackage);
 

@@ -22,30 +22,34 @@ class PlayPackageService {
 
     public async createOrUpdatePlayPackage(userId: any, playPackage: IPlayPackageInput) {
         try {
-            console.log("useId", userId)
             const { centerId, hour } = playPackage;
             const priceRepositoryInstance = new priceRepository();
             const invoiceRepositoryInstance = new InvoiceRepository();
 
             const pricePerHour = await priceRepositoryInstance.getPriceByCenterIdAndScheduleType(centerId, 'PP');
+            console.log('pricePerHour', pricePerHour)
             if (!pricePerHour) {
                 throw new AppError('Price per hour not found', 404);
             }
             playPackage.price = pricePerHour.price * hour;
             const invoiceID = 'BPP' + new Date().getTime()
-            const invoice = await invoiceRepositoryInstance.addInvoice({ invoiceID, userId, price: playPackage.price, status: 'pending', invoiceFor: 'BPP' });
+            const newInvoice = { invoiceID, userId, price: playPackage.price, status: 'pending', invoiceFor: 'BPP' }
+
+            const invoice = await invoiceRepositoryInstance.addInvoice(newInvoice);
+            console.log('invoice', invoice)
             if (invoice) {
                 playPackage.invoiceId = invoice._id.toString();
+                playPackage.userId = userId
             }
             console.log('playPackageInvoice', playPackage.invoiceId);
             const playPackageRepositoryInstance = new PlayPackageRepository();
-            const createdPlayPackage = await playPackageRepositoryInstance.addPlayPackage(playPackage);
 
+            const createdPlayPackage = await playPackageRepositoryInstance.addPlayPackage(playPackage);
 
             // Tìm kiếm một PlayHours hiện có với userId và centerId
             const playHourRepositoryInstance = new PlayHourRepository();
             const existingPlayHour = await playHourRepositoryInstance.findPlayHourByUserIdAndCenterId(userId, centerId);
-
+            console.log('existingPlayHour', existingPlayHour)
             // Nếu không, tạo một PlayHours mới với totalHours và remainingHours bỏ id Của createdPlayPackage vào từ PlayPackage
             if (!existingPlayHour) {
                 const newPlayHour = new PlayHour({

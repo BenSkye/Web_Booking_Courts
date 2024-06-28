@@ -26,7 +26,7 @@ const LayoutMain = () => {
           width: "100%",
           display: "flex",
           alignItems: "center",
-          background: "#141414",
+          background: "#FFFFFF",
         }}
       >
         <HeaderLayout />
@@ -38,8 +38,9 @@ const LayoutMain = () => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          marginTop: 10,
+
           marginBottom: 10,
+          background: "#f5f5f5"
         }}
       >
         <div
