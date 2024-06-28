@@ -55,7 +55,7 @@ export default function AboutUs() {
             <Col xs={24} md={12} className="about-us-text-section">
               <Title level={1}>Tầm nhìn</Title>
               <Paragraph>
-              <strong>Racket Rise</strong> hướng tới trở thành nền tảng hàng đầu kết nối cộng
+                <strong>Racket Rise</strong> hướng tới trở thành nền tảng hàng đầu kết nối cộng
                 đồng cầu lông toàn cầu, nâng cao trải nghiệm người chơi và thúc
                 đẩy sự phát triển của thể thao. Chúng tôi cam kết mang lại sự tiện
                 lợi tối đa trong việc tìm kiếm và đặt sân, đồng thời cung cấp các
