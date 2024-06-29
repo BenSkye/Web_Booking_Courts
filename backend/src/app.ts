@@ -6,7 +6,7 @@ import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import compression from 'compression'
 import AppError from './utils/appError'
-import errorHandler from './controller/errorController'
+import errorController from './controller/errorController'
 import authRoute from './routes/authRoute'
 import centerRoute from './routes/centerRoute'
 import centerPackageRoute from './routes/centerPackageRoute'
@@ -55,5 +55,5 @@ cron.schedule('0,30 * * * *', async () => {
   await bookingServiceInstance.checkAndUpdateBooking() // câp nhật hết hạn cho những booking chưa checkin  sau 30 phút
 })
 
-app.use(errorHandler)
+app.use(errorController)
 export default app

@@ -220,7 +220,7 @@ class bookingService implements IbookingService {
       return { status: 'fail' }
     }
 
-    const invoice = await invoiceServiceInstance.paidIvoice(reqBody.orderId)
+    const invoice = await invoiceServiceInstance.paidInvoice(reqBody.orderId)
     if (!invoice) {
       throw new AppError('Invoice not found', 404)
     }
@@ -456,7 +456,7 @@ class bookingService implements IbookingService {
         console.log('oldBooking', oldBooking)
         bookingRepository.updateBooking({ _id: oldBooking._id }, { status: oldBooking.status })
       }
-      const invoice = await invoiceServiceInstance.paidIvoice(reqBody.orderId)
+      const invoice = await invoiceServiceInstance.paidInvoice(reqBody.orderId)
       if (!invoice) {
         throw new AppError('lỗi cập nhật invoice', 401)
       }
@@ -517,7 +517,7 @@ class bookingService implements IbookingService {
     //   return { status: 'fail' }
     // }
 
-    // const invoice = await invoiceServiceInstance.paidIvoice(reqBody.orderId)
+    // const invoice = await invoiceServiceInstance.paidInvoice(reqBody.orderId)
     // if (!invoice) {
     //   throw new AppError('Invoice not found', 404)
     // }
@@ -529,6 +529,7 @@ class bookingService implements IbookingService {
     // )
   }
 
+  // chưa xog
   async UpdateBookingbyDayDecreasePrice(data: any, userId: string) {
     if (data.oldPrice < data.updateBooking.price) {
       throw new AppError('Giá mới không thể cao hơn giá cũ', 400)
