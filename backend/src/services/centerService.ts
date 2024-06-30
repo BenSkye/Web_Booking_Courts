@@ -24,29 +24,29 @@ class centerService implements ICenterService {
   async addCenter(data: any) {
     const center = { ...data.center, managerId: data.user }
     const centerRepositoryInstance = new centerRepository()
-    const newcenter = await centerRepositoryInstance.addCenter(center)
+    const newCenter = await centerRepositoryInstance.addCenter(center)
     const priceArray = data.price
     const priceRepositoryInstance = new priceRepository()
     const promises = priceArray.map(async (price: any) => {
-      price.centerId = newcenter._id
+      price.centerId = newCenter._id
       return priceRepositoryInstance.addPrice(price)
     })
     const newPrices = await Promise.all(promises)
     const priceIds = newPrices.map((price) => price._id)
-    newcenter.price = priceIds
-    await centerRepositoryInstance.updateCenter(newcenter._id, newcenter)
+    newCenter.price = priceIds
+    await centerRepositoryInstance.updateCenter(newCenter._id, newCenter)
     //Tạo court ngay khi tạo Center
     const newCourts = []
-    for (let i = 0; i < newcenter.courtCount; i++) {
+    for (let i = 0; i < newCenter.courtCount; i++) {
       const court = {
         courtNumber: i + 1,
-        centerId: newcenter._id
+        centerId: newCenter._id
       }
       const courtRepositoryInstance = new courtRepository()
       const newCourt = await courtRepositoryInstance.addCourt(court)
       newCourts.push(newCourt)
     }
-    return { newcenter, newPrices, newCourts }
+    return { newCenter, newPrices, newCourts }
   }
 
   async getAllCenters() {

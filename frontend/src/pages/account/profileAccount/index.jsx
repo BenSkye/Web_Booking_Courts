@@ -89,16 +89,16 @@ const ProfileAccount = () => {
           <Menu.Item key="2" icon={<LockOutlined />}>
             <Link to="/user/update-password">Cập nhật mật khẩu</Link>
           </Menu.Item>
-          {isCustomer && (
-            <>
-              <Menu.Item key="3" icon={<BookOutlined />}>
-                <Link to="/user/booking-court">Đặt sân</Link>
-              </Menu.Item>
-              <Menu.Item key="4" icon={<PlayCircleOutlined />}>
-                <Link to="/user/game-time">Số giờ chơi</Link>
-              </Menu.Item>
-            </>
-          )}
+          {/* {isCustomer && (
+            <> */}
+          <Menu.Item key="3" icon={<BookOutlined />}>
+            <Link to="/user/booking-court">Đặt sân</Link>
+          </Menu.Item>
+          <Menu.Item key="4" icon={<PlayCircleOutlined />}>
+            <Link to="/user/game-time">Số giờ chơi</Link>
+          </Menu.Item>
+          {/* </>
+          )} */}
           <Menu.Item key="5" icon={<FileTextOutlined />}>
             <Link to="/user/bill">Hóa đơn</Link>
           </Menu.Item>
@@ -121,8 +121,8 @@ const ProfileAccount = () => {
           <div style={{ width: "100%", maxWidth: "800px" }}>
             {selectedKey === "1" && <AccountSettingsForm />}
             {selectedKey === "2" && <UpdatePassword />}
-            {selectedKey === "3" && isCustomer && <BookingCourt />}
-            {selectedKey === "4" && isCustomer && <h1>Số giờ chơi</h1>}
+            {selectedKey === "3" && <BookingCourt />}
+            {selectedKey === "4" && <h1>Số giờ chơi</h1>}
             {selectedKey === "5" && <OrderDetails />}
           </div>
         </Content>
