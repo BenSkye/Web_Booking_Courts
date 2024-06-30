@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useContext, useEffect, useState } from "react";
-import { Table, Tag, Button, Modal, Descriptions, Divider } from "antd";
+import { Table, Tag, Button, Modal, Divider } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 import AuthContext from "../../../services/authAPI/authProvideAPI";
 import { getAllCenterAPI } from "../../../services/centersAPI/getCenters";
@@ -206,7 +206,7 @@ const ManageCenter = () => {
           scroll={{ y: "calc(100vh - 150px)" }} // Adjust based on header height
         />
       </div>
-
+  
       {selectedCenter && (
         <Modal
           title="Chi tiết trung tâm"
@@ -228,121 +228,84 @@ const ManageCenter = () => {
             </Button>,
           ]}
         >
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label="Tên sân">
-              {selectedCenter.centerName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Địa chỉ sân">
-              {selectedCenter.location}
-            </Descriptions.Item>
-            <Descriptions.Item label="Giờ mở cửa">
-              {selectedCenter.openTime}
-            </Descriptions.Item>
-            <Descriptions.Item label="Giờ đóng cửa">
-              {selectedCenter.closeTime}
-            </Descriptions.Item>
-            <Descriptions.Item label="Số sân hiện có">
-              {selectedCenter.courtCount}
-            </Descriptions.Item>
-            <Descriptions.Item label="Hình ảnh">
-              <img
-                src={
-                  Array.isArray(selectedCenter.images)
-                    ? selectedCenter.images[0]
-                    : selectedCenter.images
-                }
-                alt="Center"
-                style={{ width: "50px", height: "50px" }}
-              />
-            </Descriptions.Item>
-            <Descriptions.Item label="Dịch vụ">
-              {selectedCenter.services.map((service, index) => (
-                <Tag color="blue" key={index}>
-                  {service}
-                </Tag>
-              ))}
-            </Descriptions.Item>
-            <Descriptions.Item label="Quy tắc">
-              {selectedCenter.rule}
-            </Descriptions.Item>
-            <Descriptions.Item label="Giá">
-              {selectedCenter.price.map((item, index) => (
-                <div key={index}>
-                  <Divider />
-                  <p>
-                    <b>Giá tiền:</b> {item.price}
-                  </p>
-                  <p>
-                    <b>Giờ bắt đầu:</b> {item.startTime}
-                  </p>
-                  <p>
-                    <b>Giờ kết thúc:</b> {item.endTime}
-                  </p>
-                  <p>
-                    <b>Loại giờ:</b> {item.scheduleType}
-                  </p>
+          <Table
+            columns={[
+              { title: "Thuộc tính", dataIndex: "property", key: "property" },
+              { title: "Giá trị", dataIndex: "value", key: "value" },
+            ]}
+            dataSource={[
+              { key: "1", property: "Tên sân", value: selectedCenter.centerName },
+              { key: "2", property: "Địa chỉ sân", value: selectedCenter.location },
+              { key: "3", property: "Giờ mở cửa", value: selectedCenter.openTime },
+              { key: "4", property: "Giờ đóng cửa", value: selectedCenter.closeTime },
+              { key: "5", property: "Số sân hiện có", value: selectedCenter.courtCount },
+              { key: "6", property: "Hình ảnh", value: (
+                <img
+                  src={
+                    Array.isArray(selectedCenter.images)
+                      ? selectedCenter.images[0]
+                      : selectedCenter.images
+                  }
+                  alt="Center"
+                  style={{ width: "50px", height: "50px" }}
+                />
+              )},
+              { key: "7", property: "Dịch vụ", value: (
+                <div>
+                  {selectedCenter.services.map((service, index) => (
+                    <Tag color="blue" key={index}>
+                      {service}
+                    </Tag>
+                  ))}
                 </div>
-              ))}
-            </Descriptions.Item>
-            <Descriptions.Item label="Trạng thái">
-              {(() => {
-                // Ánh xạ từng giá trị status từ tiếng Anh sang tiếng Việt và màu sắc tương ứng
-                const statusMap = {
-                  pending: { label: "Chưa được duyệt", color: "#fa541c" }, // Màu đỏ cam
-                  accepted: { label: "Đã chấp nhận", color: "#2f54eb" }, // Màu xanh dương
-                  active: { label: "Đang hoạt động", color: "#52c41a" }, // Màu xanh lá cây
-                  expired: { label: "Hết hạn", color: "#bfbfbf" }, // Màu xám nhạt
-                  rejected: { label: "Đã từ chối", color: "#f5222d" }, // Màu đỏ
-                };
-
-                // Lấy giá trị status từ selectedCenter
-                const status = selectedCenter.status;
-
-                // Trả về component Tag với màu và nội dung trạng thái tương ứng
-                const { label, color } = statusMap[status] || {
-                  label: status,
-                  color: "#d9d9d9",
-                }; // Màu mặc định
-
-                return <Tag color={color}>{label}</Tag>;
-              })()}
-            </Descriptions.Item>
-
-            <Descriptions.Item
-              label="Gói đăng ký"
-              style={{
-                display: selectedCenter.status === "pending" ? "none" : "block",
-              }}
-            >
-              {selectedCenter.subscriptions.map((item, index) => (
-                <div key={index}>
-                  <Divider />
-                  <p>
-                    <b>Ngày kích hoạt:</b>{" "}
-                    {new Date(item.activationDate).toLocaleDateString()}
-                  </p>
-                  <p>
-                    <b>Ngày hết hạn:</b>{" "}
-                    {new Date(item.expiryDate).toLocaleDateString()}
-                  </p>
-                  <p>
-                    <b>Gói: </b> {item.packageId.name}
-                  </p>
-                  <p>
-                    <b>Giá tiền:</b> {item.packageId.price}
-                  </p>
+              )},
+              { key: "8", property: "Quy tắc", value: selectedCenter.rule },
+              { key: "9", property: "Giá", value: (
+                <div>
+                  {selectedCenter.price.map((item, index) => (
+                    <div key={index}>
+                      <p><b>Giá tiền:</b> {item.price}</p>
+                      <p><b>Giờ bắt đầu:</b> {item.startTime}</p>
+                      <p><b>Giờ kết thúc:</b> {item.endTime}</p>
+                      <p><b>Loại giờ:</b> {item.scheduleType}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </Descriptions.Item>
-
-            <Descriptions.Item label="Ngày tạo">
-              {new Date(selectedCenter.createdAt).toLocaleDateString()}
-            </Descriptions.Item>
-          </Descriptions>
+              )},
+              { key: "10", property: "Trạng thái", value: (
+                (() => {
+                  const statusMap = {
+                    pending: "Chưa được duyệt",
+                    accepted: "Đã chấp nhận",
+                    active: "Đang hoạt động",
+                    expired: "Hết hạn",
+                    rejected: "Đã từ chối",
+                  };
+                  const status = selectedCenter.status;
+                  const colorMap = {
+                    pending: "#f  a541c",
+                    accepted: "#2f54eb",
+                    active: "#52c41a",
+                    expired: "#bfbfbf",
+                    rejected: "#f5222d",
+                  };
+                  return (
+                    <Tag color={colorMap[status]}>{statusMap[status]}</Tag>
+                  );
+                })()
+              )},
+              { key: "11", property: "Ngày tạo", value: new Date(selectedCenter.createdAt).toLocaleDateString() },
+            ]}
+            pagination={false}
+            bordered
+            rowKey={(record) => record.key}
+          />
         </Modal>
       )}
     </div>
   );
+  
+  
 };
 
 export default ManageCenter;

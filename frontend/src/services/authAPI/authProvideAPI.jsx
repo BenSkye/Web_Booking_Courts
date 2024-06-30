@@ -1,59 +1,11 @@
-// import { createContext, useState, useEffect } from "react";
-// import Cookies from "js-cookie";
-// import { postData } from "../fetchAPI";
-// import { jwtDecode } from "jwt-decode";
-// const AuthContext = createContext();
-
-// export const AuthProvider = ({ children }) => {
-//   const [user, setUser] = useState(null);
-
-//   useEffect(() => {
-//     const tokenStored = Cookies.get("jwtToken");
-//     if (tokenStored) {
-//       const decodedToken = jwtDecode(tokenStored);
-//       setUser(decodedToken);
-//     }
-//   }, []);
-
-//   const login = async (email, password) => {
-//     const response = await postData("http://localhost:5050/api/v1/auth/login", {
-//       userEmail: email,
-//       password: password,
-//     });
-
-//     if (response && response.data) {
-//       const token = response.data.data.token;
-//       console.log(token);
-//       if (token) {
-//         Cookies.set("jwtToken", token, { expires: 60 });
-//         const decodedToken = jwtDecode(token);
-//         setUser(decodedToken);
-//       }
-//     }
-//     return response;
-//   };
-
-//   const logout = () => {
-//     Cookies.remove("jwtToken");
-//     setUser(null);
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ user, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
-
-// export default AuthContext;
-
 import { createContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { postData, patchData } from "../fetchAPI";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../../utils/firebase/firebase";
 import { Spin } from "antd";
+
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const AuthContext = createContext();
 
@@ -86,7 +38,6 @@ export const AuthProvider = ({ children }) => {
         setUser(decodedToken);
         return decodedToken;
       }
-      // setUser({ userName: data.userName, avatar: data.avatar });
     }
     return null;
   };
@@ -147,6 +98,12 @@ export const AuthProvider = ({ children }) => {
         const decodedToken = jwtDecode(serverToken);
         setUser(decodedToken);
       }
+
+      
+
+      // Send welcome email as part of the Google sign-in process
+      
+
       console.log(data.data.user?._id);
       setUser({
         id: data.data.user?._id,

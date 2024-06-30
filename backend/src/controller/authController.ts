@@ -1,42 +1,44 @@
-import authService from '~/services/authService'
-import AppError from '~/utils/appError'
-import catchAsync from '~/utils/catchAsync'
-import bcryptjs from 'bcryptjs'
+import authService from '~/services/authService';
+import sendEmailSerVice from '~/services/sendEmailService';
+import AppError from '~/utils/appError';
+import catchAsync from '~/utils/catchAsync';
+
 class authController {
   static registerUser = catchAsync(async (req: any, res: any, next: any) => {
-    const authServiceInstance = new authService()
-    const newUser = await authServiceInstance.registerUser(req.body)
+    const authServiceInstance = new authService();
+    const newUser = await authServiceInstance.registerUser(req.body);
     res.status(201).json({
       status: 'success',
       data: {
         user: newUser
       }
-    })
-  })
+    });
+  });
+
   static registerPartner = catchAsync(async (req: any, res: any, next: any) => {
-    const authServiceInstance = new authService()
-
-    const newUser = await authServiceInstance.registerPartner(req.body)
+    const authServiceInstance = new authService();
+    const newUser = await authServiceInstance.registerPartner(req.body);
     res.status(201).json({
       status: 'success',
       data: {
         user: newUser
       }
-    })
-  })
-  static loginUser = catchAsync(async (req: any, res: any, next: any) => {
-    const authServiceInstance = new authService()
+    });
+  });
 
-    const { userEmail, password } = req.body
+  static loginUser = catchAsync(async (req: any, res: any, next: any) => {
+    const authServiceInstance = new authService();
+
+    const { userEmail, password } = req.body;
     if (!userEmail || !password) {
-      return next(new AppError('Vui lòng nhập email và mật khẩu', 400))
+      return next(new AppError('Vui lòng nhập email và mật khẩu', 400));
     }
-    const { user, token } = await authServiceInstance.loginUser(userEmail, password)
-    console.log('token', token)
+    const { user, token } = await authServiceInstance.loginUser(userEmail, password);
+    console.log('token', token);
     res
       .cookie('access_token', token, {
         httpOnly: true,
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000) // Example: Expires in 24 hours
       })
       .status(201)
       .json({
@@ -45,24 +47,24 @@ class authController {
           user: user,
           token: token
         }
-      })
-  })
-  static changePassword = catchAsync(async (req: any, res: any, next: any) => {
-    const authServiceInstance = new authService()
+      });
+  });
 
-    const { oldPassword, newPassword, confirmPassword } = req.body
-    console.log('req.body', req.body)
+  static changePassword = catchAsync(async (req: any, res: any, next: any) => {
+    const authServiceInstance = new authService();
+
+    const { oldPassword, newPassword, confirmPassword } = req.body;
     if (!oldPassword || !newPassword || !confirmPassword) {
-      return next(new AppError('Vui lòng nhập mật khẩu cũ và mật khẩu mới', 400))
+      return next(new AppError('Vui lòng nhập mật khẩu cũ và mật khẩu mới', 400));
     }
     if (newPassword !== confirmPassword) {
-      return next(new AppError('Vui lòng nhập xác nhận mật khẩu trùng với mật khẩu mới', 400))
+      return next(new AppError('Vui lòng nhập xác nhận mật khẩu trùng với mật khẩu mới', 400));
     }
-    const { userNewPass, token } = await authServiceInstance.changePassword(req.user._id, oldPassword, newPassword)
+    const { userNewPass, token } = await authServiceInstance.changePassword(req.user._id, oldPassword, newPassword);
     res
       .cookie('access_token', token, {
         httpOnly: true,
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000) // Example: Expires in 24 hours
       })
       .status(201)
       .json({
@@ -71,50 +73,47 @@ class authController {
           user: userNewPass,
           token: token
         }
-      })
-  })
+      });
+  });
 
-  //check user đã đăng nhập chưa
   static protect = catchAsync(async (req: any, res: any, next: any) => {
-    const authServiceInstance = new authService()
-    let token
+    const authServiceInstance = new authService();
+    let token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1]
+      token = req.headers.authorization.split(' ')[1];
     }
-    // console.log('token', token)
     if (!token) {
-      return next(new AppError('Vui lòng đăng nhập để truy cập', 401))
+      return next(new AppError('Vui lòng đăng nhập để truy cập', 401));
     }
-    const currentUser = await authServiceInstance.protect(token)
-    req.user = currentUser as any
-    next()
-  })
+    const currentUser = await authServiceInstance.protect(token);
+    req.user = currentUser as any;
+    next();
+  });
 
-  //Check user role có qyền thực hiện action không
   static restricTO = (...roles: string[]) => {
     return (req: any, res: any, next: any) => {
       if (!roles.includes(req.user.role)) {
-        return next(new AppError('Không có quyền truy cập', 403))
+        return next(new AppError('Không có quyền truy cập', 403));
       }
-      next()
-    }
-  }
+      next();
+    };
+  };
 
   static googleLogin = catchAsync(async (req: any, res: any, next: any) => {
-    const authServiceInstance = new authService()
+    const authServiceInstance = new authService();
 
-    const { email, name, photo } = req.body
+    const { email, name, photo, password } = req.body;
 
     if (!email) {
-      return next(new AppError('Vui lòng nhập email', 400))
+      return next(new AppError('Vui lòng nhập email', 400));
     }
 
-    const { user, token } = await authServiceInstance.googleLogin(email, name, photo)
+    const { user, token } = await authServiceInstance.googleLogin(email, name, photo);
 
     res
       .cookie('access_token', token, {
         httpOnly: true,
-        expires: new Date(Date.now() + 3600000) // 1 hour
+        expires: new Date(Date.now() + 3600000) // Example: Expires in 1 hour
       })
       .status(200)
       .json({
@@ -123,7 +122,8 @@ class authController {
           user,
           token
         }
-      })
-  })
+      });
+  });
 }
-export default authController
+
+export default authController;

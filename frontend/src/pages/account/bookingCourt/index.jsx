@@ -66,8 +66,8 @@ const BookingCourt = () => {
     getPersonalBooking();
   }, []);
   useEffect(() => {
-    console.log("selectedBookingForUpdate", selectedBookingForUpdate);
-  }, [selectedBookingForUpdate]);
+    console.log("selectedDateBookings", selectedDateBookings);
+  }, [selectedDateBookings]);
 
   const onSelect = (value) => {
     const selectedDate = value.toDate();
