@@ -13,7 +13,7 @@ class tournamentService implements ItournamentService {
     const newTournament = await tournamentRepositoryInstance.addTournament(tournament)
     return newTournament
   }
-  async getTournamentById(id: String) {
+  async getTournamentById(id: string) {
     const tournamentRepositoryInstance = new tournamentRepository()
     const tournament = await tournamentRepositoryInstance.getTournament({ _id: id })
     return tournament
