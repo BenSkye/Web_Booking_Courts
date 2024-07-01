@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import validator from 'validator'
 
 const tournamentSchema = new mongoose.Schema(
   {
@@ -14,8 +15,8 @@ const tournamentSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
-      match: [/.+\@.+\..+/, 'Email không hợp lệ']
+      required: [true, 'Email không được để trống'],
+      validate: [validator.isEmail, 'Email không hợp lệ']
     },
     tournamentName: {
       type: String,

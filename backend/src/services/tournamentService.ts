@@ -2,7 +2,7 @@ import tournamentRepository from '~/repository/tournamentRepository'
 
 interface ItournamentService {
   addTournament(data: any, userId: string): Promise<any>
-  getTournamentById(id: String): Promise<any>
+  getTournamentById(id: string): Promise<any>
 }
 
 class tournamentService implements ItournamentService {
