@@ -2,6 +2,7 @@ import { Button, Card, Modal, Pagination, Skeleton } from "antd";
 import { useEffect, useState } from "react";
 import { getAllTournamentAPI } from "../../../services/tournamentAPI/tournamentAPI";
 import TournamentDetail from "../../TournamentDetail";
+import { Link } from "react-router-dom";
 
 const pageSize = 3;
 export default function HistoryTournament() {
@@ -64,10 +65,9 @@ export default function HistoryTournament() {
               key={index}
               title={tournament.tournamentName}
               extra={
-                // <Link to={`/tournament/detail/${tournament.id}`}>Chi tiết</Link>
-                <Button type="link" onClick={() => showModal(tournament.id)}>
-                  Chi tiết
-                </Button>
+                <Link to={`/tournament/detail/${tournament._id}`}>
+                  <Button type="link">Chi tiết</Button>
+                </Link>
               }
               bodyStyle={{ padding: "10px" }}
               headStyle={{ backgroundColor: "#f0f0f0", padding: "10px" }}
@@ -79,7 +79,8 @@ export default function HistoryTournament() {
               }}
             >
               <p style={{ margin: 0, padding: 0 }}>
-                {tournament.startDate}/{tournament.endDate}
+                {new Date(tournament.startDate).toLocaleDateString()} -{" "}
+                {new Date(tournament.endDate).toLocaleDateString()}
               </p>
             </Card>
           ))}

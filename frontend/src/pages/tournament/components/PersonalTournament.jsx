@@ -5,9 +5,17 @@ import {
   getPersonalTournamentAPI,
 } from "../../../services/tournamentAPI/tournamentAPI";
 import TournamentDetail from "../../TournamentDetail";
+import { Link } from "react-router-dom";
 
 const pageSize = 3;
-
+const statusStyles = {
+  pending: { message: "Giải đấu đang chờ xử lý.", color: "gray" },
+  denied: { message: "Giải đấu đã bị từ chối.", color: "red" },
+  approved: { message: "Giải đấu đã được chấp nhận.", color: "green" },
+  confirm: { message: "Giải đấu đã được thanh toán.", color: "blue" },
+  completed: { message: "Giải đấu đã hoàn thành.", color: "navy" },
+  cancelled: { message: "Giải đấu đã bị hủy.", color: "orange" },
+};
 export default function PersonalTournament() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tournamentId, setTournamentId] = useState();
@@ -20,22 +28,6 @@ export default function PersonalTournament() {
     setIsModalOpen(false);
   };
 
-  const getColorByStatus = (status) => {
-    switch (status) {
-      case "Ongoing":
-        return "green";
-      case "Pending":
-        return "orange";
-      case "Accepted":
-        return "blue";
-      case "Completed":
-        return "gray";
-      case "Rejected":
-        return "red";
-      default:
-        return "black";
-    }
-  };
   const [currentPage, setCurrentPage] = useState(1);
   const [ListTournament, setListTournament] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -83,16 +75,22 @@ export default function PersonalTournament() {
               title={
                 <span>
                   {tournament.tournamentName + " "}
-                  <span style={{ color: getColorByStatus(tournament.status) }}>
-                    {tournament.status}
+                  <span
+                    style={{
+                      color:
+                        statusStyles[tournament.status.toLowerCase()]?.color ||
+                        "black",
+                    }}
+                  >
+                    {statusStyles[tournament.status.toLowerCase()]?.message ||
+                      "Trạng thái giải đấu không xác định."}
                   </span>
                 </span>
               }
               extra={
-                // <Link to={`/tournament/detail/${tournament.id}`}>Chi tiết</Link>
-                <Button type="link" onClick={() => showModal(tournament.id)}>
-                  Chi tiết
-                </Button>
+                <Link to={`/tournament/detail/${tournament._id}`}>
+                  <Button type="link">Chi tiết</Button>
+                </Link>
               }
               bodyStyle={{ padding: "10px" }}
               headStyle={{ backgroundColor: "#f0f0f0", padding: "10px" }}
@@ -104,7 +102,8 @@ export default function PersonalTournament() {
               }}
             >
               <p style={{ margin: 0, padding: 0 }}>
-                {tournament.startDate}/{tournament.endDate}
+                {new Date(tournament.startDate).toLocaleDateString()} -{" "}
+                {new Date(tournament.endDate).toLocaleDateString()}
               </p>
             </Card>
           ))}
@@ -115,14 +114,14 @@ export default function PersonalTournament() {
         total={ListTournament.length}
         style={{ display: "flex", justifyContent: "center", marginTop: "5px" }}
       />
-      <Modal
+      {/* <Modal
         title="Chi tiết giải đấu"
         open={isModalOpen}
         footer={null}
         onCancel={handleOk}
       >
         <TournamentDetail tournamentId={tournamentId} />
-      </Modal>
+      </Modal> */}
     </div>
   );
 }
