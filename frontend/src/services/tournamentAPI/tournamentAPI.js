@@ -3,18 +3,16 @@ import { postData } from "../fetchAPI";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const getAllTournamentAPI = async () => {
-  const data = await fetchData(
-    "https://664e992dfafad45dfae087c5.mockapi.io/Tournament"
-  );
+  const response = await fetchData(`${apiBaseUrl}/tournament/all-tournaments`);
+  console.log("Response:", response);
+  const data = response.data.tournaments;
   if (Array.isArray(data)) {
+    // Filter to include only completed tournaments
     const filteredData = data.filter(
-      (tournament) =>
-        tournament.status === "Completed" || tournament.status === "Ongoing"
+      (tournament) => tournament.status === "completed"
     );
-    const sortedData = filteredData.sort((a, b) =>
-      a.status === b.status ? 0 : a.status === "Ongoing" ? -1 : 1
-    );
-    return sortedData;
+    // Sorting is not necessary as all filtered tournaments have the same status ("completed")
+    return filteredData;
   } else {
     console.error("Invalid data format:", data);
     return [];
@@ -22,21 +20,29 @@ export const getAllTournamentAPI = async () => {
 };
 
 export const getPersonalTournamentAPI = async () => {
-  const data = await fetchData(
-    "https://664e992dfafad45dfae087c5.mockapi.io/Tournament?userId=1"
+  const response = await fetchData(
+    `${apiBaseUrl}/tournament/personal-tournaments`
   );
-  if (Array.isArray(data)) {
-    const statusOrder = [
-      "Ongoing",
-      "Accepted",
-      "Pending",
-      "Completed",
-      "Rejected",
-    ];
-    const sortedData = data.sort((a, b) => {
-      return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
-    });
-    return sortedData;
+  console.log("Response:", response);
+  const data = response.data.tournaments;
+  if (response.status === "success") {
+    if (Array.isArray(data)) {
+      const statusOrder = [
+        "confirm",
+        "approved",
+        "pending",
+        "completed",
+        "denied",
+        "cancelled",
+      ];
+      const sortedData = data.sort((a, b) => {
+        return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+      });
+      return sortedData;
+    } else {
+      console.error("Invalid data format:", data);
+      return [];
+    }
   } else {
     console.error("Invalid data format:", data);
     return [];
@@ -64,6 +70,19 @@ export const createTournamentAPI = async (data) => {
     return response.data;
   }
   if (response.status === 201) {
+    return response.data;
+  }
+};
+
+export const getTournamentInCenterAPI = async (centerId) => {
+  const response = await fetchData(
+    `${apiBaseUrl}/tournament/tournament-in-center/${centerId}`
+  );
+  console.log("Response:", response);
+  if (response.status === "fail") {
+    return response.data;
+  }
+  if (response.status === "success") {
     return response.data;
   }
 };

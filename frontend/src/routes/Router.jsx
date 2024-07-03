@@ -20,7 +20,6 @@ import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
 import SignupPartner from "../pages/login/signupPartner";
 import BookingCourtDirectly from "../pages/BookingCourtDirectly/BookingCourtDirectly";
-import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/RequestToOrganizeATournament";
 import NoAccess from "../components/noAccess/noAccess";
 import NotFound404 from "../components/noAccess/notFound404";
 
@@ -33,6 +32,7 @@ import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople
 import ManagerManagement from "../pages/courtManage/manageCourtByAdmin/manageManager";
 import PersonalTournament from "../pages/tournament/components/PersonalTournament";
 import TournamentDetail from "../pages/TournamentDetail";
+import RequestToOrganizeATournament from "../pages/courtManage/RequestToOrganizeATournament/RequestToOrganizeATournament";
 function Routing() {
   return (
     <Routes>

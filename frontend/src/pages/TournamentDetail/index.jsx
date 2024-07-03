@@ -6,7 +6,7 @@ const statusStyles = {
   pending: { message: "Giải đấu đang chờ xử lý.", color: "gray" },
   denied: { message: "Giải đấu đã bị từ chối.", color: "red" },
   approved: { message: "Giải đấu đã được chấp nhận.", color: "green" },
-  confirm: { message: "Giải đấu đã được xác nhận.", color: "blue" },
+  confirm: { message: "Giải đấu đã được thanh toán.", color: "blue" },
   completed: { message: "Giải đấu đã hoàn thành.", color: "navy" },
   cancelled: { message: "Giải đấu đã bị hủy.", color: "orange" },
 };
@@ -38,7 +38,7 @@ export default function TournamentDetail() {
   }
 
   return (
-    <Card title="Chi tiết giải đấu" style={{ margin: "20px" }}>
+    <Card>
       <h5
         style={{
           color:
@@ -53,15 +53,17 @@ export default function TournamentDetail() {
       <p>Email: {tournament.email}</p>
       <p>Số điện thoại: {tournament.phone}</p>
       <p>
-        Thời gian: Từ ngày <strong>{tournament.startDate}</strong> tới ngày{" "}
-        <strong>{tournament.endDate}</strong>
+        Thời gian: Từ ngày{" "}
+        <strong>{new Date(tournament.startDate).toLocaleDateString()}</strong>{" "}
+        tới ngày{" "}
+        <strong>{new Date(tournament.endDate).toLocaleDateString()}</strong>
       </p>
       <p>
         Trung tâm cầu lông: <strong>{tournament.centerId.centerName}</strong>{" "}
         tại <strong>{tournament.centerId.location}</strong>
       </p>
-      <p>Giải thưởng: </p>
       <p>
+        Giải thưởng:{" "}
         {tournament.prizeStructure?.split("\n").map((prize, index) => (
           <span key={index}>
             {prize}
@@ -78,12 +80,12 @@ export default function TournamentDetail() {
             <p>Yêu cầu đặc biệt: {tournament.specialRequests}</p>
           </>
         )}
-      {tournament.status === "Pending" && (
+      {tournament.status === "pending" && (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Button danger>Hủy giải đấu</Button>
         </div>
       )}
-      {tournament.status === "Accepted" && (
+      {tournament.status === "approved" && (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Button danger>Hủy giải đấu</Button>
           <Button type="primary">Thanh toán</Button>

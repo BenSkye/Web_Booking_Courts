@@ -63,7 +63,7 @@ const tournamentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'denied', 'approved', 'Confirm', 'completed', 'cancelled'],
+      enum: ['pending', 'denied', 'approved', 'confirm', 'completed', 'cancelled'],
       default: 'Pending'
     },
     userId: {
