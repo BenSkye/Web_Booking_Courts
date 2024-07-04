@@ -31,33 +31,53 @@ const CourtManageUpdate = () => {
   const [priceData, setPriceData] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [courtStatusValid, setCourtStatusValid] = useState(true);
+  const [openTime, setOpenTime] = useState(null);
+  const [closeTime, setCloseTime] = useState(null);
+  const getScheduleTypeLabel = (scheduleType) => {
+    switch (scheduleType) {
+      case 'MP':
+        return 'giá giờ chơi theo tháng';
+      case 'PP':
+        return 'giá gói giờ chơi';
+      case 'NP':
+        return 'giá giờ thường';
+      case 'GP':
+        return 'giá giờ vàng';
+      default:
+        return scheduleType;
+    }
+  };
+  
+
   useEffect(() => {
     const fetchData = async () => {
       const token = Cookies.get("jwtToken");
       try {
         const result = await getCenterByIdAPI(id, token);
+        const centerData = result.data.center;
         form.setFieldsValue({
-          ...result.data.center,
-          openTime: moment(result.data.center.openTime, "HH:mm"),
-          closeTime: moment(result.data.center.closeTime, "HH:mm"),
+          ...centerData,
+          openTime: moment(centerData.openTime, "HH:mm"),
+          closeTime: moment(centerData.closeTime, "HH:mm"),
         });
 
-        // Lưu giá trị cũ của courtCount
-        setInitialCourtCount(result.data.center.courtCount);
+        setInitialCourtCount(centerData.courtCount);
+        setOpenTime(moment(centerData.openTime, "HH:mm"));
+        setCloseTime(moment(centerData.closeTime, "HH:mm"));
 
         if (
-          result.data.center.status !== "accepted" &&
-          result.data.center.status !== "pending" &&
-          result.data.center.status !== "rejected" &&
-          result.data.center.status !== "expired"
+          centerData.status !== "accepted" &&
+          centerData.status !== "pending" &&
+          centerData.status !== "rejected" &&
+          centerData.status !== "expired"
         ) {
           setCourtStatusValid(false);
           return;
         }
-        // Chuyển đổi hình ảnh thành file list
-        if (result.data.center.images) {
+
+        if (centerData.images) {
           setFileList(
-            result.data.center.images.map((url, index) => ({
+            centerData.images.map((url, index) => ({
               uid: index,
               name: `image-${index}`,
               status: "done",
@@ -66,11 +86,8 @@ const CourtManageUpdate = () => {
           );
         }
 
-        // Lưu dữ liệu giá
-        setPriceData(result.data.center.price);
-
-        // Lưu dữ liệu dịch vụ
-        setSelectedServices(result.data.center.services);
+        setPriceData(centerData.price);
+        setSelectedServices(centerData.services);
       } catch (error) {
         console.error("API Error: ", error);
         setError(error);
@@ -85,12 +102,13 @@ const CourtManageUpdate = () => {
   if (!courtStatusValid) {
     return <Navigate to="/no-access" />;
   }
+
   const onFinish = async (values) => {
     const token = Cookies.get("jwtToken");
     const formattedValues = {
       ...values,
-      openTime: values.openTime ? values.openTime.format("HH:mm") : null,
-      closeTime: values.closeTime ? values.closeTime.format("HH:mm") : null,
+      openTime: openTime ? openTime.format("HH:mm") : null,
+      closeTime: closeTime ? closeTime.format("HH:mm") : null,
     };
     try {
       await updateCenter(id, formattedValues, token);
@@ -123,6 +141,27 @@ const CourtManageUpdate = () => {
     return Promise.resolve();
   };
 
+  const validateTimeDifference = (_, value) => {
+    if (openTime && closeTime) {
+      const duration = moment.duration(closeTime.diff(openTime)).asHours();
+      if (duration < 8) {
+        return Promise.reject(
+          new Error("Giờ đóng cửa và mở cửa phải cách nhau ít nhất 8 tiếng.")
+        );
+      }
+    }
+    return Promise.resolve();
+  };
+
+  const validatePrice = (_, value) => {
+    if (value && value < 10000) {
+      return Promise.reject(
+        new Error("Giá tiền phải lớn hơn hoặc bằng 10,000 VND.")
+      );
+    }
+    return Promise.resolve();
+  };
+
   if (loading) {
     return <Spin size="large" />;
   }
@@ -132,6 +171,10 @@ const CourtManageUpdate = () => {
       <Alert message="Error" description="Failed to fetch data." type="error" />
     );
   }
+
+  const shouldRenderTimeFields = (scheduleType) => {
+    return !["NP", "PP", "MP"].includes(scheduleType);
+  };
 
   return (
     <Form
@@ -156,20 +199,41 @@ const CourtManageUpdate = () => {
       <Form.Item name="rule" label="Quy định sử dụng sân">
         <Input.TextArea rows={4} />
       </Form.Item>
-      <Form.Item name="openTime" label="Giờ mở cửa">
+      <Form.Item
+        name="openTime"
+        label="Giờ mở cửa"
+        rules={[{ validator: validateTimeDifference }]}
+      >
         <TimePicker
           format="HH:mm"
           disabledMinutes={() => [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-            20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37,
-            38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
-            55, 56, 57, 58, 59,
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
+            36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+            52, 53, 54, 55, 56, 57, 58, 59,
           ]}
           disabledHours={() => [0, 1, 2, 3, 4]}
+          value={openTime}
+          onChange={(time) => setOpenTime(time)}
         />
       </Form.Item>
-      <Form.Item name="closeTime" label="Giờ đóng cửa">
-        <TimePicker format="HH:mm" />
+      <Form.Item
+        name="closeTime"
+        label="Giờ đóng cửa"
+        rules={[{ validator: validateTimeDifference }]}
+      >
+        <TimePicker
+          format="HH:mm"
+          disabledMinutes={() => [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
+            36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+            52, 53, 54, 55, 56, 57, 58, 59,
+          ]}
+          disabledHours={() => [0, 1, 2, 3, 4]}
+          value={closeTime}
+          onChange={(time) => setCloseTime(time)}
+        />
       </Form.Item>
       <Form.Item name="images" label="Hình ảnh sân">
         <Upload
@@ -181,7 +245,6 @@ const CourtManageUpdate = () => {
         </Upload>
       </Form.Item>
       <ServicesAndAmenities selectedServices={selectedServices} />{" "}
-      {/* Thay thế thành phần dịch vụ */}
       <Form.List name="price">
         {(fields) => (
           <Card
@@ -198,32 +261,39 @@ const CourtManageUpdate = () => {
                       <Form.Item
                         name={[index, "price"]}
                         initialValue={item.price}
+                        rules={[{ validator: validatePrice }]}
                       >
-                        <Input addonBefore="Giá tiền:" suffix="VND" />
+                        <Input
+                          type="number"
+                          min={10000}
+                          addonBefore="Giá tiền:"
+                          suffix="VND"
+                        />
                       </Form.Item>
                     </Col>
+                    {shouldRenderTimeFields(item.scheduleType) && (
+                      <>
+                        <Col span={6}>
+                          <Form.Item
+                            name={[index, "startTime"]}
+                            initialValue={item.startTime}
+                          >
+                            <Input addonBefore="Giờ bắt đầu:" />
+                          </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                          <Form.Item
+                            name={[index, "endTime"]}
+                            initialValue={item.endTime}
+                          >
+                            <Input addonBefore="Giờ kết thúc:" />
+                          </Form.Item>
+                        </Col>
+                      </>
+                    )}
                     <Col span={6}>
-                      <Form.Item
-                        name={[index, "startTime"]}
-                        initialValue={item.startTime}
-                      >
-                        <Input addonBefore="Giờ bắt đầu:" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={6}>
-                      <Form.Item
-                        name={[index, "endTime"]}
-                        initialValue={item.endTime}
-                      >
-                        <Input addonBefore="Giờ kết thúc:" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={6}>
-                      <Form.Item
-                        name={[index, "scheduleType"]}
-                        initialValue={item.scheduleType}
-                      >
-                        <Input addonBefore="Loại giờ:" />
+                      <Form.Item>
+                        <span>{getScheduleTypeLabel(item.scheduleType)}</span>
                       </Form.Item>
                     </Col>
                   </Row>
