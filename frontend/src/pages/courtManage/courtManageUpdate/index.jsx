@@ -19,6 +19,8 @@ import { getCenterByIdAPI } from "../../../services/partnerAPI";
 import { updateCenter } from "../../../services/centersAPI/getCenters";
 import Cookies from "js-cookie";
 import ServicesAndAmenities from "../partner/components/ServicesAndAmenities";
+import MyLocationMap2 from "../../../utils/map/MapForAddCourt";
+import Location from "../partner/components/Location";
 
 const CourtManageUpdate = () => {
   const { id } = useParams();
@@ -27,27 +29,34 @@ const CourtManageUpdate = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fileList, setFileList] = useState([]);
+  const [imagesLicense, setImagesLicense] = useState([]);
   const [initialCourtCount, setInitialCourtCount] = useState(null);
   const [priceData, setPriceData] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [courtStatusValid, setCourtStatusValid] = useState(true);
   const [openTime, setOpenTime] = useState(null);
   const [closeTime, setCloseTime] = useState(null);
+  const [address, setAddress] = useState(form.getFieldValue("location") || "");
+
+  const handleLocationChange = (value) => {
+    setAddress(value);
+    form.setFieldsValue({ location: value });
+  };
+
   const getScheduleTypeLabel = (scheduleType) => {
     switch (scheduleType) {
-      case 'MP':
-        return 'giá giờ chơi theo tháng';
-      case 'PP':
-        return 'giá gói giờ chơi';
-      case 'NP':
-        return 'giá giờ thường';
-      case 'GP':
-        return 'giá giờ vàng';
+      case "MP":
+        return "giá giờ chơi theo tháng";
+      case "PP":
+        return "giá gói giờ chơi";
+      case "NP":
+        return "giá giờ thường";
+      case "GP":
+        return "giá giờ vàng";
       default:
         return scheduleType;
     }
   };
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,6 +73,7 @@ const CourtManageUpdate = () => {
         setInitialCourtCount(centerData.courtCount);
         setOpenTime(moment(centerData.openTime, "HH:mm"));
         setCloseTime(moment(centerData.closeTime, "HH:mm"));
+        setAddress(centerData.location);
 
         if (
           centerData.status !== "accepted" &&
@@ -78,6 +88,16 @@ const CourtManageUpdate = () => {
         if (centerData.images) {
           setFileList(
             centerData.images.map((url, index) => ({
+              uid: index,
+              name: `image-${index}`,
+              status: "done",
+              url,
+            }))
+          );
+        }
+        if (centerData.imagesLicense) {
+          setImagesLicense(
+            centerData.imagesLicense.map((url, index) => ({
               uid: index,
               name: `image-${index}`,
               status: "done",
@@ -131,6 +151,9 @@ const CourtManageUpdate = () => {
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList);
   };
+  const handleUploadImagesLicenseChange = ({ fileList }) => {
+    setImagesLicense(fileList);
+  };
 
   const validateCourtCount = (_, value) => {
     if (value < initialCourtCount) {
@@ -142,11 +165,18 @@ const CourtManageUpdate = () => {
   };
 
   const validateTimeDifference = (_, value) => {
+    if (!openTime || !closeTime) {
+      return Promise.reject(
+        new Error("Cả giờ mở cửa và giờ đóng cửa đều phải được nhập.")
+      );
+    }
     if (openTime && closeTime) {
       const duration = moment.duration(closeTime.diff(openTime)).asHours();
       if (duration < 8) {
         return Promise.reject(
-          new Error("Giờ đóng cửa và mở cửa phải cách nhau ít nhất 8 tiếng.")
+          new Error(
+            "Giờ đóng cửa và mở cửa phải cách nhau ít nhất 8 tiếng và giờ mở cửa không vượt quá giờ đóng cửa."
+          )
         );
       }
     }
@@ -186,8 +216,15 @@ const CourtManageUpdate = () => {
       <Form.Item name="centerName" label="Tên trung tâm">
         <Input />
       </Form.Item>
-      <Form.Item name="location" label="Địa chỉ trung tâm">
-        <Input />
+      <Form.Item
+        label="Địa chỉ"
+        name="location"
+        rules={[{ required: true, message: "Hãy nhập địa chỉ" }]}
+      >
+        <Location onChange={handleLocationChange} />
+      </Form.Item>
+      <Form.Item>
+        <MyLocationMap2 address={address} />
       </Form.Item>
       <Form.Item
         name="courtCount"
@@ -206,12 +243,6 @@ const CourtManageUpdate = () => {
       >
         <TimePicker
           format="HH:mm"
-          disabledMinutes={() => [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-            19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
-            36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-            52, 53, 54, 55, 56, 57, 58, 59,
-          ]}
           disabledHours={() => [0, 1, 2, 3, 4]}
           value={openTime}
           onChange={(time) => setOpenTime(time)}
@@ -224,21 +255,26 @@ const CourtManageUpdate = () => {
       >
         <TimePicker
           format="HH:mm"
-          disabledMinutes={() => [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-            19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
-            36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-            52, 53, 54, 55, 56, 57, 58, 59,
-          ]}
           disabledHours={() => [0, 1, 2, 3, 4]}
           value={closeTime}
           onChange={(time) => setCloseTime(time)}
         />
       </Form.Item>
+
       <Form.Item name="images" label="Hình ảnh sân">
         <Upload
           fileList={fileList}
           onChange={handleUploadChange}
+          listType="picture"
+        >
+          <Button>Upload</Button>
+        </Upload>
+      </Form.Item>
+      
+      <Form.Item name="imagesLicense" label="Hình ảnh giấy phép kinh doanh">
+        <Upload
+          fileList={imagesLicense}
+          onChange={handleUploadImagesLicenseChange}
           listType="picture"
         >
           <Button>Upload</Button>
