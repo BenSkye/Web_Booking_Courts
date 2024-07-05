@@ -102,7 +102,7 @@ const CourtManageDetail = () => {
 
   if (error) {
     return (
-      <Alert message="Error" description="Failed to fetch data." type="error" />
+      <Alert message="404" description="Không tìm thấy sân" type="error" />
     );
   }
 
@@ -203,15 +203,17 @@ const CourtManageDetail = () => {
           </Card>
         </Col>
       </Row>
-      <Link to={`/courtManage/update/${data._id}`}>
-        <Button
-          type="default"
-          block
-          style={{ marginBottom: "10px", backgroundColor: "orange" }}
-        >
-          Cập nhật thông tin
-        </Button>
-      </Link>
+      {data.status !== "active" && (
+        <Link to={`/courtManage/update/${data._id}`}>
+          <Button
+            type="default"
+            block
+            style={{ marginBottom: "10px", backgroundColor: "orange" }}
+          >
+            Cập nhật thông tin
+          </Button>
+        </Link>
+      )}
     </div>
   );
 };

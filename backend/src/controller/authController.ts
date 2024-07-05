@@ -1,7 +1,8 @@
 import authService from '~/services/authService'
+import sendEmailSerVice from '~/services/sendEmailService'
 import AppError from '~/utils/appError'
 import catchAsync from '~/utils/catchAsync'
-import bcryptjs from 'bcryptjs'
+
 class authController {
   static registerUser = catchAsync(async (req: any, res: any, next: any) => {
     const authServiceInstance = new authService()
@@ -13,9 +14,9 @@ class authController {
       }
     })
   })
+
   static registerPartner = catchAsync(async (req: any, res: any, next: any) => {
     const authServiceInstance = new authService()
-
     const newUser = await authServiceInstance.registerPartner(req.body)
     res.status(201).json({
       status: 'success',
@@ -24,6 +25,7 @@ class authController {
       }
     })
   })
+
   static loginUser = catchAsync(async (req: any, res: any, next: any) => {
     const authServiceInstance = new authService()
 
@@ -36,7 +38,7 @@ class authController {
     res
       .cookie('access_token', token, {
         httpOnly: true,
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000) // Example: Expires in 24 hours
       })
       .status(201)
       .json({
@@ -47,11 +49,11 @@ class authController {
         }
       })
   })
+
   static changePassword = catchAsync(async (req: any, res: any, next: any) => {
     const authServiceInstance = new authService()
 
     const { oldPassword, newPassword, confirmPassword } = req.body
-    console.log('req.body', req.body)
     if (!oldPassword || !newPassword || !confirmPassword) {
       return next(new AppError('Vui lòng nhập mật khẩu cũ và mật khẩu mới', 400))
     }
@@ -62,7 +64,7 @@ class authController {
     res
       .cookie('access_token', token, {
         httpOnly: true,
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000) // Example: Expires in 24 hours
       })
       .status(201)
       .json({
@@ -74,14 +76,14 @@ class authController {
       })
   })
 
-  //check user đã đăng nhập chưa
   static protect = catchAsync(async (req: any, res: any, next: any) => {
     const authServiceInstance = new authService()
     let token
+    console.log('req.headers.authorization', req.headers.authorization)
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1]
     }
-    // console.log('token', token)
+    console.log('token', token)
     if (!token) {
       return next(new AppError('Vui lòng đăng nhập để truy cập', 401))
     }
@@ -90,7 +92,6 @@ class authController {
     next()
   })
 
-  //Check user role có qyền thực hiện action không
   static restricTO = (...roles: string[]) => {
     return (req: any, res: any, next: any) => {
       if (!roles.includes(req.user.role)) {
@@ -103,7 +104,7 @@ class authController {
   static googleLogin = catchAsync(async (req: any, res: any, next: any) => {
     const authServiceInstance = new authService()
 
-    const { email, name, photo } = req.body
+    const { email, name, photo, password } = req.body
 
     if (!email) {
       return next(new AppError('Vui lòng nhập email', 400))
@@ -114,7 +115,7 @@ class authController {
     res
       .cookie('access_token', token, {
         httpOnly: true,
-        expires: new Date(Date.now() + 3600000) // 1 hour
+        expires: new Date(Date.now() + 3600000) // Example: Expires in 1 hour
       })
       .status(200)
       .json({
@@ -126,4 +127,5 @@ class authController {
       })
   })
 }
+
 export default authController

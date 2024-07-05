@@ -21,9 +21,7 @@ interface IUserRepository {
   getAllUser(): Promise<any>
 }
 class userRepository implements IUserRepository {
-  static findByEmail(userEmail: string) {
-    throw new Error('Method not implemented.')
-  }
+  
   async addUser(user: IUser) {
     const newUser = new User(user)
     const userSaved = await newUser.save()

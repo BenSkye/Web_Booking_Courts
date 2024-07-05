@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import LayoutMain from "@/components/layouts";
 import Home from "@/pages/home";
 import AboutUs from "@/components/dashboard/aboutUs";
@@ -20,8 +20,9 @@ import ManagerDashboar from "@/pages/courtManage/ManagerDashboard";
 import ManagerCalendar from "../pages/courtManage/ManagerCalendar";
 import SignupPartner from "../pages/login/signupPartner";
 import BookingCourtDirectly from "../pages/BookingCourtDirectly/BookingCourtDirectly";
-import RequestToOrganizeATournament from "../pages/RequestToOrganizeATournament/RequestToOrganizeATournament";
 import NoAccess from "../components/noAccess/noAccess";
+import NotFound404 from "../components/noAccess/notFound404";
+
 import ProtectedRoute from "../utils/authRoute/authRoute";
 import CourtManageUpdate from "../pages/courtManage/courtManageUpdate";
 
@@ -29,6 +30,9 @@ import ManageCenter from "../pages/courtManage/manageCourtByAdmin/manageCenter";
 import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage";
 import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople";
 import ManagerManagement from "../pages/courtManage/manageCourtByAdmin/manageManager";
+import PersonalTournament from "../pages/tournament/components/PersonalTournament";
+import TournamentDetail from "../pages/TournamentDetail";
+import RequestToOrganizeATournament from "../pages/courtManage/RequestToOrganizeATournament/RequestToOrganizeATournament";
 function Routing() {
   return (
     <Routes>
@@ -74,6 +78,14 @@ function Routing() {
           }
         />
         <Route
+          path="/tournament/personal"
+          element={
+            <ProtectedRoute roles={["guest"]}>
+              <PersonalTournament />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/tournament/create/:centerID"
           element={
             <ProtectedRoute roles={["guest"]}>
@@ -81,10 +93,10 @@ function Routing() {
             </ProtectedRoute>
           }
         />
-        {/* <Route
+        <Route
           path="/tournament/detail/:tournamentID"
           element={<TournamentDetail />}
-        /> */}
+        />
         <Route
           path="/bookingdetail/:id"
           element={
@@ -121,7 +133,7 @@ function Routing() {
         <Route
           path="/user/bill"
           element={
-            <ProtectedRoute roles={["customer"]}>
+            <ProtectedRoute roles={["customer", "manager"]}>
               <ProfileAccount />
             </ProtectedRoute>
           }
@@ -241,13 +253,14 @@ function Routing() {
           }
         />
         <Route path="/courtManage/partner" element={<Partner />} />
-        <Route path="" />
+        <Route path="*" element={<Navigate to="/not-found" />} />
       </Route>
 
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/signupPartner" element={<SignupPartner />} />
       <Route path="/no-access" element={<NoAccess />} />
+      <Route path="/not-found" element={<NotFound404 />} />
     </Routes>
   );
 }
