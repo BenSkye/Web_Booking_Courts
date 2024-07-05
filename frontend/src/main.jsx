@@ -9,9 +9,9 @@ import '@/styles/main.css';
 
 const theme = {
   token: {
-    colorPrimary: '#FFCD1C',
+    colorPrimary: 'rgb(30, 136, 229)',
     colorBgLayout: 'linear-gradient(to left, #bcbcbc, #444444)',
-    colorTextPlaceholder: 'silver.200',
+    colorTextPlaceholder: 'silver',
     colorBgInput: 'white',
     addonBg: 'white',
   },
@@ -21,8 +21,8 @@ const theme = {
       colorText: 'black',
       variants: {
         primary: {
-          backgroundColor: '#FFCD1C',
-          color: 'white', // text color when the button has the primary color
+          backgroundColor: 'rgb(30, 136, 229)',
+          color: 'white',
         },
       },
     },

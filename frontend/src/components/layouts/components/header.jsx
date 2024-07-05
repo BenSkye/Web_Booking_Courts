@@ -153,7 +153,7 @@ export default function HeaderLayout() {
     },
     {
       label: (
-        <Link to="/">
+        <Link to="/user/booking-court">
           <div
             style={{
               display: "flex",
@@ -280,7 +280,7 @@ export default function HeaderLayout() {
             flex: 1,
             minWidth: 0,
             fontSize: "24px",
-            background: "#003b95",
+            background: "rgb(30 136 229)",
           }}
         >
           {menuItems?.map((item) => (
@@ -323,8 +323,10 @@ export default function HeaderLayout() {
         </Dropdown>
       ) : (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
+
           <Link to="/login" style={{ paddingRight: "20px" }}>
             <Button
+
               style={{
                 display: "flex",
                 alignItems: "center",

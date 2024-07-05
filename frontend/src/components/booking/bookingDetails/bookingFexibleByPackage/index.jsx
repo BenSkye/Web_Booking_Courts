@@ -19,7 +19,6 @@ const BookingFlexibleByPackage = ({ id, onSelectPackage, pricePerHour }) => {
         history.push('/login');
       } else {
         message.error('Tạo gói chơi thất bại. Vui lòng thử lại.');
-
       }
     } catch (error) {
       console.error("Error adding play package:", error);

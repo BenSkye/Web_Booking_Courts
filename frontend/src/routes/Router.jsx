@@ -232,7 +232,7 @@ function Routing() {
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/admin/ManagerManagement"
           element={
             <ProtectedRoute roles={["admin"]}>

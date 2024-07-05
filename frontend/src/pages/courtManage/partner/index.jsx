@@ -292,7 +292,7 @@ const CenterForm = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", maxWidth: "1500px", margin: "0 auto" }}>
       <Steps current={current} style={{ marginBottom: "20px" }}>
         {steps.map((item) => (
           <Step key={item.title} title={item.title} />
@@ -327,3 +327,4 @@ const CenterForm = () => {
 };
 
 export default CenterForm;
+

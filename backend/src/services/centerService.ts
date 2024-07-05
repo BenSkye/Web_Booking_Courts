@@ -274,7 +274,7 @@ class centerService implements ICenterService {
       throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
     }
   }
-  
+
   async changeCenterStatus(centerId: string, status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected') {
     const centerRepositoryInstance = new centerRepository()
     const center = await centerRepositoryInstance.getCenter({ _id: centerId })

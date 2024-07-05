@@ -43,6 +43,7 @@ app.use('/api/v1/user', userRoute)
 app.use('/api/v1/court', courtRoute)
 app.use('/api/v1/playPackage', playPackageRoute)
 app.use('/api/v1/fixed-package-schedule', fixedPackageScheduleRoute)
+app.use('/api/v1/')
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })

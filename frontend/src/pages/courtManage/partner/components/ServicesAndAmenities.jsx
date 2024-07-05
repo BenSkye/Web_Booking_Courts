@@ -13,7 +13,6 @@ import {
   FaShower,
   FaLock,
 } from "react-icons/fa";
-import { CheckCircleFilled } from "@ant-design/icons";
 
 const services = [
   { value: "Bãi đỗ xe", label: "Bãi đỗ xe", icon: <FaCar /> },
@@ -38,26 +37,33 @@ const services = [
 ];
 
 const ServicesAndAmenities = ({ selectedServices = [] }) => (
-  <Form.Item label="Dịch Vụ và Tiện Ích">
-    <Form.Item name="services" initialValue={selectedServices} label="Dịch Vụ">
-      <Checkbox.Group style={{ width: "100%" }}>
-        <Row gutter={[16, 16]} justify="start">
-          {services.map((service) => (
-            <Col span={8} key={service.value}>
-              <Card style={{ textAlign: "left" }}>
-                <Checkbox
-                  value={service.value}
-                  icon={<CheckCircleFilled style={{ color: '#1890ff' }} />} // Blue checkmark
-                >
-                  {service.icon} {service.label}
-                </Checkbox>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Checkbox.Group>
+  <div>
+    <style>
+      {`
+        .ant-checkbox-checked .ant-checkbox-inner {
+          background-color: #1890ff;
+          border-color: #1890ff;
+        }
+      `}
+    </style>
+    <Form.Item label="Dịch Vụ và Tiện Ích">
+      <Form.Item name="services" initialValue={selectedServices} label="Dịch Vụ">
+        <Checkbox.Group style={{ width: "100%" }}>
+          <Row gutter={[16, 16]} justify="start">
+            {services.map((service) => (
+              <Col span={8} key={service.value}>
+                <Card style={{ textAlign: "left" }}>
+                  <Checkbox value={service.value}>
+                    {service.icon} {service.label}
+                  </Checkbox>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Checkbox.Group>
+      </Form.Item>
     </Form.Item>
-  </Form.Item>
+  </div>
 );
 
 export default ServicesAndAmenities;
