@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import AccountSettingsForm from "../accountInformation/index";
 import UpdatePassword from "../updatePassword/index";
 import OrderDetails from "../bill/index";
 import BookingCourt from "../bookingCourt/index";
+
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -15,15 +15,13 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
-// import AuthContext from "../../../services/authAPI/authProvideAPI";
 
 const { Sider, Content } = Layout;
 
 const ProfileAccount = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("1");
-  const [isCustomer, setIsCustomer] = useState(false); // State để xác định vai trò của người dùng
-  // const { user } = useContext(AuthContext);
+  const [isCustomer, setIsCustomer] = useState(false); // State to determine the user role
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -31,14 +29,18 @@ const ProfileAccount = () => {
 
   useEffect(() => {
     // Simulate determining user role (replace with your actual logic)
-    const userRole = "admin, manager"; // Change this to 'customer', 'admin', 'manager' based on your logic
+    const role = "admin"; // Change this to 'customer', 'admin', 'manager' for testing
+
+    console.log("User Role:", role); // Log user role
 
     // Set isCustomer based on userRole
-    setIsCustomer(userRole === "customer");
+    setIsCustomer(role === "customer" ? true : false);
+
+    console.log("Is Customer:", isCustomer); // Log isCustomer state
 
     // Determine the selected key based on the current pathname
     setSelectedKey(getSelectedKey(location.pathname));
-  }, [location.pathname]);
+  }, [isCustomer, location.pathname]);
 
   const getSelectedKey = (pathname) => {
     switch (pathname) {
@@ -122,7 +124,7 @@ const ProfileAccount = () => {
             {selectedKey === "1" && <AccountSettingsForm />}
             {selectedKey === "2" && <UpdatePassword />}
             {selectedKey === "3" && isCustomer && <BookingCourt />}
-            {selectedKey === "4" && isCustomer && <h1>Số giờ chơi</h1>}
+            {/* {selectedKey === "4" && isCustomer && <GameTime />} */}
             {selectedKey === "5" && <OrderDetails />}
           </div>
         </Content>

@@ -4,6 +4,8 @@ import courtRepository from '~/repository/courtRepository'
 import priceRepository from '~/repository/priceRepository'
 import timeSlotRepository from '~/repository/timeslotRepository'
 import AppError from '~/utils/appError'
+import sendEmailSerVice from './sendEmailService'
+import userRepository from '~/repository/userRepository' // Thêm dòng này để import userRepository
 
 interface ICenterService {
   addCenter(data: any): Promise<any>
@@ -16,8 +18,8 @@ interface ICenterService {
   getPersonalActiveCenters(userId: string): Promise<any>
   updateCenterInforById(id: string, data: any, userId: string): Promise<any>
   getAllSubscriptions(): Promise<any>
-  changeCenterStatus(centerId: string, status: string): Promise<any>
-
+  changeCenterStatus(centerId: string, status: string, deniedReason?: string): Promise<any>
+  
 }
 
 class centerService implements ICenterService {
@@ -274,18 +276,54 @@ class centerService implements ICenterService {
       throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
     }
   }
+
+  async changeCenterStatus(
+    centerId: string,
+    status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected',
+    deniedReason?: string
+  ) {
+    const centerRepositoryInstance = new centerRepository();
+    const userRepositoryInstance = new userRepository();
   
-  async changeCenterStatus(centerId: string, status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected') {
-    const centerRepositoryInstance = new centerRepository()
-    const center = await centerRepositoryInstance.getCenter({ _id: centerId })
-
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId });
+  
     if (!center) {
-      throw new AppError('Center not found', 404)
+      throw new AppError('Center not found', 404);
     }
-
-    center.status = status
-    const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
-    return updatedCenter
+  
+    console.log('Center found:', center);
+  
+    center.status = status;
+  
+    // Clear deniedReason if transitioning from 'rejected' to another status
+    if (status !== 'rejected') {
+      center.denied = undefined;
+    } else if (deniedReason) {
+      center.denied = deniedReason;
+    }
+  
+    console.log('Updating center with new status and denied reason:', center);
+  
+    const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center);
+    console.log('Center updated successfully:', updatedCenter);
+  
+    // Get manager's email from User model
+    const manager = await userRepositoryInstance.findUser({ _id: center.managerId });
+    if (!manager) {
+      throw new AppError('Manager not found', 404);
+    }
+  
+    const mailOption = {
+      subject: 'Center Status Update',
+      text: `Hello, the status of your center has been updated to ${status}${status === 'rejected' ? ` with the following reason: ${deniedReason}` : ''}.`,
+      html: `<html><p><b>Hello,</b></p><p>The status of your center has been updated to <b>${status}</b>${status === 'rejected' ? ` with the following reason: <b>${deniedReason}</b>` : ''}.</p></html>`
+    };
+  
+    await sendEmailSerVice.sendEmail(manager.userEmail, mailOption);
+    
+    return updatedCenter;
   }
+  
+
 }
 export default centerService

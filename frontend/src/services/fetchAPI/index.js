@@ -63,26 +63,27 @@ export const postData = async (url, data) => {
 
 export const patchData = async (url, data) => {
   try {
-    let token = Cookies.get('jwtToken');
-    if (!token) {
-      token = '';
-    }
+    let token = Cookies.get('jwtToken') || '';
+    
     console.log('Data to patch:', data);
+    
     const response = await axios.patch(url, data, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
-    if (response.status === 201) {
+
+    if (response.status === 200 || response.status === 201) {
       return response;
     } else {
       console.error('Error patching data:', response.status);
+      return null; // or throw an error
     }
   } catch (error) {
-    return error.response;
+    console.error('Error patching data:', error);
+    return null; // or throw an error
   }
-  return null;
 };
 export const putData = async (url, data) => {
   try {
