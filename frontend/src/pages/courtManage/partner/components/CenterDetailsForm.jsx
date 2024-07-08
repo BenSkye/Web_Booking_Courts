@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -27,16 +27,33 @@ const CenterDetailsForm = ({
   uploadProgressLicense,
 }) => {
   const [openTime, setOpenTime] = useState(null);
+  const [closeTime, setCloseTime] = useState(null);
   const [address, setAddress] = useState(form.getFieldValue("location") || "");
-  const disabledHours = () => {
-    if (!openTime) return [];
-    const hours = [];
-    for (let i = 0; i <= 24; i++) {
+
+  useEffect(() => {
+    form.setFieldsValue({ openTime, closeTime });
+  }, [openTime, closeTime, form]);
+
+  const disabledHoursForClose = () => {
+    const disabledHours = [0, 1, 2, 3, 4];
+    if (!openTime) return disabledHours;
+    for (let i = 0; i < 24; i++) {
       if (i <= openTime.hour() || i < openTime.hour() + 8) {
-        hours.push(i);
+        disabledHours.push(i);
       }
     }
-    return hours;
+    return Array.from(new Set(disabledHours));
+  };
+
+  const disabledHoursForOpen = () => {
+    const disabledHours = [0, 1, 2, 3, 4];
+    if (!closeTime) return disabledHours;
+    for (let i = 0; i < 24; i++) {
+      if (i >= closeTime.hour() || i > closeTime.hour() - 8) {
+        disabledHours.push(i);
+      }
+    }
+    return Array.from(new Set(disabledHours));
   };
 
   const handleLocationChange = (value) => {
@@ -71,13 +88,13 @@ const CenterDetailsForm = ({
         <TimePicker
           format={"HH:mm"}
           onChange={(time) => setOpenTime(time)}
+          disabledHours={disabledHoursForOpen}
           disabledMinutes={() => [
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
             20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37,
             38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
             55, 56, 57, 58, 59,
           ]}
-          disabledHours={() => [0, 1, 2, 3, 4]}
         />
       </Form.Item>
       <Form.Item
@@ -87,7 +104,8 @@ const CenterDetailsForm = ({
       >
         <TimePicker
           format={"HH:mm"}
-          disabledHours={disabledHours}
+          onChange={(time) => setCloseTime(time)}
+          disabledHours={disabledHoursForClose}
           disabledMinutes={() => [
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
             20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37,
