@@ -4,13 +4,13 @@ import catchAsync from '~/utils/catchAsync'
 
 class centerController {
   static createCenter = catchAsync(async (req: any, res: any, next: any) => {
-    req.body = { ...req.body, user: req.user._id }
-    const centerServiceInstance = new centerService()
-    const { newcenter, newPrices, newCourts } = await centerServiceInstance.addCenter(req.body)
+    req.body = { ...req.body, user: req.user._id };
+    const centerServiceInstance = new centerService();
+    const { newCenter, newPrices, newCourts } = await centerServiceInstance.addCenter(req.body);
     res.status(201).json({
       status: 'success',
       data: {
-        newcenter,
+        newCenter,
         newPrices,
         newCourts
       }
@@ -112,7 +112,7 @@ class centerController {
     if (!status) {
       return next(new AppError('Status is required', 400))
     }
-
+    
     const centerServiceInstance = new centerService()
     const updatedCenter = await centerServiceInstance.changeCenterStatus(centerId, status, denied)
 

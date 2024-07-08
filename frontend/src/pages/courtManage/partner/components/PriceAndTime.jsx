@@ -1,5 +1,6 @@
 import React from "react";
 import { Form, InputNumber, TimePicker, Checkbox } from "antd";
+import moment from "moment";
 
 const CustomForm = ({
   form,
@@ -18,6 +19,39 @@ const CustomForm = ({
       }
     }
     return hours;
+  };
+
+  const validateGoldenTime = (_, value) => {
+    const startTimeGolden = form.getFieldValue("startTimeGolden");
+    const endTimeGolden = form.getFieldValue("endTimeGolden");
+
+    if (!startTimeGolden || !endTimeGolden) {
+      return Promise.resolve();
+    }
+
+    if (startTimeGolden.isAfter(endTimeGolden)) {
+      return Promise.reject(new Error("Giờ bắt đầu không được sau giờ kết thúc!"));
+    }
+
+    if (endTimeGolden.diff(startTimeGolden, "hours") < 1) {
+      return Promise.reject(new Error("Giờ kết thúc phải cách giờ bắt đầu ít nhất 1 giờ!"));
+    }
+    
+    return Promise.resolve();
+  };
+
+  const validateStartTimeGolden = (_, value) => {
+    const endTimeGolden = form.getFieldValue("endTimeGolden");
+
+    if (!value || !endTimeGolden) {
+      return Promise.resolve();
+    }
+
+    if (value.isAfter(endTimeGolden)) {
+      return Promise.reject(new Error("Giờ bắt đầu không được sau giờ kết thúc!"));
+    }
+
+    return Promise.resolve();
   };
 
   return (
@@ -46,7 +80,7 @@ const CustomForm = ({
             rules={[
               {
                 required: showGoldenPrice,
-                message: "Hạy nhập giá tiền giờ chơi khung giờ vàng!",
+                message: "Hãy nhập giá tiền giờ chơi khung giờ vàng!",
               },
             ]}
           >
@@ -60,22 +94,25 @@ const CustomForm = ({
                 required: showGoldenPrice,
                 message: "Hãy chọn giờ bắt đầu",
               },
+              {
+                validator: validateStartTimeGolden,
+              },
             ]}
           >
             <TimePicker
               format={"HH:mm"}
-              disabledMinutes={() => [
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
-                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-                52, 53, 54, 55, 56, 57, 58, 59,
-              ]}
               disabledHours={() =>
                 getDisabledHours(
                   form.getFieldValue("openTime"),
                   form.getFieldValue("closeTime")
                 )
               }
+              disabledMinutes={() => [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+                20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37,
+                38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
+                55, 56, 57, 58, 59,
+              ]}
             />
           </Form.Item>
           <Form.Item
@@ -86,22 +123,25 @@ const CustomForm = ({
                 required: showGoldenPrice,
                 message: "Hãy chọn giờ kết thúc!",
               },
+              {
+                validator: validateGoldenTime,
+              },
             ]}
           >
             <TimePicker
               format={"HH:mm"}
-              disabledMinutes={() => [
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35,
-                36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-                52, 53, 54, 55, 56, 57, 58, 59,
-              ]}
               disabledHours={() =>
                 getDisabledHours(
                   form.getFieldValue("openTime"),
                   form.getFieldValue("closeTime")
                 )
               }
+              disabledMinutes={() => [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+                20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37,
+                38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
+                55, 56, 57, 58, 59,
+              ]}
             />
           </Form.Item>
         </Form.Item>

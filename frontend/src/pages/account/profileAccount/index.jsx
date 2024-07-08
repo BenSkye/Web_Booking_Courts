@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+// eslint-disable-next-line no-unused-vars
+import React, { useState, useEffect, useContext } from "react";
+
 import { Link, useLocation } from "react-router-dom";
 import AccountSettingsForm from "../accountInformation/index";
 import UpdatePassword from "../updatePassword/index";
@@ -15,13 +17,15 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
-
+// import AuthContext from "../../../services/authAPI/authProvideAPI";
+import AuthContext from "../../../services/authAPI/authProvideAPI";
 const { Sider, Content } = Layout;
 
 const ProfileAccount = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("1");
-  const [isCustomer, setIsCustomer] = useState(false); // State to determine the user role
+  const [isCustomer, setIsCustomer] = useState(false); // State để xác định vai trò của người dùng
+  const { user } = useContext(AuthContext);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -34,9 +38,9 @@ const ProfileAccount = () => {
     console.log("User Role:", role); // Log user role
 
     // Set isCustomer based on userRole
-    setIsCustomer(role === "customer" ? true : false);
-
-    console.log("Is Customer:", isCustomer); // Log isCustomer state
+    if (user.role === "customer") {
+      setIsCustomer(true);
+    }
 
     // Determine the selected key based on the current pathname
     setSelectedKey(getSelectedKey(location.pathname));
@@ -91,16 +95,16 @@ const ProfileAccount = () => {
           <Menu.Item key="2" icon={<LockOutlined />}>
             <Link to="/user/update-password">Cập nhật mật khẩu</Link>
           </Menu.Item>
-          {isCustomer && (
-            <>
-              <Menu.Item key="3" icon={<BookOutlined />}>
-                <Link to="/user/booking-court">Đặt sân</Link>
-              </Menu.Item>
-              <Menu.Item key="4" icon={<PlayCircleOutlined />}>
-                <Link to="/user/game-time">Số giờ chơi</Link>
-              </Menu.Item>
-            </>
-          )}
+          {/* {isCustomer && (
+            <> */}
+          <Menu.Item key="3" icon={<BookOutlined />}>
+            <Link to="/user/booking-court">Đặt sân</Link>
+          </Menu.Item>
+          <Menu.Item key="4" icon={<PlayCircleOutlined />}>
+            <Link to="/user/game-time">Số giờ chơi</Link>
+          </Menu.Item>
+          {/* </>
+          )} */}
           <Menu.Item key="5" icon={<FileTextOutlined />}>
             <Link to="/user/bill">Hóa đơn</Link>
           </Menu.Item>
@@ -123,8 +127,8 @@ const ProfileAccount = () => {
           <div style={{ width: "100%", maxWidth: "800px" }}>
             {selectedKey === "1" && <AccountSettingsForm />}
             {selectedKey === "2" && <UpdatePassword />}
-            {selectedKey === "3" && isCustomer && <BookingCourt />}
-            {/* {selectedKey === "4" && isCustomer && <GameTime />} */}
+            {selectedKey === "3" && <BookingCourt />}
+            {selectedKey === "4" && <h1>Số giờ chơi</h1>}
             {selectedKey === "5" && <OrderDetails />}
           </div>
         </Content>

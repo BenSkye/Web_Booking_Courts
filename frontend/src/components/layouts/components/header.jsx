@@ -153,7 +153,7 @@ export default function HeaderLayout() {
     },
     {
       label: (
-        <Link to="/">
+        <Link to="/user/booking-court">
           <div
             style={{
               display: "flex",

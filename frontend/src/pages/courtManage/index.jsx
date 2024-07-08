@@ -63,10 +63,10 @@ export default function CourtManage() {
   }
   const statusMapping = {
     pending: { text: "đang chờ duyệt", color: "gray" },
-    accepted: { text: "được chấp nhận", color: "blue" },
+    accepted: { text: "được chấp nhận, vui lòng mua gói để sân hoạt động", color: "blue" },
     active: { text: "đang hoạt động", color: "green" },
-    expired: { text: "quá hạn", color: "orange" },
-    rejected: { text: "bị từ chối", color: "red" },
+    expired: { text: "gói đăng ký bị quá hạn", color: "orange" },
+    rejected: { text: "đã bị từ chối, lý do đã được ghi ở email", color: "red" },
   };
 
   return (
