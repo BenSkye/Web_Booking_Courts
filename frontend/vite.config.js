@@ -12,7 +12,9 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   plugins: [react()],
   define: {
-    'process.env': {},
+    'import.meta.env.VITE_API_BASE_URL': JSON.stringify(
+      'https://webbookingcourts-production.up.railway.app/api/v1'
+    ),
   },
   server: {
     port: 2003,
