@@ -26,6 +26,8 @@ import NotFound404 from "../components/noAccess/notFound404";
 import ProtectedRoute from "../utils/authRoute/authRoute";
 import CourtManageUpdate from "../pages/courtManage/courtManageUpdate";
 
+import Chat from '../pages/chat/Chat'
+
 import ManageCenter from "../pages/courtManage/manageCourtByAdmin/manageCenter";
 import AdminDashboard from "../pages/courtManage/manageCourtByAdmin/adminManage";
 import UserManagement from "../pages/courtManage/manageCourtByAdmin/managePeople";
@@ -255,7 +257,7 @@ function Routing() {
         <Route path="/courtManage/partner" element={<Partner />} />
         <Route path="*" element={<Navigate to="/not-found" />} />
       </Route>
-
+      <Route path="/chat" element={<Chat />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/signupPartner" element={<SignupPartner />} />

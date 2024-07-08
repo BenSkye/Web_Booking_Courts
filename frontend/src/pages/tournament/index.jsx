@@ -16,13 +16,9 @@ export default function Tournament() {
           <ButtonRouter />
         </Col>
       </Row>
-<<<<<<< HEAD
       <Row style={{ marginTop: "30px" }}>
-=======
-      {/* <Row style={{ marginTop: 30 }}>
->>>>>>> 0b0b9926af54ae91d0cc9d96784f577a10d0c4c8
         <TopCenter />
-      </Row> */}
+      </Row>
     </div>
   );
 }

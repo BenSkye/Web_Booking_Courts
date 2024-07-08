@@ -73,7 +73,6 @@ export default function HistoryTournament() {
           dataSource={ListTournament.slice(
             (currentPage - 1) * pageSize,
             currentPage * pageSize
-<<<<<<< HEAD
           )}
           columns={columns}
           pagination={false}
@@ -81,32 +80,6 @@ export default function HistoryTournament() {
           style={{ marginBottom: "20px" }}
         />
       )}
-=======
-          ).map((tournament, index) => (
-            <Card
-              key={index}
-              title={tournament.tournamentName}
-              extra={
-                <Link to={`/tournament/detail/${tournament._id}`}>
-                  <Button type="link">Chi tiết</Button>
-                </Link>
-              }
-              bodyStyle={{ padding: "10px" }}
-              headStyle={{ backgroundColor: "#f0f0f0", padding: "10px" }}
-              style={{
-                width: "100%",
-                boxShadow: "0px 4px 18px rgba(0, 0, 0, 0.1)",
-                borderRadius: "10px",
-                margin: 0,
-              }}
-            >
-              <p style={{ margin: 0, padding: 0 }}>
-                {new Date(tournament.startDate).toLocaleDateString()} -{" "}
-                {new Date(tournament.endDate).toLocaleDateString()}
-              </p>
-            </Card>
-          ))}
->>>>>>> 0b0b9926af54ae91d0cc9d96784f577a10d0c4c8
       <Pagination
         current={currentPage}
         onChange={handleChange}
