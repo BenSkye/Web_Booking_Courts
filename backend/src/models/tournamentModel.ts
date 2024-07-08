@@ -70,6 +70,9 @@ const tournamentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User', // Assuming you have a User model
       required: true
+    },
+    price: {
+      type: Number
     }
   },
   {

@@ -4,6 +4,8 @@ interface ItournamentRepository {
   addTournament(tournament: any): Promise<any>
   getTournament(query: any): Promise<any>
   getTournaments(query: any): Promise<any>
+  getTournamentById(Id: string): Promise<any>
+  updateTournament(query: any): Promise<any>
 }
 
 class tournamentRepository implements ItournamentRepository {
@@ -16,6 +18,12 @@ class tournamentRepository implements ItournamentRepository {
   }
   async getTournaments(query: any) {
     return await Tournament.find(query).populate('centerId')
+  }
+  async getTournamentById(Id: string) {
+    return await Tournament.findById(Id)
+  }
+  async updateTournament(query: any) {
+    return await Tournament.findByIdAndUpdate(query._id, query, { new: true })
   }
 }
 

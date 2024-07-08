@@ -113,5 +113,18 @@ class bookingController {
       }
     })
   })
+  static getBookingByDay = catchAsync(async (req: any, res: any, next: any) => {
+    const dateFrom = req.query.dateFrom
+    const dateTo = req.query.dateTo
+
+    const bookingServiceInstance = new bookingService()
+    const bookings = await bookingServiceInstance.getBookingByDay(dateFrom, dateTo)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        bookings
+      }
+    })
+  })
 }
 export default bookingController

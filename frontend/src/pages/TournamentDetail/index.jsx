@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getTournamentAPI } from "../../services/tournamentAPI/tournamentAPI";
 import { Button, Skeleton, Card } from "antd";
 import { useParams } from "react-router-dom";
+import AuthContext from "../../services/authAPI/authProvideAPI";
 const statusStyles = {
   pending: { message: "Giải đấu đang chờ xử lý.", color: "gray" },
   denied: { message: "Giải đấu đã bị từ chối.", color: "red" },
@@ -12,7 +13,7 @@ const statusStyles = {
 };
 export default function TournamentDetail() {
   const tournamentId = useParams().tournamentID;
-  const currentUser = { id: "1" }; //const { currentUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [tournament, setTournament] = useState(null);
 
   useEffect(() => {
@@ -72,14 +73,22 @@ export default function TournamentDetail() {
         ))}
       </p>
       <p>Đơn vị tài trợ: {tournament.sponsor}</p>
-      {currentUser.id === tournament.userId &&
-        tournament.status !== "Completed" && (
-          <>
-            <p>Số lượng vận động viên dự kiến: {tournament.numberOfAthletes}</p>
-            <p>Số lượng trận đấu dự kiến: {tournament.numberOfMatches}</p>
-            <p>Yêu cầu đặc biệt: {tournament.specialRequests}</p>
-          </>
-        )}
+      {user.id === tournament.userId && tournament.status !== "Completed" && (
+        <>
+          <p>Số lượng vận động viên dự kiến: {tournament.numberOfAthletes}</p>
+          <p>Số lượng trận đấu dự kiến: {tournament.numberOfMatches}</p>
+          <p>Yêu cầu đặc biệt: {tournament.specialRequests}</p>
+        </>
+      )}
+      {tournament.price ? (
+        <strong style={{ color: "#DD947B" }}>
+          Giá tổ chức giải đấu:{" "}
+          {Number(tournament?.price).toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </strong>
+      ) : null}
       {tournament.status === "pending" && (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Button danger>Hủy giải đấu</Button>
