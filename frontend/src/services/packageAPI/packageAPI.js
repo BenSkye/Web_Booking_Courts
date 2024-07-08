@@ -1,11 +1,12 @@
 import axios from "axios";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-const getAllCenterPackage = async (token) => {
+export const getAllCenterPackage = async (token) => {
   try {
     const response = await axios.get(
       `${apiBaseUrl}/centerpackage/getAllCenterPackage`,
       {
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       }
@@ -17,4 +18,21 @@ const getAllCenterPackage = async (token) => {
   }
 };
 
-export default getAllCenterPackage;
+export const selectCenterPackage = async (centerId, packageId, token) => {
+  try {
+    const response = await axios.patch(
+      `${apiBaseUrl}/center/my-centers/${centerId}/select-package/${packageId}`,
+      {}, // Body của request, nếu có
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data; // Trả về dữ liệu nhận được từ server
+  } catch (error) {
+    console.error("Error selecting center package:", error);
+    throw error;
+  }
+};
+

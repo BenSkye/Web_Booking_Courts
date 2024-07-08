@@ -6,11 +6,11 @@ class centerController {
   static createCenter = catchAsync(async (req: any, res: any, next: any) => {
     req.body = { ...req.body, user: req.user._id };
     const centerServiceInstance = new centerService();
-    const { newcenter, newPrices, newCourts } = await centerServiceInstance.addCenter(req.body);
+    const { newCenter, newPrices, newCourts } = await centerServiceInstance.addCenter(req.body);
     res.status(201).json({
       status: 'success',
       data: {
-        newcenter,
+        newCenter,
         newPrices,
         newCourts
       }
