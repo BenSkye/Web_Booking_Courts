@@ -36,6 +36,8 @@ const CourtManageUpdate = () => {
   const [courtStatusValid, setCourtStatusValid] = useState(true);
   const [openTime, setOpenTime] = useState(null);
   const [closeTime, setCloseTime] = useState(null);
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
   const [address, setAddress] = useState(form.getFieldValue("location") || "");
 
   const handleLocationChange = (value) => {
@@ -73,6 +75,8 @@ const CourtManageUpdate = () => {
         setInitialCourtCount(centerData.courtCount);
         setOpenTime(moment(centerData.openTime, "HH:mm"));
         setCloseTime(moment(centerData.closeTime, "HH:mm"));
+        setStartTime(moment(centerData.startTime, "HH:mm"));
+        setEndTime(moment(centerData.endTime, "HH:mm"));
         setAddress(centerData.location);
 
         if (
@@ -182,6 +186,24 @@ const CourtManageUpdate = () => {
     }
     return Promise.resolve();
   };
+  const validateTimeDifferenceSaE = (_, value) => {
+    if (!startTime || !endTime) {
+      return Promise.reject(
+        new Error("Cả giờ bắt đầu và giờ kết thúc đều phải được nhập.")
+      );
+    }
+    if (startTime && endTime) {
+      const duration = moment.duration(endTime.diff(startTime)).asHours();
+      if (duration < 1) {
+        return Promise.reject(
+          new Error(
+            "Giờ kết thúc và bắt dầu phải cách nhau ít nhất 1 tiếng và giờ bắt đầu không vượt quá giờ kết thúc."
+          )
+        );
+      }
+    }
+    return Promise.resolve();
+  };
 
   const validatePrice = (_, value) => {
     if (value && value < 10000) {
@@ -198,7 +220,11 @@ const CourtManageUpdate = () => {
 
   if (error) {
     return (
-      <Alert message="Error" description="Failed to fetch data." type="error" />
+      <Alert
+        message="Error"
+        description="Lỗi khi cập nhật dữ liệu"
+        type="error"
+      />
     );
   }
 
@@ -213,7 +239,11 @@ const CourtManageUpdate = () => {
       layout="vertical"
     >
       <h1>Cập nhật sân đấu của bạn</h1>
-      <Form.Item name="centerName" label="Tên trung tâm">
+      <Form.Item
+        name="centerName"
+        label="Tên trung tâm"
+        rules={[{ required: true, message: "phai nhap ten" }]}
+      >
         <Input />
       </Form.Item>
       <Form.Item
@@ -260,8 +290,7 @@ const CourtManageUpdate = () => {
           onChange={(time) => setCloseTime(time)}
         />
       </Form.Item>
-
-      <Form.Item name="images" label="Hình ảnh sân">
+      {/* <Form.Item name="images" label="Hình ảnh sân">
         <Upload
           fileList={fileList}
           onChange={handleUploadChange}
@@ -279,7 +308,7 @@ const CourtManageUpdate = () => {
         >
           <Button>Upload</Button>
         </Upload>
-      </Form.Item>
+      </Form.Item> */}
       <ServicesAndAmenities selectedServices={selectedServices} />{" "}
       <Form.List name="price">
         {(fields) => (
@@ -311,18 +340,30 @@ const CourtManageUpdate = () => {
                       <>
                         <Col span={6}>
                           <Form.Item
-                            name={[index, "startTime"]}
-                            initialValue={item.startTime}
+                            // name={[index, "startTime"]}
+                            label="Giờ bắt đầu"
+                            rules={[{ validator: validateTimeDifferenceSaE }]}
                           >
-                            <Input addonBefore="Giờ bắt đầu:" />
+                            <TimePicker
+                              format="HH:mm"
+                              disabledHours={() => [0, 1, 2, 3, 4]}
+                              value={startTime}
+                              onChange={(time) => setStartTime(time)}
+                            />
                           </Form.Item>
                         </Col>
                         <Col span={6}>
                           <Form.Item
-                            name={[index, "endTime"]}
-                            initialValue={item.endTime}
+                            // name={[index, "endTime"]}
+                            label="Giờ kết thúc"
+                            rules={[{ validator: validateTimeDifferenceSaE }]}
                           >
-                            <Input addonBefore="Giờ kết thúc:" />
+                            <TimePicker
+                              format="HH:mm"
+                              disabledHours={() => [0, 1, 2, 3, 4]}
+                              value={endTime}
+                              onChange={(time) => setEndTime(time)}
+                            />
                           </Form.Item>
                         </Col>
                       </>
