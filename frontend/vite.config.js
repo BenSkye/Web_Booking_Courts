@@ -12,8 +12,8 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   plugins: [react()],
   // define: {
-  //   "import.meta.env.VITE_API_BASE_URL": JSON.stringify(
-  //     "https://webbookingcourts-production.up.railway.app/api/v1"
+  //   'import.meta.env.VITE_API_BASE_URL': JSON.stringify(
+  //     'https://webbookingcourts-production.up.railway.app/api/v1'
   //   ),
   // },
   server: {
