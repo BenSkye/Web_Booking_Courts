@@ -6,19 +6,19 @@ class courtController {
     const courtServiceInstance = new courtService()
     const courts = await courtServiceInstance.getCourtByCenterId(req.params.centerId)
     res.status(200).json({
-    status: 'success',
-    data: {
+      status: 'success',
+      data: {
         courts
-    }
+      }
     })
-})
-static  getAllCourt = catchAsync(async (req: any, res: any, next: any) => {
-  try {
-    const users = await courtService.getAllCourt();
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching users', error });
-  }
-});
+  })
+  static getAllCourt = catchAsync(async (req: any, res: any, next: any) => {
+    try {
+      const courts = await courtService.getAllCourt()
+      res.status(200).json(courts)
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching court', error })
+    }
+  })
 }
 export default courtController

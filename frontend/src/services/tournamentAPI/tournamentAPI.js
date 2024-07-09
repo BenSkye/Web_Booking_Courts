@@ -1,5 +1,5 @@
 import { fetchData } from "@/services/fetchAPI";
-import { postData } from "../fetchAPI";
+import { postData, putData } from "../fetchAPI";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const getAllTournamentAPI = async () => {
@@ -64,6 +64,33 @@ export const createTournamentAPI = async (data) => {
   const response = await postData(
     `${apiBaseUrl}/tournament/create-tournament`,
     data
+  );
+  console.log("Response:", response);
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === 201) {
+    return response.data;
+  }
+};
+
+export const approvedTournamentAPI = async (id, pricePerDay) => {
+  const response = await putData(
+    `${apiBaseUrl}/tournament/approved-tournament/${id}`,
+    pricePerDay
+  );
+  console.log("Response:", response);
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === 201) {
+    return response.data;
+  }
+};
+
+export const deniedTournamentAPI = async (id) => {
+  const response = await putData(
+    `${apiBaseUrl}/tournament/denied-tournament/${id}`
   );
   console.log("Response:", response);
   if (response.data.status === "fail") {

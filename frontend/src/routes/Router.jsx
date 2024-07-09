@@ -33,6 +33,7 @@ import ManagerManagement from "../pages/courtManage/manageCourtByAdmin/manageMan
 import PersonalTournament from "../pages/tournament/components/PersonalTournament";
 import TournamentDetail from "../pages/TournamentDetail";
 import RequestToOrganizeATournament from "../pages/courtManage/RequestToOrganizeATournament/RequestToOrganizeATournament";
+import ManagerTournamentDetail from "../pages/courtManage/RequestToOrganizeATournament/components/managerTournamentDetail";
 function Routing() {
   return (
     <Routes>
@@ -96,6 +97,10 @@ function Routing() {
         <Route
           path="/tournament/detail/:tournamentID"
           element={<TournamentDetail />}
+        />
+        <Route
+          path="/manager-tournament/detail/:tournamentID"
+          element={<ManagerTournamentDetail />}
         />
         <Route
           path="/bookingdetail/:id"

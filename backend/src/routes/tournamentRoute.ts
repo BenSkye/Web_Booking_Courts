@@ -10,5 +10,11 @@ tournamenRoute
   .route('/personal-tournaments')
   .get(authController.protect, authController.restricTO('customer'), tournamentController.getPersonalTournaments)
 tournamenRoute.route('/tournament-in-center/:centerId').get(tournamentController.getTournamentByCenterId)
+tournamenRoute
+  .route('/approved-tournament/:tournamentId')
+  .put(authController.protect, authController.restricTO('manager'), tournamentController.approveTournament)
+tournamenRoute
+  .route('/denied-tournament/:tournamentId')
+  .put(authController.protect, authController.restricTO('manager'), tournamentController.denyTournament)
 tournamenRoute.route('/:id').get(tournamentController.getTournamentById)
 export default tournamenRoute

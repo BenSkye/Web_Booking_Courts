@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getTournamentInCenterAPI } from "../../../../services/tournamentAPI/tournamentAPI";
 import { Button, Card, Skeleton } from "antd";
 import { Link } from "react-router-dom";
@@ -77,7 +77,7 @@ export default function ListTournamentInCenter({ centerId }) {
             </span>
           }
           extra={
-            <Link to={`/tournament/detail/${tournament._id}`}>
+            <Link to={`/manager-tournament/detail/${tournament._id}`}>
               <Button type="link">Chi tiết</Button>
             </Link>
           }

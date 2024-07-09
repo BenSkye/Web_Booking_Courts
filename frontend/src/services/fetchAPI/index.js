@@ -75,15 +75,16 @@ export const patchData = async (url, data) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (response.status === 201) {
+
+    if (response.status === 200 || response.status === 201) {
       return response;
     } else {
       console.error("Error patching data:", response.status);
     }
   } catch (error) {
-    return error.response;
+    console.error('Error patching data:', error);
+    return null; // or throw an error
   }
-  return null;
 };
 export const putData = async (url, data) => {
   try {

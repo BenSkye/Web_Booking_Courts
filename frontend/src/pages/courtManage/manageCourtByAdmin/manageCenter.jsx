@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useContext, useEffect, useState } from "react";
-import { Table, Tag, Button, Modal, Divider } from "antd";
+import { Table, Tag, Button, Modal, Input } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 import AuthContext from "../../../services/authAPI/authProvideAPI";
 import { getAllCenterAPI } from "../../../services/centersAPI/getCenters";
 import changeCenterStatus from "../../../services/admin/manageStatus";
-// eslint-disable-next-line react/prop-types
+import moment from "moment"; // Import thư viện moment
 
 const ManageCenter = () => {
   const { user } = useContext(AuthContext);
@@ -13,12 +13,12 @@ const ManageCenter = () => {
   const [selectedCenter, setSelectedCenter] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   useEffect(() => {
     const fetchCenters = async () => {
       try {
         const data = await getAllCenterAPI();
-        console.log("Fetched centers:", data);
         setCenters(data);
       } catch (error) {
         console.error("Failed to fetch centers:", error);
@@ -34,6 +34,7 @@ const ManageCenter = () => {
 
   const handleView = (record) => {
     setSelectedCenter(record);
+    setRejectionReason(record.rejectionReason || ""); // Load the rejection reason if it exists
     setIsModalVisible(true);
   };
 
@@ -41,31 +42,44 @@ const ManageCenter = () => {
     console.log("Approved");
     setConfirmLoading(true);
     try {
-      // Determine the next status based on the current status
       const currentStatus = selectedCenter.status;
-      const statusSequence = [
-        "pending",
-        "accepted",
-        "active",
-        "expired",
-        "rejected",
-      ];
-      const currentIndex = statusSequence.indexOf(currentStatus);
-      const nextStatus = statusSequence[currentIndex + 1];
+      let nextStatus;
 
-      // Call API to change 
-      console.log('selectedCenter',selectedCenter)
-      await changeCenterStatus(selectedCenter._id, nextStatus);
+      if (currentStatus === "rejected") {
+        nextStatus = "accepted";
+      } else {
+        const statusSequence = [
+          "pending",
+          "accepted",
+          "active",
+          "expired",
+          "rejected",
+        ];
+        const currentIndex = statusSequence.indexOf(currentStatus);
+        nextStatus = statusSequence[currentIndex + 1];
+      }
 
-      // Update local state after successful status change
+      // When approving, ensure to preserve rejection reason if transitioning from rejected
+      const updatedRejectionReason =
+        nextStatus === "rejected" ? rejectionReason : "";
+
+      await changeCenterStatus(
+        selectedCenter._id,
+        nextStatus,
+        updatedRejectionReason
+      );
+
       const updatedCenters = centers.map((center) =>
         center._id === selectedCenter._id
-          ? { ...center, status: nextStatus }
+          ? {
+              ...center,
+              status: nextStatus,
+              rejectionReason: updatedRejectionReason,
+            }
           : center
       );
       setCenters(updatedCenters);
 
-      // Close modal
       setIsModalVisible(false);
     } catch (error) {
       console.error("Failed to approve center:", error);
@@ -74,9 +88,42 @@ const ManageCenter = () => {
     }
   };
 
+  const handleReject = async () => {
+    console.log("Rejected");
+    setConfirmLoading(true);
+    try {
+      const nextStatus = "rejected";
+      await changeCenterStatus(
+        selectedCenter._id,
+        nextStatus,
+        rejectionReason
+      );
+
+      const updatedCenters = centers.map((center) =>
+        center._id === selectedCenter._id
+          ? { ...center, status: nextStatus, rejectionReason }
+          : center
+      );
+      setCenters(updatedCenters);
+
+      setIsModalVisible(false);
+    } catch (error) {
+      console.error("Failed to reject center:", error);
+    } finally {
+      setConfirmLoading(false);
+    }
+  };
+
   const handleCancel = () => {
     console.log("Clicked cancel button");
     setIsModalVisible(false);
+  };
+
+  const scheduleTypeMap = {
+    GP: "Golden Price",
+    NP: "Normal Price",
+    MP: "Month Price",
+    PP: "Package Price",
   };
 
   const columns = [
@@ -110,11 +157,17 @@ const ManageCenter = () => {
       dataIndex: "images",
       key: "images",
       render: (images) => (
-        <img
-          src={Array.isArray(images) ? images[0] : images}
-          alt="Center"
-          style={{ width: "50px", height: "50px" }}
-        />
+        <div>
+          {Array.isArray(images) &&
+            images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt="Center"
+                style={{ width: "50px", height: "50px", marginRight: "5px" }}
+              />
+            ))}
+        </div>
       ),
     },
     {
@@ -136,7 +189,6 @@ const ManageCenter = () => {
       dataIndex: "status",
       key: "status",
       render: (status) => {
-        // Ánh xạ từng giá trị status từ tiếng Anh sang tiếng Việt
         const statusMap = {
           pending: "Chưa được duyệt",
           accepted: "Đã chấp nhận",
@@ -145,45 +197,45 @@ const ManageCenter = () => {
           rejected: "Đã từ chối",
         };
 
-        // Xác định màu sắc dựa trên giá trị status
         let color = "";
         switch (status) {
           case "pending":
-            color = "#fa541c"; // Màu đỏ cam
+            color = "#fa541c";
             break;
           case "accepted":
-            color = "#2f54eb"; // Màu xanh dương
+            color = "#2f54eb";
             break;
           case "active":
-            color = "#52c41a"; // Màu xanh lá cây
+            color = "#52c41a";
             break;
           case "expired":
-            color = "#bfbfbf"; // Màu xám nhạt
+            color = "#bfbfbf";
             break;
           case "rejected":
-            color = "#f5222d"; // Màu đỏ
+            color = "#f5222d";
             break;
           default:
-            color = "#d9d9d9"; // Màu mặc định
+            color = "#d9d9d9";
         }
 
-        // Trả về component Tag với màu và nội dung tương ứng
         return <Tag color={color}>{statusMap[status]}</Tag>;
       },
     },
-
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (createdAt) => moment(createdAt).format("DD/MM/YYYY HH:mm"), // Format ngày tạo
     },
     {
       title: "Hành động",
       key: "action",
       render: (text, record) => (
-        <Button icon={<EyeOutlined />} onClick={() => handleView(record)}>
-          Xem
-        </Button>
+        <div>
+          <Button icon={<EyeOutlined />} onClick={() => handleView(record)}>
+            Xem
+          </Button>
+        </div>
       ),
     },
   ];
@@ -203,10 +255,10 @@ const ManageCenter = () => {
           dataSource={centers}
           columns={columns}
           style={{ width: "100%", height: "100%" }}
-          scroll={{ y: "calc(100vh - 150px)" }} // Adjust based on header height
+          scroll={{ y: "calc(100vh - 150px)" }}
         />
       </div>
-  
+
       {selectedCenter && (
         <Modal
           title="Chi tiết trung tâm"
@@ -215,7 +267,11 @@ const ManageCenter = () => {
           confirmLoading={confirmLoading}
           onCancel={handleCancel}
           footer={[
-            <Button key="cancel" onClick={handleCancel}>
+            <Button
+              key="cancel"
+              onClick={handleCancel}
+              style={{ float: "left" }}
+            >
               Hủy
             </Button>,
             <Button
@@ -226,6 +282,14 @@ const ManageCenter = () => {
             >
               Duyệt
             </Button>,
+            <Button
+              key="reject"
+              type="danger"
+              loading={confirmLoading}
+              onClick={handleReject}
+            >
+              Từ chối
+            </Button>,
           ]}
         >
           <Table
@@ -234,78 +298,120 @@ const ManageCenter = () => {
               { title: "Giá trị", dataIndex: "value", key: "value" },
             ]}
             dataSource={[
-              { key: "1", property: "Tên sân", value: selectedCenter.centerName },
-              { key: "2", property: "Địa chỉ sân", value: selectedCenter.location },
-              { key: "3", property: "Giờ mở cửa", value: selectedCenter.openTime },
-              { key: "4", property: "Giờ đóng cửa", value: selectedCenter.closeTime },
-              { key: "5", property: "Số sân hiện có", value: selectedCenter.courtCount },
-              { key: "6", property: "Hình ảnh", value: (
-                <img
-                  src={
-                    Array.isArray(selectedCenter.images)
-                      ? selectedCenter.images[0]
-                      : selectedCenter.images
-                  }
-                  alt="Center"
-                  style={{ width: "50px", height: "50px" }}
-                />
-              )},
-              { key: "7", property: "Dịch vụ", value: (
-                <div>
-                  {selectedCenter.services.map((service, index) => (
-                    <Tag color="blue" key={index}>
-                      {service}
-                    </Tag>
-                  ))}
-                </div>
-              )},
-              { key: "8", property: "Quy tắc", value: selectedCenter.rule },
-              { key: "9", property: "Giá", value: (
-                <div>
-                  {selectedCenter.price.map((item, index) => (
-                    <div key={index}>
-                      <p><b>Giá tiền:</b> {item.price}</p>
-                      <p><b>Giờ bắt đầu:</b> {item.startTime}</p>
-                      <p><b>Giờ kết thúc:</b> {item.endTime}</p>
-                      <p><b>Loại giờ:</b> {item.scheduleType}</p>
-                    </div>
-                  ))}
-                </div>
-              )},
-              { key: "10", property: "Trạng thái", value: (
-                (() => {
-                  const statusMap = {
-                    pending: "Chưa được duyệt",
-                    accepted: "Đã chấp nhận",
-                    active: "Đang hoạt động",
-                    expired: "Hết hạn",
-                    rejected: "Đã từ chối",
-                  };
-                  const status = selectedCenter.status;
-                  const colorMap = {
-                    pending: "#f  a541c",
-                    accepted: "#2f54eb",
-                    active: "#52c41a",
-                    expired: "#bfbfbf",
-                    rejected: "#f5222d",
-                  };
-                  return (
-                    <Tag color={colorMap[status]}>{statusMap[status]}</Tag>
-                  );
-                })()
-              )},
-              { key: "11", property: "Ngày tạo", value: new Date(selectedCenter.createdAt).toLocaleDateString() },
+              {
+                key: "1",
+                property: "Tên sân",
+                value: selectedCenter.centerName,
+              },
+              {
+                key: "2",
+                property: "Địa chỉ sân",
+                value: selectedCenter.location,
+              },
+              {
+                key: "3",
+                property: "Giờ mở cửa",
+                value: selectedCenter.openTime,
+              },
+              {
+                key: "4",
+                property: "Giờ đóng cửa",
+                value: selectedCenter.closeTime,
+              },
+              {
+                key: "5",
+                property: "Số sân hiện có",
+                value: selectedCenter.courtCount,
+              },
+              {
+                key: "6",
+                property: "Hình ảnh",
+                value: (
+                  <div>
+                    {Array.isArray(selectedCenter.images) &&
+                      selectedCenter.images.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt="Center"
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            marginRight: "5px",
+                          }}
+                        />
+                      ))}
+                  </div>
+                ),
+              },
+              {
+                key: "7",
+                property: "Gói đăng ký",
+                value: (
+                  <div>
+                    {selectedCenter.subscriptions.map((subscription, index) => (
+                      <div key={index}>
+                        <p><b>Thời gian:</b> {subscription.packageId.durationMonths} tháng</p>
+                        <p><b>Giá tiền:</b> {subscription.packageId.price} VNĐ</p>
+                        <p><b>Ngày kích hoạt:</b> {new Date(subscription.activationDate).toLocaleDateString()}</p>
+                        <p><b>Ngày kết thúc:</b> {new Date(subscription.expiryDate).toLocaleDateString()}</p>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                key: "8",
+                property: "Giá",
+                value: (
+                  <div>
+                    {selectedCenter.price.map((item, index) => (
+                      <div key={index}>
+                        <p><b>Giá tiền:</b> {item.price}</p>
+                        <p><b>Giờ bắt đầu:</b> {item.startTime}</p>
+                        <p><b>Giờ kết thúc:</b> {item.endTime}</p>
+                        <p><b>Loại giờ:</b> {scheduleTypeMap[item.scheduleType]}</p>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                key: "9",
+                property: "Dịch vụ",
+                value: (
+                  <div>
+                    {selectedCenter.services.map((service, index) => (
+                      <Tag color="blue" key={index}>
+                        {service}
+                      </Tag>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                key: "10",
+                property: "Trạng thái",
+                value: selectedCenter.status,
+              },
+              {
+                key: "11",
+                property: "Lý do từ chối",
+                value: (
+                  <Input
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    disabled={selectedCenter.status === "rejected"}
+                  />
+                ),
+              },
             ]}
             pagination={false}
-            bordered
-            rowKey={(record) => record.key}
           />
         </Modal>
       )}
     </div>
   );
-  
-  
 };
 
 export default ManageCenter;
