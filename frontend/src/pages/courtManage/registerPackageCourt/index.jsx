@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Typography, Spin } from "antd";
+import { Card, Button, Typography, Spin, Modal } from "antd";
 import { useParams, Navigate } from "react-router-dom";
 import "antd/dist/reset.css";
-import { getAllCenterPackage, selectCenterPackage } from "../../../services/packageAPI/packageAPI";
+import {
+  getAllCenterPackage,
+  selectCenterPackage,
+} from "../../../services/packageAPI/packageAPI";
 import { getFormDataAPI } from "../../../services/partnerAPI/index";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+
 const { Title, Text } = Typography;
 
 const RegisterPackageCourt = () => {
@@ -16,7 +20,10 @@ const RegisterPackageCourt = () => {
   const [courtExists, setCourtExists] = useState(true);
   const [courtStatusValid, setCourtStatusValid] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchCourtAndPackages = async () => {
       const token = Cookies.get("jwtToken");
@@ -56,11 +63,16 @@ const RegisterPackageCourt = () => {
     fetchCourtAndPackages();
   }, [id]);
 
-  const handlePurchase = async (packageId) => {
+  const handlePurchaseClick = (pkg) => {
+    setSelectedPackage(pkg);
+    setIsModalVisible(true);
+  };
+
+  const handlePurchaseConfirm = async () => {
     const token = Cookies.get("jwtToken");
     setPurchasing(true);
     try {
-      await selectCenterPackage(id, packageId, token);
+      await selectCenterPackage(id, selectedPackage._id, token);
       alert("Mua gói thành công!");
       navigate("/courtManage");
     } catch (error) {
@@ -68,6 +80,7 @@ const RegisterPackageCourt = () => {
       alert("Có lỗi xảy ra, vui lòng thử lại.");
     } finally {
       setPurchasing(false);
+      setIsModalVisible(false);
     }
   };
 
@@ -114,7 +127,7 @@ const RegisterPackageCourt = () => {
             <Button
               type="primary"
               block
-              onClick={() => handlePurchase(pkg._id)}
+              onClick={() => handlePurchaseClick(pkg)}
               loading={purchasing}
             >
               Mua Ngay
@@ -122,6 +135,25 @@ const RegisterPackageCourt = () => {
           </Card>
         ))}
       </div>
+      <Modal
+        title="Xác nhận mua gói"
+        visible={isModalVisible}
+        onOk={handlePurchaseConfirm}
+        onCancel={() => setIsModalVisible(false)}
+        confirmLoading={purchasing}
+        okButtonProps={{
+          style: {
+            backgroundColor: "green",
+            borderColor: "green",
+            color: "white",
+          },
+        }}
+        cancelButtonProps={{
+          style: { backgroundColor: "red", borderColor: "red", color: "white" },
+        }}
+      >
+        <p>Bạn có chắc chắn muốn mua gói {selectedPackage?.name} không?</p>
+      </Modal>
     </div>
   );
 };

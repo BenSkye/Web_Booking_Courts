@@ -12,6 +12,7 @@ import {
   Card,
   List,
   TimePicker,
+  Select
 } from "antd";
 import moment from "moment";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
@@ -36,8 +37,6 @@ const CourtManageUpdate = () => {
   const [courtStatusValid, setCourtStatusValid] = useState(true);
   const [openTime, setOpenTime] = useState(null);
   const [closeTime, setCloseTime] = useState(null);
-  const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
   const [address, setAddress] = useState(form.getFieldValue("location") || "");
 
   const handleLocationChange = (value) => {
@@ -75,8 +74,6 @@ const CourtManageUpdate = () => {
         setInitialCourtCount(centerData.courtCount);
         setOpenTime(moment(centerData.openTime, "HH:mm"));
         setCloseTime(moment(centerData.closeTime, "HH:mm"));
-        setStartTime(moment(centerData.startTime, "HH:mm"));
-        setEndTime(moment(centerData.endTime, "HH:mm"));
         setAddress(centerData.location);
 
         if (
@@ -186,24 +183,6 @@ const CourtManageUpdate = () => {
     }
     return Promise.resolve();
   };
-  const validateTimeDifferenceSaE = (_, value) => {
-    if (!startTime || !endTime) {
-      return Promise.reject(
-        new Error("Cả giờ bắt đầu và giờ kết thúc đều phải được nhập.")
-      );
-    }
-    if (startTime && endTime) {
-      const duration = moment.duration(endTime.diff(startTime)).asHours();
-      if (duration < 1) {
-        return Promise.reject(
-          new Error(
-            "Giờ kết thúc và bắt dầu phải cách nhau ít nhất 1 tiếng và giờ bắt đầu không vượt quá giờ kết thúc."
-          )
-        );
-      }
-    }
-    return Promise.resolve();
-  };
 
   const validatePrice = (_, value) => {
     if (value && value < 10000) {
@@ -220,11 +199,7 @@ const CourtManageUpdate = () => {
 
   if (error) {
     return (
-      <Alert
-        message="Error"
-        description="Lỗi khi cập nhật dữ liệu"
-        type="error"
-      />
+      <Alert message="Error" description="Failed to fetch data." type="error" />
     );
   }
 
@@ -232,6 +207,12 @@ const CourtManageUpdate = () => {
     return !["NP", "PP", "MP"].includes(scheduleType);
   };
 
+  const hours = [];
+  for (let i = 5; i < 24; i++) {
+    const hour = i < 10 ? `0${i}` : `${i}`;
+    hours.push(`${hour}:00`);
+    hours.push(`${hour}:30`);
+  }
   return (
     <Form
       form={form}
@@ -239,11 +220,7 @@ const CourtManageUpdate = () => {
       layout="vertical"
     >
       <h1>Cập nhật sân đấu của bạn</h1>
-      <Form.Item
-        name="centerName"
-        label="Tên trung tâm"
-        rules={[{ required: true, message: "phai nhap ten" }]}
-      >
+      <Form.Item name="centerName" label="Tên trung tâm">
         <Input />
       </Form.Item>
       <Form.Item
@@ -290,7 +267,7 @@ const CourtManageUpdate = () => {
           onChange={(time) => setCloseTime(time)}
         />
       </Form.Item>
-      {/* <Form.Item name="images" label="Hình ảnh sân">
+      <Form.Item name="images" label="Hình ảnh sân">
         <Upload
           fileList={fileList}
           onChange={handleUploadChange}
@@ -299,7 +276,6 @@ const CourtManageUpdate = () => {
           <Button>Upload</Button>
         </Upload>
       </Form.Item>
-      
       <Form.Item name="imagesLicense" label="Hình ảnh giấy phép kinh doanh">
         <Upload
           fileList={imagesLicense}
@@ -308,7 +284,7 @@ const CourtManageUpdate = () => {
         >
           <Button>Upload</Button>
         </Upload>
-      </Form.Item> */}
+      </Form.Item>
       <ServicesAndAmenities selectedServices={selectedServices} />{" "}
       <Form.List name="price">
         {(fields) => (
@@ -340,30 +316,32 @@ const CourtManageUpdate = () => {
                       <>
                         <Col span={6}>
                           <Form.Item
-                            // name={[index, "startTime"]}
+                            name={[index, "startTime"]}
+                            initialValue={item.startTime}
                             label="Giờ bắt đầu"
-                            rules={[{ validator: validateTimeDifferenceSaE }]}
                           >
-                            <TimePicker
-                              format="HH:mm"
-                              disabledHours={() => [0, 1, 2, 3, 4]}
-                              value={startTime}
-                              onChange={(time) => setStartTime(time)}
-                            />
+                            <Select addonBefore="Giờ bắt đầu:">
+                              {hours.map((hour) => (
+                                <Option key={hour} value={hour}>
+                                  {hour}
+                                </Option>
+                              ))}
+                            </Select>
                           </Form.Item>
                         </Col>
                         <Col span={6}>
                           <Form.Item
-                            // name={[index, "endTime"]}
+                            name={[index, "endTime"]}
+                            initialValue={item.endTime}
                             label="Giờ kết thúc"
-                            rules={[{ validator: validateTimeDifferenceSaE }]}
                           >
-                            <TimePicker
-                              format="HH:mm"
-                              disabledHours={() => [0, 1, 2, 3, 4]}
-                              value={endTime}
-                              onChange={(time) => setEndTime(time)}
-                            />
+                            <Select addonBefore="Giờ kết thúc:">
+                              {hours.map((hour) => (
+                                <Option key={hour} value={hour}>
+                                  {hour}
+                                </Option>
+                              ))}
+                            </Select>
                           </Form.Item>
                         </Col>
                       </>
