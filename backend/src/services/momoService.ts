@@ -61,6 +61,7 @@ class momoService {
     try {
       // Gửi yêu cầu HTTP bằng Axios
       const result = await axios(options) // Nhật ký thêm để gỡ lỗi chi tiết
+      console.log('MoMo API Result:', result.data)
       return result.data
     } catch (error: any) {
       console.error('MoMo API Error:', error) // Nhật ký thêm để gỡ lỗi chi tiết

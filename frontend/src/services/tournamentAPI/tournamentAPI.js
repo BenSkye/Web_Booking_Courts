@@ -113,3 +113,20 @@ export const getTournamentInCenterAPI = async (centerId) => {
     return response.data;
   }
 };
+
+export const cancelBookingAndApproveTournamentAPI = async (
+  id,
+  { pricePerDay, totalAmount, listBookingId }
+) => {
+  const response = await putData(
+    `${apiBaseUrl}/tournament/cancel-booking-and-approved-tournament/${id}`,
+    { pricePerDay, totalAmount, listBookingId }
+  );
+  console.log("Response:", response);
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === 201) {
+    return response.data;
+  }
+};

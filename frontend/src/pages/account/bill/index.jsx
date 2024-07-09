@@ -18,6 +18,7 @@ const { Paragraph } = Typography;
 const invoiceForMapping = {
   BBD: "Đặt lịch theo ngày",
   UBBD: "Sửa giờ chơi",
+  BPP: "Mua gói giờ chơi",
   // Thêm các ánh xạ khác nếu cần
 };
 const STATUS_MAPPING = {
@@ -26,6 +27,11 @@ const STATUS_MAPPING = {
   cancelled: { color: "red", text: "Đã hủy" },
   expired: { color: "#A9A9A9", text: "Hết hạn" },
   disable: { color: "#A9A9A9", text: "Đã được đổi" },
+};
+const INVOICE_STATUS_MAPPING = {
+  pending: { text: "Chờ thanh toán", color: "orange" },
+  paid: { text: "Đã thanh toán", color: "green" },
+  cancelled: { text: "Đã hủy", color: "red" },
 };
 const OrderDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -56,7 +62,10 @@ const OrderDetails = () => {
   };
 
   useEffect(() => {
-    if (selectedInvoice) {
+    if (
+      selectedInvoice?.invoiceFor === "BBD" ||
+      selectedInvoice?.invoiceFor === "UBBD"
+    ) {
       getBookingByInvoiceId(selectedInvoice._id);
     }
   }, [selectedInvoice]);
@@ -102,12 +111,12 @@ const OrderDetails = () => {
               <Col xs={24} sm={24} md={24} lg={6}>
                 <Image
                   width="80%"
-                  src={invoice.center.images[0]}
+                  src={invoice.center?.images[0]}
                   alt={invoice.center.centerName}
                   style={{ width: "100%" }}
                 />
               </Col>
-              <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+              <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                 <h3 style={{ fontSize: "13px" }}>
                   {invoice.center.centerName}
                 </h3>
@@ -117,10 +126,18 @@ const OrderDetails = () => {
                 xs={24}
                 sm={24}
                 md={12}
-                lg={6}
-                xl={3}
+                lg={24}
+                xl={6}
                 style={{ textAlign: "left" }}
               >
+                <p
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                  }}
+                >
+                  {invoiceForMapping[invoice.invoiceFor]}
+                </p>
                 <p
                   style={{
                     fontWeight: "bold",
@@ -138,16 +155,18 @@ const OrderDetails = () => {
                 xs={24}
                 sm={24}
                 md={12}
-                lg={6}
-                xl={3}
+                lg={24}
+                xl={24}
                 style={{ textAlign: "left" }}
               >
                 <p
                   style={{
-                    color: invoice.status === "paid" ? "green" : "black",
+                    color:
+                      INVOICE_STATUS_MAPPING[invoice.status]?.color || "black",
                   }}
                 >
-                  {invoice.status === "paid" ? "Đã thanh toán" : invoice.status}
+                  {INVOICE_STATUS_MAPPING[invoice.status]?.text ||
+                    invoice.status}
                 </p>
               </Col>
             </Row>

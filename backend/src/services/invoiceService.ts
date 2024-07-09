@@ -3,6 +3,7 @@ import bookingService from './bookingService'
 import centerService from './centerService'
 import centerRepository from '~/repository/centerRepository'
 import bookingRepository from '~/repository/bookingRepository'
+import PlayPackageRepository from '~/repository/playPackagesRepository'
 
 interface IinvoiceService {
   addInvoiceBookingbyDay(price: any, userid: string, orderId: string): Promise<any>
@@ -56,11 +57,21 @@ class InvoiceService implements IinvoiceService {
     const ListInvoice = await InvoiceRepositoryInstance.getListInvoices({ userId: userid })
     const updatedInvoices = await Promise.all(
       ListInvoice.map(async (invoice: any) => {
+        console.log('invoice', invoice)
+        const centerRepositoryInstance = new centerRepository()
         if (invoice.invoiceFor === 'BBD' || invoice.invoiceFor === 'UBBD') {
           const booking = await bookingRepository.getBooking({ invoiceId: invoice._id })
-          const centerRepositoryInstance = new centerRepository()
+          console.log('booking', booking)
           if (!booking) return invoice
           const center = await centerRepositoryInstance.getCenterById({ _id: booking.centerId })
+          return { ...invoice.toObject(), center }
+        }
+        if (invoice.invoiceFor === 'BPP') {
+          const PlayPackageRepositoryInstance = new PlayPackageRepository()
+          const playPackage = await PlayPackageRepositoryInstance.getPlayPackage({ invoiceId: invoice._id })
+          console.log('playPackage', playPackage)
+          if (!playPackage) return invoice
+          const center = await centerRepositoryInstance.getCenterById({ _id: playPackage.centerId })
           return { ...invoice.toObject(), center }
         }
         return invoice

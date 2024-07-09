@@ -75,5 +75,28 @@ class tournamentController {
       }
     })
   })
+  static cancelBookingAndApproveTournament = catchAsync(async (req: any, res: any, next: any) => {
+    const tournamentServiceInstance = new tournamentService()
+    const pricePerDay = req.body.pricePerDay
+    const listBookingId = req.body.listBookingId
+    const totalAmount = req.body.totalAmount
+    const paymentResult = await tournamentServiceInstance.cancelBookingAndApproveTournament(
+      req.params.tournamentId,
+      pricePerDay,
+      totalAmount,
+      listBookingId
+    )
+    res.status(201).json({
+      status: 'success',
+      data: {
+        paymentResult
+      }
+    })
+  })
+  static callbackCancelBookingAndApproveTournament = catchAsync(async (req: any, res: any, next: any) => {
+    console.log(req.body)
+    const tournamentServiceInstance = new tournamentService()
+    const result = tournamentServiceInstance.callbackCancelBookingAndApproveTournament(req.body)
+  })
 }
 export default tournamentController

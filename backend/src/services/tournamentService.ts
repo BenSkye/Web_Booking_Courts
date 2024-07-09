@@ -3,6 +3,8 @@ import courtRepository from '~/repository/courtRepository'
 import timeSlotRepository from '~/repository/timeslotRepository'
 import tournamentRepository from '~/repository/tournamentRepository'
 import AppError from '~/utils/appError'
+import momoService from './momoService'
+import bookingRepository from '~/repository/bookingRepository'
 
 interface ItournamentService {
   addTournament(data: any, userId: string): Promise<any>
@@ -12,6 +14,13 @@ interface ItournamentService {
   getTournamentByCenterId(centerId: string): Promise<any>
   approveTournament(tournamentId: string, pricePerDay: number): Promise<any>
   denyTournament(tournamentId: string): Promise<any>
+  cancelBookingAndApproveTournament(
+    tournamentId: string,
+    pricePerDay: number,
+    totalAmount: number,
+    listBookingId: [any]
+  ): Promise<any>
+  callbackCancelBookingAndApproveTournament(data: any): Promise<any>
 }
 
 class tournamentService implements ItournamentService {
@@ -108,6 +117,52 @@ class tournamentService implements ItournamentService {
     })
 
     return updatedTournament
+  }
+  async cancelBookingAndApproveTournament(
+    tournamentId: string,
+    pricePerDay: number,
+    totalAmount: number,
+    listBookingId: [any]
+  ) {
+    console.log('listBookingId', listBookingId)
+    console.log('totalAmount', totalAmount)
+    console.log('pricePerDay', pricePerDay)
+    const tournamentRepositoryInstance = new tournamentRepository()
+    const tournaments = await tournamentRepositoryInstance.getTournaments({ _id: tournamentId })
+    const centerId = ''
+    const orderInfo = 'Thanh toán hủy đặt sân'
+    const callbackUrl = '/api/v1/tournament/callback-cancel-booking-and-approved-tournament'
+    const redirect = '/manager-tournament/detail/' + tournamentId
+    const totalprice = totalAmount
+    const orderId = 'CB' + new Date().getTime()
+    const extraData = `{"pricePerDay":${pricePerDay},"tournamentId":"${tournamentId}","listBookingId":[${listBookingId.map((id) => `"${id}"`).join(',')}]}`
+    const paymentResult = await momoService.createPayment(
+      orderInfo,
+      totalprice,
+      orderId,
+      centerId,
+      callbackUrl,
+      extraData,
+      redirect
+    )
+    return paymentResult
+  }
+  async callbackCancelBookingAndApproveTournament(data: any) {
+    try {
+      if (data.resultCode === 0) {
+        const extraData = JSON.parse(data.extraData)
+        console.log('extraData', extraData)
+        await this.approveTournament(extraData.tournamentId, extraData.pricePerDay)
+        for (const bookingId of extraData.listBookingId) {
+          await bookingRepository.updateBooking({ _id: { $in: bookingId } }, { status: 'cancelled' })
+        }
+        console.log('Payment success')
+      } else {
+        console.log('Payment failed')
+      }
+    } catch (error) {
+      console.error('Error parsing extraData:', data.extraData, error)
+    }
   }
 }
 export default tournamentService
