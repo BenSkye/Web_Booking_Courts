@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import dayjs from 'dayjs';
 import {
@@ -41,6 +42,11 @@ const BookingFixedByMonth = ({ id }) => {
   const [bookingId, setBookingId] = useState(null); // State to store the new booking ID
   const [bookings, setBookings] = useState([]); // State to store the bookings
   const [totalPrice, setTotalPrice] = useState(0);
+  const navigate = useNavigate();
+
+  const handlePayment = () => {
+    navigate('/paymentBookingFixed', { state: { bookingId } });
+  };
 
   useEffect(() => {
     const getCenter = async (id) => {
@@ -367,6 +373,11 @@ const BookingFixedByMonth = ({ id }) => {
                 {formatPrice(totalPrice)}
               </h2>
               <Calendar cellRender={cellRender} />
+              <Form.Item>
+                <Button type='primary' onClick={handlePayment} block>
+                  Thanh toán
+                </Button>
+              </Form.Item>
             </>
           ) : (
             <Empty description='Chưa có thông tin giá' />
