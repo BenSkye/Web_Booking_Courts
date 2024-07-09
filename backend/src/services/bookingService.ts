@@ -55,6 +55,7 @@ class bookingService implements IbookingService {
     const bookingDetail = listBooking.map((booking: { date: any; start: any; end: any }) => {
       return `${booking.date} (${booking.start} - ${booking.end})`
     })
+    
     const centerId = listBooking[0].centerId
     const centerServiceInstance = new centerService()
     const center = await centerServiceInstance.getCenterById(centerId)

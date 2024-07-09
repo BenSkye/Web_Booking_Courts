@@ -21,6 +21,8 @@ centerRoute
   .route('/my-active-centers')
   .get(authController.protect, authController.restricTO('manager'), centerController.getPersonalActiveCenters)
 
+  
+
 centerRoute
   .route('/:id')
   .get(centerController.getCenterById)
@@ -32,7 +34,9 @@ centerRoute
 centerRoute
   .route('/my-centers/:centerId/select-package/:packageId')
   .patch(authController.protect, authController.restricTO('manager'), centerController.selectPackage)
-  
+ 
+  centerRoute.route('/callback-pakage-pay').post(centerController.handlePackagePaymentCallback)
+
 centerRoute
   .route('/centers/:centerId/change-status-accepted')
   .get(authController.protect, authController.restricTO('admin'), centerController.changeCenterStatusAccept)
