@@ -80,8 +80,9 @@ class CenterRepository implements ICenterRepository {
   }
 
   async updateCenter(query: object, data: any) {
-    return await Center.findOneAndUpdate(query, data, { new: true })
+    return await Center.findOneAndUpdate(query, data, { new: true });
   }
+  
   async getAllSubscriptions() {
     try {
       return await Center.find({ 'subscriptions.packageId': { $ne: null } })
