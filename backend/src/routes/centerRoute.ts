@@ -33,7 +33,7 @@ centerRoute
 
 centerRoute
   .route('/my-centers/:centerId/select-package/:packageId')
-  .patch(authController.protect, authController.restricTO('manager'), centerController.selectPackage)
+  .patch(authController.protect, authController.restricTO('manager'), centerController.momoPayPackageController)
  
   centerRoute.route('/callback-pakage-pay').post(centerController.handlePackagePaymentCallback)
 
