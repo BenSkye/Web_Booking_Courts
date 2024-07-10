@@ -137,6 +137,7 @@ const AccountSettingsForm = () => {
         userEmail: user.userEmail,
         userPhone: user.userPhone,
         avatar: user.avatar,
+        userAddress: user.userAddress,
       });
       setLoading(false);
     }
@@ -146,7 +147,8 @@ const AccountSettingsForm = () => {
     const userChange = await Updateuser(
       values.userName,
       values.userPhone,
-      values.avatar
+      values.avatar,
+      values.userAddress
     );
     if (userChange) {
       message.success("Cập nhật tài khoản!");
@@ -170,12 +172,11 @@ const AccountSettingsForm = () => {
     try {
       const storageRef = ref(storage, `avatars/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
-
+  
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Upload is " + progress + "% done");
         },
         (error) => {
@@ -186,6 +187,7 @@ const AccountSettingsForm = () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             form.setFieldsValue({ avatar: downloadURL });
             message.success("Upload successful");
+            setUser((prevUser) => ({ ...prevUser, avatar: downloadURL })); // Update the avatar in the user state
           });
         }
       );
@@ -200,8 +202,7 @@ const AccountSettingsForm = () => {
   }
 
   return (
-    <div className="form-container">
-      <div className="form-header">Cập nhật tài khoản</div>
+    <div style={styles.formContainer}>
       <Form
         form={form}
         name="account-settings"
@@ -220,12 +221,7 @@ const AccountSettingsForm = () => {
                 ? user.avatar
                 : "https://api.dicebear.com/7.x/miniavs/svg?seed=1"
             }
-            style={{
-              background: "white",
-              height: "100px",
-              width: "100px",
-              cursor: "pointer",
-            }}
+            style={styles.avatar}
           />
           <input
             type="file"
@@ -248,6 +244,9 @@ const AccountSettingsForm = () => {
         <Form.Item label="Địa chỉ" name="userAddress">
           <Input />
         </Form.Item>
+        <Form.Item name="avatar" hidden>
+          <Input />
+        </Form.Item>
         <Form.Item wrapperCol={{ span: 24 }}>
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
             Cập nhật tài khoản
@@ -261,7 +260,7 @@ const AccountSettingsForm = () => {
 const AccountManagement = () => {
   return (
     <div className="tabs-container">
-      <Tabs defaultActiveKey="1" style={{ width: "100%", maxWidth: "800px" }}>
+      <Tabs defaultActiveKey="2" style={{ width: "100%", maxWidth: "800px" }}>
         <Tabs.TabPane tab="Cập nhật mật khẩu" key="1">
           <UpdatePassword />
         </Tabs.TabPane>

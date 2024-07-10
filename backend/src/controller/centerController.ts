@@ -112,7 +112,7 @@ class centerController {
     if (!status) {
       return next(new AppError('Status is required', 400))
     }
-    
+
     const centerServiceInstance = new centerService()
     const updatedCenter = await centerServiceInstance.changeCenterStatus(centerId, status, denied)
 
