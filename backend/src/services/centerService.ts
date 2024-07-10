@@ -8,7 +8,7 @@ import sendEmailSerVice from './sendEmailService'
 import userRepository from '~/repository/userRepository' // Thêm dòng này để import userRepository
 import momoService from './momoService'
 import centerController from '~/controller/centerController'
-
+import mongoose from 'mongoose';
 interface ICenterService {
   addCenter(data: any): Promise<any>
   getAllCenters(): Promise<any>
@@ -98,6 +98,10 @@ class centerService implements ICenterService {
   }
   
   async momoPayPackage(centerId: string, packageId: string, userId: string) {
+    if (!mongoose.Types.ObjectId.isValid(centerId) || !mongoose.Types.ObjectId.isValid(packageId) || !mongoose.Types.ObjectId.isValid(userId)) {
+      throw new AppError('Invalid ID format', 400);
+    }
+  
     const centerRepositoryInstance = new centerRepository();
     const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId });
     if (!center) {
@@ -115,7 +119,7 @@ class centerService implements ICenterService {
   
     const totalprice = centerPackage.price;
     const orderId = 'BD' + Math.floor(Math.random() * 1000000).toString();
-    const redirect = '/user/bill';
+    const redirect = '/courtManage';
     const orderInfo = 'Thanh toán gói sân ' + center.centerName;
     const callbackUrl = '/api/v1/center/callback-package-pay';
     const extraData = JSON.stringify({ centerId, packageId, userId });

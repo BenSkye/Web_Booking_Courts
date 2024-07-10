@@ -72,9 +72,14 @@ const RegisterPackageCourt = () => {
     const token = Cookies.get("jwtToken");
     setPurchasing(true);
     try {
-      await selectCenterPackage(id, selectedPackage._id, token);
-      alert("Mua gói thành công!");
-      navigate("/courtManage");
+      const paymentResult = await selectCenterPackage(
+        id,
+        selectedPackage._id,
+        token
+      );
+
+      alert("Tạo hoá đơn thành công!");
+      window.location.href = paymentResult.result.payUrl;
     } catch (error) {
       console.error("Error purchasing package:", error);
       alert("Có lỗi xảy ra, vui lòng thử lại.");
