@@ -31,6 +31,15 @@ class UserService {
     const userRepositoryInstance = new userRepository()
     return await userRepositoryInstance.getAllUser()
   }
+  static async getUserByEmail(email: string) {
+    const userRepositoryInstance = new userRepository()
+    const user = await userRepositoryInstance.findUser({ userEmail: email })
+    if (!user) {
+      return null
+    }
+    user.password = ''
+    return user
+  }
 }
 
 export default UserService
