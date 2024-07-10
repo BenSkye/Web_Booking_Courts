@@ -39,6 +39,26 @@ class UserController {
       res.status(500).json({ message: 'Error fetching users', error })
     }
   })
+  static checkEmailExist = catchAsync(async (req: any, res: any, next: any) => {
+    const { email } = req.body
+    console.log('email', email)
+    const user = await UserService.getUserByEmail(email)
+    if (user) {
+      res.status(201).json({
+        status: 'success',
+        data: {
+          user
+        }
+      })
+    } else {
+      res.status(201).json({
+        status: 'success',
+        data: {
+          user: null
+        }
+      })
+    }
+  })
 }
 
 export default UserController

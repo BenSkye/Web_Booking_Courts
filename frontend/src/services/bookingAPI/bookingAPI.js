@@ -119,3 +119,17 @@ export const getBookingByDayAPI = async (dateFrom, dateTo) => {
     return response.data;
   }
 };
+
+export const bookingDirectlyAPI = async (data) => {
+  const response = await postData(
+    `${apiBaseUrl}/booking/booking-directly`,
+    data
+  );
+  console.log("Response:", response);
+  if (response.data.status === "success") {
+    return response.data;
+  }
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+};

@@ -37,7 +37,7 @@ const { Step } = Steps;
 const { Option } = Select;
 
 // eslint-disable-next-line react/prop-types
-export default function PickTimeBooking({ idCenter }) {
+export default function PickTimeBooking({ idCenter, onSubmit }) {
   const dispatch = useDispatch();
   const { selectedCourts, center, totalPrice } = useSelector(
     (state) => state.cart
@@ -49,6 +49,8 @@ export default function PickTimeBooking({ idCenter }) {
   const [availableCourts, setAvailableCourts] = useState([]);
   const [startTime, setStartTime] = useState(null);
   const [duration, setDuration] = useState(null);
+  const [listBooking, setListBooking] = useState([]);
+
   const [showModal, setShowModal] = useState(false);
 
   const handleSelectedDay = (date) => {
@@ -144,8 +146,35 @@ export default function PickTimeBooking({ idCenter }) {
 
   useEffect(() => {
     // Dispatch action để cập nhật tổng giá tiền mỗi khi có thay đổi trong giỏ hàng
+    console.log("Selected courts:", selectedCourts);
+    const bookings = [];
+    selectedCourts.map((court) => {
+      const datePrefix = "1970-01-01T";
+      const startTimeDate = new Date(`${datePrefix}${startTime}:00Z`);
+      const durationInMilliseconds = duration * 60 * 60 * 1000;
+      const endTime = new Date(
+        startTimeDate.getTime() + durationInMilliseconds
+      );
+      const endHours = endTime.getUTCHours().toString().padStart(2, "0");
+      const endMinutes = endTime.getUTCMinutes().toString().padStart(2, "0");
+      const endTimeFormat = `${endHours}:${endMinutes}`;
+      bookings.push({
+        courtId: court._id,
+        price: court.price,
+        centerId: court.centerId,
+        date: selectedDate,
+        start: startTime,
+        end: endTimeFormat,
+      });
+    });
+    console.log("Bookings:", bookings);
+    setListBooking(bookings);
     dispatch(updateTotalPrice(calculateTotalPrice()));
   }, [selectedCourts]);
+
+  const handleBookingSubmit = async () => {
+    await onSubmit(listBooking);
+  };
 
   return (
     <div>
@@ -297,45 +326,6 @@ export default function PickTimeBooking({ idCenter }) {
             title="Sân được chọn"
             style={{ boxShadow: "1px 1px 1px 1px rgba(0, 0, 0, 0.2)" }}
           >
-            {/* <Row
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                height: "150px",
-                width: "100%",
-              }}
-            >
-              <Col span={12}>
-                <div style={{ width: "100%" }}>
-                  {center.nameCenter && <strong>{center.nameCenter}</strong>}
-                </div>
-                <a style={{ width: "100%" }} onClick={handleOpenModal}>
-                  {center.addressCenter && (
-                    <p>
-                      {center.addressCenter} <FaMapMarkerAlt />
-                    </p>
-                  )}
-                </a>
-              </Col>
-              <Col span={12}>
-                <Carousel autoplay>
-                  {!center.imgCenter || center.imgCenter.length === 0 ? (
-                    <Empty />
-                  ) : (
-                    center.imgCenter.map((image, index) => (
-                      <div key={index}>
-                        <img
-                          src={image}
-                          alt={center.nameCenter}
-                          style={{ width: "100%", height: "100%" }}
-                        />
-                      </div>
-                    ))
-                  )}
-                </Carousel>
-              </Col>
-            </Row> */}
-
             {selectedCourts.length === 0 ? (
               <></>
             ) : (
@@ -378,6 +368,7 @@ export default function PickTimeBooking({ idCenter }) {
                 type="primary"
                 disabled={selectedCourts.length === 0}
                 style={{ marginTop: 16 }}
+                onClick={handleBookingSubmit}
               >
                 Xác nhận đặt sân cho khách hàng
               </Button>
@@ -385,16 +376,6 @@ export default function PickTimeBooking({ idCenter }) {
           </Card>
         </Col>
       </Row>
-      <Modal
-        visible={showModal}
-        title="Vị trí"
-        onCancel={handleCloseModal}
-        footer={null}
-        centered
-        style={{ height: "80vh" }} // Thiết lập chiều cao của modal
-      >
-        <MyLocationMap address={center.addressCenter} />
-      </Modal>
     </div>
   );
 }
