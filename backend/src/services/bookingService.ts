@@ -91,11 +91,6 @@ class bookingService implements IbookingService {
       } else {
         slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
       }
-
-      // const available = await timeSlotRepositoryInstance.checkTimeSlotAvailable(slot)
-      // if (!available) {
-      //   throw new AppError('Slot not available', 400)
-      // }
       slotAvailable.push({ ...slot })
       slot.start = slot.end
     }

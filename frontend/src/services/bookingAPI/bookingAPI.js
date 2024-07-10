@@ -62,7 +62,7 @@ export const getPersonalBookingAPI = async () => {
     `${apiBaseUrl}/booking/get-personal-booking`
   );
   console.log("Response:", response);
-  if (response.data.status === "fail") {
+  if (response.status === "fail") {
     return response.data;
   }
   if (response.status === "success") {

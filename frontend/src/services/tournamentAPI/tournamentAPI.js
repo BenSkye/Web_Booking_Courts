@@ -60,10 +60,48 @@ export const getTournamentAPI = async (id) => {
   }
 };
 
+export const getTournamentByInvoiceIdAPI = async (invoiceId) => {
+  const response = await fetchData(
+    `${apiBaseUrl}/tournament/tournament-by-invoice/${invoiceId}`
+  );
+  console.log("Response:", response);
+  if (response.status === "fail") {
+    return response.data;
+  }
+  if (response.status === "success") {
+    return response.data;
+  }
+};
+
 export const createTournamentAPI = async (data) => {
   const response = await postData(
     `${apiBaseUrl}/tournament/create-tournament`,
     data
+  );
+  console.log("Response:", response);
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === 201) {
+    return response.data;
+  }
+};
+
+export const cancelTournamentAPI = async (id) => {
+  const response = await putData(
+    `${apiBaseUrl}/tournament/cancel-tournament/${id}`
+  );
+  console.log("Response:", response);
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === 201) {
+    return response.data;
+  }
+};
+export const confirmTournamentAPI = async (id) => {
+  const response = await putData(
+    `${apiBaseUrl}/tournament/confirm-tournament/${id}`
   );
   console.log("Response:", response);
   if (response.data.status === "fail") {
@@ -110,6 +148,23 @@ export const getTournamentInCenterAPI = async (centerId) => {
     return response.data;
   }
   if (response.status === "success") {
+    return response.data;
+  }
+};
+
+export const cancelBookingAndApproveTournamentAPI = async (
+  id,
+  { pricePerDay, totalAmount, listBookingId }
+) => {
+  const response = await putData(
+    `${apiBaseUrl}/tournament/cancel-booking-and-approved-tournament/${id}`,
+    { pricePerDay, totalAmount, listBookingId }
+  );
+  console.log("Response:", response);
+  if (response.data.status === "fail") {
+    return response.data;
+  }
+  if (response.status === 201) {
     return response.data;
   }
 };
