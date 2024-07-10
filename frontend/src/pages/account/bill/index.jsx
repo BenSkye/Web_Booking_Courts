@@ -14,11 +14,13 @@ import {
 import moment from "moment";
 import { getPersonalInvoiceAPI } from "../../../services/invoiceAPI/invoiceAPI";
 import { getBookingByInvoiceIdAPI } from "../../../services/bookingAPI/bookingAPI";
+import { getTournamentByInvoiceIdAPI } from "../../../services/tournamentAPI/tournamentAPI";
 const { Paragraph } = Typography;
 const invoiceForMapping = {
   BBD: "Đặt lịch theo ngày",
   UBBD: "Sửa giờ chơi",
   BPP: "Mua gói giờ chơi",
+  BT: "Đặt lịch tổ chức giải",
   // Thêm các ánh xạ khác nếu cần
 };
 const STATUS_MAPPING = {
@@ -35,9 +37,12 @@ const INVOICE_STATUS_MAPPING = {
 };
 const OrderDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisibleTournament, setIsModalVisibleTournament] =
+    useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [invoices, setInvoices] = useState([]);
   const [listBooking, setListBooking] = useState([]);
+  const [tournament, setTournament] = useState();
   const [loading, setLoading] = useState(true);
 
   const getInvoices = async () => {
@@ -51,14 +56,19 @@ const OrderDetails = () => {
   useEffect(() => {
     getInvoices();
   }, []);
-  useEffect(() => {
-    console.log("listBooking:", listBooking.length);
-  }, [listBooking]);
 
   const getBookingByInvoiceId = async (invoiceId) => {
     const result = await getBookingByInvoiceIdAPI(invoiceId);
     console.log("bookings:", result.bookings);
     setListBooking(result.bookings);
+    setIsModalVisible(true);
+  };
+
+  const getTournamentByInvoiceId = async (invoiceId) => {
+    const result = await getTournamentByInvoiceIdAPI(invoiceId);
+    console.log("tournament:", result.tournament);
+    setTournament(result.tournament);
+    setIsModalVisibleTournament(true);
   };
 
   useEffect(() => {
@@ -68,12 +78,14 @@ const OrderDetails = () => {
     ) {
       getBookingByInvoiceId(selectedInvoice._id);
     }
+    if (selectedInvoice?.invoiceFor === "BT") {
+      getTournamentByInvoiceId(selectedInvoice._id);
+    }
   }, [selectedInvoice]);
 
   const showModal = (invoice) => {
     console.log("invoice:", invoice);
     setSelectedInvoice(invoice);
-    setIsModalVisible(true);
   };
 
   const handleOk = () => {
@@ -83,6 +95,8 @@ const OrderDetails = () => {
   const handleCancel = () => {
     setListBooking([]);
     setSelectedInvoice(null);
+    setTournament(null);
+    setIsModalVisibleTournament(false);
     setIsModalVisible(false);
   };
 
@@ -239,14 +253,6 @@ const OrderDetails = () => {
                           : "Không xác định"}
                       </span>
                     </Paragraph>
-                    {/* {booking.status === "confirmed" && (
-                      <Button
-                        type="primary"
-                        onClick={() => handleEditClick(booking)}
-                      >
-                        Sửa giờ chơi
-                      </Button>
-                    )} */}
                   </Card>
                 </List.Item>
               )}
@@ -282,6 +288,54 @@ const OrderDetails = () => {
             </div>
           </Modal>
         </>
+      )}
+      {tournament && (
+        <Modal
+          title="Chi tiết hóa đơn"
+          visible={isModalVisibleTournament}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          footer={null}
+        >
+          <div>
+            <h3>Giải đấu: {tournament.tournamentName}</h3>
+            <p>
+              Ngày bắt đầu:{" "}
+              {new Date(tournament.startDate).toLocaleDateString("en-US")}
+            </p>
+            <p>
+              Ngày Kết thúc:{" "}
+              {new Date(tournament.endDate).toLocaleDateString("en-US")}
+            </p>
+            <p>Mã hóa đơn: {selectedInvoice.invoiceID}</p>
+            <p>
+              Giá:{" "}
+              {Number(selectedInvoice.price).toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </p>
+            <div>
+              <p>
+                Hóa đơn :{" "}
+                {invoiceForMapping[selectedInvoice.invoiceFor] ||
+                  selectedInvoice.invoiceFor}
+              </p>
+              <p>
+                Ngày thanh toán:{" "}
+                {selectedInvoice.createdAt
+                  ? new Date(selectedInvoice.createdAt).toLocaleDateString(
+                      "vi-VN"
+                    )
+                  : "N/A"}
+              </p>
+              <p>
+                Giờ thanh toán:{" "}
+                {moment(selectedInvoice.createdAt).format("HH:mm")}
+              </p>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );

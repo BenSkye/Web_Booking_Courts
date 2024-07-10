@@ -54,6 +54,18 @@ class tournamentController {
       }
     })
   })
+  static cancelTournament = catchAsync(async (req: any, res: any, next: any) => {
+    const tournamentServiceInstance = new tournamentService()
+    const userId = req.user._id
+    const tournament = await tournamentServiceInstance.cancelTournament(userId, req.params.tournamentId)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tournament
+      }
+    })
+  })
+
   static approveTournament = catchAsync(async (req: any, res: any, next: any) => {
     const tournamentServiceInstance = new tournamentService()
     const pricePerDay = req.body.pricePerDay
@@ -97,6 +109,31 @@ class tournamentController {
     console.log(req.body)
     const tournamentServiceInstance = new tournamentService()
     const result = tournamentServiceInstance.callbackCancelBookingAndApproveTournament(req.body)
+  })
+  static confirmTournament = catchAsync(async (req: any, res: any, next: any) => {
+    const tournamentServiceInstance = new tournamentService()
+    const paymentResult = await tournamentServiceInstance.confirmTournament(req.params.tournamentId)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        paymentResult
+      }
+    })
+  })
+  static callbackConfirmTournament = catchAsync(async (req: any, res: any, next: any) => {
+    console.log(req.body)
+    const tournamentServiceInstance = new tournamentService()
+    const result = tournamentServiceInstance.callbackConfirmTournament(req.body)
+  })
+  static getTournamentByInvoiceId = catchAsync(async (req: any, res: any, next: any) => {
+    const tournamentServiceInstance = new tournamentService()
+    const tournament = await tournamentServiceInstance.getTournamentByInvoiceId(req.params.invoiceId)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tournament
+      }
+    })
   })
 }
 export default tournamentController

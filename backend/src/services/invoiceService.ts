@@ -4,10 +4,10 @@ import centerService from './centerService'
 import centerRepository from '~/repository/centerRepository'
 import bookingRepository from '~/repository/bookingRepository'
 import PlayPackageRepository from '~/repository/playPackagesRepository'
+import tournamentRepository from '~/repository/tournamentRepository'
 
 interface IinvoiceService {
   addInvoiceBookingbyDay(price: any, userid: string, orderId: string): Promise<any>
-
   addInvoiceUpdateBookingbyDay(price: any, userid: string, orderId: string): Promise<any>
   paidInvoice(invoiceId: string): Promise<any>
   getInvoicesByUserId(userid: string): Promise<any>
@@ -72,6 +72,13 @@ class InvoiceService implements IinvoiceService {
           console.log('playPackage', playPackage)
           if (!playPackage) return invoice
           const center = await centerRepositoryInstance.getCenterById({ _id: playPackage.centerId })
+          return { ...invoice.toObject(), center }
+        }
+        if (invoice.invoiceFor === 'BT') {
+          const tournamentRepositoryInstance = new tournamentRepository()
+          const tournament = await tournamentRepositoryInstance.getTournament({ invoiceId: invoice._id })
+          if (!tournament) return invoice
+          const center = await centerRepositoryInstance.getCenterById({ _id: tournament.centerId._id })
           return { ...invoice.toObject(), center }
         }
         return invoice
