@@ -126,5 +126,15 @@ class bookingController {
       }
     })
   })
+  static bookingDirectly = catchAsync(async (req: any, res: any, next: any) => {
+    const bookingServiceInstance = new bookingService()
+    const listnewbooking = await bookingServiceInstance.bookingDirectly(req.body)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        listnewbooking
+      }
+    })
+  })
 }
 export default bookingController

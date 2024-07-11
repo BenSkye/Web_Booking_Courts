@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import validator from 'validator'
 
 const tournamentSchema = new mongoose.Schema(
@@ -73,6 +73,9 @@ const tournamentSchema = new mongoose.Schema(
     },
     price: {
       type: Number
+    },
+    invoiceId: {
+      type: Schema.Types.ObjectId
     }
   },
   {

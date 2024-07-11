@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button, Skeleton, Card, Modal, Form, Input } from "antd";
-import { useParams } from "react-router-dom";
+import { redirect, useParams } from "react-router-dom";
 import {
   approvedTournamentAPI,
+  cancelBookingAndApproveTournamentAPI,
   deniedTournamentAPI,
   getTournamentAPI,
 } from "../../../../services/tournamentAPI/tournamentAPI";
@@ -45,6 +46,29 @@ export default function ManagerTournamentDetail() {
       setIsLoading(true);
       await deniedTournamentAPI(tournamentId);
       fetchTournament();
+    } catch (error) {
+      console.error("Error fetching personal booking data:", error);
+    }
+  };
+
+  const cancelBookingAndApproveTournament = async (
+    pricePerDay,
+    totalAmount,
+    listBookingId
+  ) => {
+    try {
+      setIsLoading(true);
+      const result = await cancelBookingAndApproveTournamentAPI(tournamentId, {
+        pricePerDay: pricePerDay,
+        totalAmount: totalAmount,
+        listBookingId: listBookingId,
+      });
+      console.log("Result:", result);
+      console.log(
+        "result.data.paymentResult.payUrl:",
+        result.data.paymentResult.payUrl
+      );
+      window.location.href = result.data.paymentResult.payUrl;
     } catch (error) {
       console.error("Error fetching personal booking data:", error);
     }
@@ -100,6 +124,31 @@ export default function ManagerTournamentDetail() {
         console.log("Tournament Fee:", pricePerDay);
         // logic for confirming the tournament approval
         approvedTournament(pricePerDay);
+      })
+      .catch((info) => {
+        console.log("Validation Failed:", info);
+      });
+  };
+  const handelCancelBookingAndApprove = () => {
+    setIsModalOpen(false);
+    form
+      .validateFields()
+      .then((values) => {
+        // Remove all dots and the currency symbol, then convert to number
+        const pricePerDay = Number(
+          values.fee.replace(/\./g, "").replace("₫", "").trim()
+        );
+
+        console.log("Tournament Fee:", pricePerDay);
+        const listBookingId = ListBooking.map((booking) => booking._id);
+        console.log("List Booking ID:", listBookingId);
+        console.log("totalAmount", totalAmount);
+        cancelBookingAndApproveTournament(
+          pricePerDay,
+          totalAmount,
+          listBookingId
+        );
+        // approvedTournament(pricePerDay);
       })
       .catch((info) => {
         console.log("Validation Failed:", info);
@@ -292,7 +341,7 @@ export default function ManagerTournamentDetail() {
             <Input onChange={(e) => handleFeeChange(e.target.value)} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" onClick={handleOk}>
+            <Button type="primary" onClick={handelCancelBookingAndApprove}>
               Xác nhận
             </Button>
           </Form.Item>
