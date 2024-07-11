@@ -20,7 +20,7 @@ interface IPlayPackageInput {
 
 class PlayPackageService {
 
-    public async createOrUpdatePlayPackage(userId: any, playPackage: IPlayPackageInput) {
+    async createOrUpdatePlayPackage(userId: any, playPackage: IPlayPackageInput) {
         try {
             const { centerId, hour } = playPackage;
             const priceRepositoryInstance = new priceRepository();
@@ -79,6 +79,14 @@ class PlayPackageService {
         } catch (error) {
             console.error('Error creating or updating play package:', error);
             throw error; // Throw the error to be handled by the caller
+        }
+    }
+    async getPlayHourByUserId(userId: string) {
+        try {
+            const playPackages = await PlayHour.find({ userId }).populate('userId').exec();
+            return playPackages
+        } catch (error: any) {
+            return error
         }
     }
 }

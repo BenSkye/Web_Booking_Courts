@@ -5,7 +5,11 @@ import { addPlayPackage } from '@/services/bookingAPI/bookingAPI'; // Adjust the
 
 const BookingFlexibleByPackage = ({ id, onSelectPackage, pricePerHour }) => {
   const [hours, setHours] = useState(10); // Initial state for number of hours, starting with 1 hour
-  const { centerId } = useParams();
+  const params = useParams();
+  const centerId = params.id
+
+  console.log("centerId:", centerId);
+
   const handleSelectPackage = async () => {
     try {
       const response = await addPlayPackage({ centerId, hour: hours });
@@ -14,9 +18,6 @@ const BookingFlexibleByPackage = ({ id, onSelectPackage, pricePerHour }) => {
       if (response.status === 'success') {
         message.success('Tạo gói chơi thành công');
 
-      } else if (response.message === 'Vui lòng đăng nhập để truy cập') {
-        message.error('Vui lòng đăng nhập để truy cập');
-        history.push('/login');
       } else {
         message.error('Tạo gói chơi thất bại. Vui lòng thử lại.');
       }

@@ -27,6 +27,18 @@ class PlayPackageController {
             next(error); // Pass the error to the global error handler
         }
     };
+
+    static getPlayPackageByUserId = async (req: any, res: any, next: any) => {
+        try {
+            const { userId } = req.body
+            const playPackageService = new PlayPackageService();
+            const getPlayPackageByUserId = await playPackageService.getPlayHourByUserId(userId);
+
+            return res.status(200).json(getPlayPackageByUserId);
+        } catch {
+            res.status(500).json({})
+        }
+    }
 }
 
 export default PlayPackageController;
