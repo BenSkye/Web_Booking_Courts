@@ -20,8 +20,8 @@ class sendEmailSerVice {
       from: 'racketrise@gmail.com',
       to: email,
       subject: mailOption.subject,
-      text: mailOption.text, // Thêm mật khẩu vào nội dung email
-      html: mailOption.html // HTML có thể format mật khẩu để nổi bật hơn
+      text: mailOption.text,
+      html: mailOption.html
     }
 
     try {

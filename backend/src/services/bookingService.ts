@@ -14,6 +14,7 @@ import bcryptjs from 'bcryptjs'
 
 import { stat } from 'fs'
 import sendEmailSerVice from './sendEmailService'
+import CenterRepository from '~/repository/centerRepository'
 interface IbookingService {
   createBookingbyDay(listBooking: [any], userId: string): Promise<any>
   checkAllSlotsAvailability(listBooking: [any]): Promise<boolean>
@@ -219,19 +220,55 @@ class bookingService implements IbookingService {
       )
       await invoiceServiceInstance.deleteInvoiceById(invoice._id)
       return { status: 'fail' }
-    }
-
-    const invoice = await invoiceServiceInstance.paidInvoice(reqBody.orderId)
-    if (!invoice) {
-      throw new AppError('Invoice not found', 404)
-    }
-    const listBooking = await bookingRepository.getListBooking({ invoiceId: invoice._id })
-    await Promise.all(
-      listBooking.map(async (booking: any) => {
-        await this.changeBookingStatusAfterPaySuccess(booking._id)
+    } else {
+      const invoice = await invoiceServiceInstance.paidInvoice(reqBody.orderId)
+      if (!invoice) {
+        throw new AppError('Invoice not found', 404)
+      }
+      const listBooking = await bookingRepository.getListBooking({ invoiceId: invoice._id })
+      await Promise.all(
+        listBooking.map(async (booking: any) => {
+          await this.changeBookingStatusAfterPaySuccess(booking._id)
+        })
+      )
+      const bookingDetailsPromises = listBooking.map(async (booking: any) => {
+        const courtRepositoryInstance = new courtRepository()
+        const court = await courtRepositoryInstance.getCourt({ _id: booking.courtId })
+        if (court) {
+          return `Sân: ${court.courtNumber}, Ngày: ${booking.date.toLocaleDateString()}, Giờ: ${booking.start} - ${booking.end}`
+        }
+        return ''
       })
-    )
-    return { status: 'success' }
+      const bookingDetailsArray = await Promise.all(bookingDetailsPromises)
+      const bookingDetails = bookingDetailsArray.filter((detail) => detail).join('<br>')
+      console.log('bookingDetails', bookingDetails)
+
+      const userRepositoryInstance = new userRepository()
+      const user = await userRepositoryInstance.findUser({ _id: listBooking[0].userId })
+      if (!user) {
+        throw new AppError('user not found', 404)
+      }
+      const email = user.userEmail
+      const centerRepositoryInstance = new CenterRepository()
+      const center = await centerRepositoryInstance.getCenter({ _id: listBooking[0].centerId })
+      if (!center) {
+        throw new AppError('center not found', 404)
+      }
+
+      await sendEmailSerVice.sendEmail(email, {
+        subject: 'Đã hoàn thành đặt sân',
+        text: `Bạn đã đặt sân thành công ở trung tâm cầu lông ${center.centerName} địa chỉ ${center.location}.\n\n${bookingDetails}`,
+        html: `
+          <p>Bạn đã đặt sân thành công ở trung tâm cầu lông ${center.centerName}</p>
+          </br>
+          <p>Địa chỉ: ${center.location}</p>
+          </br>
+          <p>${bookingDetails}</p>
+        `
+      })
+
+      return { status: 'success' }
+    }
   }
 
   async getBookingByDayAndCenter(centerId: string, date: string) {
