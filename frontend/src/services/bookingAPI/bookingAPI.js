@@ -62,7 +62,7 @@ export const getPersonalBookingAPI = async () => {
     `${apiBaseUrl}/booking/get-personal-booking`
   );
   console.log("Response:", response);
-  if (response.data.status === "fail") {
+  if (response.status === "fail") {
     return response.data;
   }
   if (response.status === "success") {
@@ -72,15 +72,13 @@ export const getPersonalBookingAPI = async () => {
 
 export const addPlayPackage = async (playPackageData) => {
   try {
-    const response = await postData(
-      `${apiBaseUrl}/playPackage`,
-      playPackageData
-    );
+    const response = await postData(`${apiBaseUrl}/playPackage`, playPackageData);
     return response.data;
   } catch (error) {
     throw error.response.data;
   }
 };
+
 export const completeBookingAPI = async (bookingId) => {
   const response = await fetchData(
     `${apiBaseUrl}/booking/completed-booking/${bookingId}`
@@ -116,6 +114,20 @@ export const getBookingByDayAPI = async (dateFrom, dateTo) => {
     return response.data;
   }
   if (response.status === "success") {
+    return response.data;
+  }
+};
+
+export const bookingDirectlyAPI = async (data) => {
+  const response = await postData(
+    `${apiBaseUrl}/booking/booking-directly`,
+    data
+  );
+  console.log("Response:", response);
+  if (response.data.status === "success") {
+    return response.data;
+  }
+  if (response.data.status === "fail") {
     return response.data;
   }
 };

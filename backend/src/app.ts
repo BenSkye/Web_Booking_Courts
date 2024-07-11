@@ -14,8 +14,9 @@ import bookingRoute from './routes/bookingRoute'
 import timeslotRoute from './routes/timeslotRoute'
 import priceRoute from './routes/priceRoute'
 // import momoRoute from './routes/momoRoute'
+import messageRouter from './routes/messageRoute'
 import courtRoute from './routes/courtRoute'
-
+import chatRouter from './routes/chatRoute'
 import playPackageRoute from './routes/playPackageRoute'
 import invoiceRoute from './routes/invoiceRoutes'
 import userRoute from './routes/userRoute'
@@ -23,6 +24,7 @@ import fixedPackageScheduleRoute from './routes/fixedPackageScheduleRoute'
 import timeSlotService from './services/timeslotService'
 import bookingService from './services/bookingService'
 import tournamenRoute from './routes/tournamentRoute'
+import tournamentService from './services/tournamentService'
 
 dotenv.config()
 
@@ -45,6 +47,9 @@ app.use('/api/v1/court', courtRoute)
 app.use('/api/v1/playPackage', playPackageRoute)
 app.use('/api/v1/tournament', tournamenRoute)
 app.use('/api/v1/fixed-package-schedule', fixedPackageScheduleRoute)
+app.use('/api/v1/chats', chatRouter)
+app.use('/api/v1/messages', messageRouter)
+
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
@@ -55,6 +60,11 @@ cron.schedule('0,30 * * * *', async () => {
   await timeSlotServiceInstance.checkAndUpdateTimeSlots() //cập nhật hếthạn cho những slot đã qua giờ hiện tại
   const bookingServiceInstance = new bookingService()
   await bookingServiceInstance.checkAndUpdateBooking() // câp nhật hết hạn cho những booking chưa checkin  sau 30 phút
+})
+cron.schedule('0 0 * * *', async () => {
+  console.log('Daily cron job for completedTournament started at', new Date().toISOString())
+  const tournamentServiceInstance = new tournamentService()
+  await tournamentServiceInstance.completedTournament()
 })
 
 app.use(errorController)

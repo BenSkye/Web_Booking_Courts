@@ -183,8 +183,23 @@ export default function HeaderLayout() {
   return (
     <>
       <>
-        <img width={60} height={60} src={logo} className="demo-logo" style={{ margin: "4px 4px" }} />
-        <Menu mode="horizontal" selectedKeys={[selectedKey]} style={{ flex: 1, minWidth: 0, fontSize: "24px", background: "#003b95" }}>
+      <img
+          width={60}
+          height={60}
+          src={logo}
+          className="demo-logo"
+          style={{ margin: "4px 4px" }}
+        />
+        <Menu
+          mode="horizontal"
+          selectedKeys={[selectedKey]}
+          style={{
+            flex: 1,
+            minWidth: 0,
+            fontSize: "24px",
+            background: "rgb(30 136 229)",
+          }}
+        >
           {menuItems?.map((item) => (
             <Menu.Item key={item.key} style={{ color: "white" }}>
               <Link to={item.path}>{item.label}</Link>
@@ -207,8 +222,16 @@ export default function HeaderLayout() {
         </Dropdown>
       ) : (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
+
           <Link to="/login" style={{ paddingRight: "20px" }}>
-            <Button style={{ display: "flex", alignItems: "center", justifyContent: "start" }}>
+          <Button
+
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "start",
+              }}
+            >
               <CgProfile size="20px" />
               <>Đăng nhập</>
             </Button>

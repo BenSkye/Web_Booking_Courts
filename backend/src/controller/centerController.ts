@@ -1,12 +1,13 @@
+import { stat } from 'fs'
 import centerService from '~/services/centerService'
 import AppError from '~/utils/appError'
 import catchAsync from '~/utils/catchAsync'
 
 class centerController {
   static createCenter = catchAsync(async (req: any, res: any, next: any) => {
-    req.body = { ...req.body, user: req.user._id };
-    const centerServiceInstance = new centerService();
-    const { newCenter, newPrices, newCourts } = await centerServiceInstance.addCenter(req.body);
+    req.body = { ...req.body, user: req.user._id }
+    const centerServiceInstance = new centerService()
+    const { newCenter, newPrices, newCourts } = await centerServiceInstance.addCenter(req.body)
     res.status(201).json({
       status: 'success',
       data: {
@@ -82,12 +83,38 @@ class centerController {
   static selectPackage = catchAsync(async (req: any, res: any, next: any) => {
     const centerServiceInstance = new centerService()
     const center = await centerServiceInstance.selectPackage(req.params.centerId, req.params.packageId, req.user._id)
+    // const payUrl = req.params
+    // res.redirect(payUrl)
     res.status(200).json({
       status: 'success',
       data: {
         center
       }
     })
+  })
+
+  static momoPayPackageController = catchAsync(async (req: any, res: any, next: any) => {
+    const centerServiceInstance = new centerService()
+    const result = await centerServiceInstance.momoPayPackage(req.params.centerId, req.params.packageId, req.user._id)
+
+    return res.status(200).json({ result })
+  })
+
+  static handlePackagePaymentCallback = catchAsync(async (req: any, res: any, next: any) => {
+    const centerServiceInstance = new centerService()
+    const result = await centerServiceInstance.callbackPayForPackage(req.body)
+
+    if (result.status === 'success') {
+      res.status(200).json({
+        status: 'success',
+        data: result.center
+      })
+    } else {
+      res.status(400).json({
+        status: 'fail',
+        message: result.message || 'Payment failed'
+      })
+    }
   })
 
   static changeCenterStatusAccept = catchAsync(async (req: any, res: any, next: any) => {

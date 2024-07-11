@@ -12,6 +12,7 @@ import {
   Card,
   List,
   TimePicker,
+  Select
 } from "antd";
 import moment from "moment";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
@@ -206,6 +207,12 @@ const CourtManageUpdate = () => {
     return !["NP", "PP", "MP"].includes(scheduleType);
   };
 
+  const hours = [];
+  for (let i = 5; i < 24; i++) {
+    const hour = i < 10 ? `0${i}` : `${i}`;
+    hours.push(`${hour}:00`);
+    hours.push(`${hour}:30`);
+  }
   return (
     <Form
       form={form}
@@ -260,7 +267,6 @@ const CourtManageUpdate = () => {
           onChange={(time) => setCloseTime(time)}
         />
       </Form.Item>
-
       <Form.Item name="images" label="Hình ảnh sân">
         <Upload
           fileList={fileList}
@@ -270,7 +276,6 @@ const CourtManageUpdate = () => {
           <Button>Upload</Button>
         </Upload>
       </Form.Item>
-      
       <Form.Item name="imagesLicense" label="Hình ảnh giấy phép kinh doanh">
         <Upload
           fileList={imagesLicense}
@@ -313,16 +318,30 @@ const CourtManageUpdate = () => {
                           <Form.Item
                             name={[index, "startTime"]}
                             initialValue={item.startTime}
+                            label="Giờ bắt đầu"
                           >
-                            <Input addonBefore="Giờ bắt đầu:" />
+                            <Select addonBefore="Giờ bắt đầu:">
+                              {hours.map((hour) => (
+                                <Option key={hour} value={hour}>
+                                  {hour}
+                                </Option>
+                              ))}
+                            </Select>
                           </Form.Item>
                         </Col>
                         <Col span={6}>
                           <Form.Item
                             name={[index, "endTime"]}
                             initialValue={item.endTime}
+                            label="Giờ kết thúc"
                           >
-                            <Input addonBefore="Giờ kết thúc:" />
+                            <Select addonBefore="Giờ kết thúc:">
+                              {hours.map((hour) => (
+                                <Option key={hour} value={hour}>
+                                  {hour}
+                                </Option>
+                              ))}
+                            </Select>
                           </Form.Item>
                         </Col>
                       </>
