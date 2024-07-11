@@ -21,6 +21,8 @@ centerRoute
   .route('/my-active-centers')
   .get(authController.protect, authController.restricTO('manager'), centerController.getPersonalActiveCenters)
 
+  
+
 centerRoute
   .route('/:id')
   .get(centerController.getCenterById)
@@ -29,10 +31,13 @@ centerRoute
   .route('/my-centers/:centerId')
   .get(authController.protect, authController.restricTO('manager'), centerController.getPersonalCenterDetail)
 
+  //gọi tới api tạo momo
 centerRoute
   .route('/my-centers/:centerId/select-package/:packageId')
-  .patch(authController.protect, authController.restricTO('manager'), centerController.selectPackage)
-  
+  .patch(authController.protect, authController.restricTO('manager'), centerController.momoPayPackageController)
+ 
+  centerRoute.route('/callback-package-pay').post(centerController.handlePackagePaymentCallback)
+
 centerRoute
   .route('/centers/:centerId/change-status-accepted')
   .get(authController.protect, authController.restricTO('admin'), centerController.changeCenterStatusAccept)
