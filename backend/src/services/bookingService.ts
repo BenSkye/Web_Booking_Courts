@@ -10,6 +10,7 @@ import courtRepository from '~/repository/courtRepository'
 import userRepository from '~/repository/userRepository'
 import centerRepository from '~/repository/centerRepository'
 import timeSlotService from './timeslotService'
+import { stat } from 'fs'
 interface IbookingService {
   createBookingbyDay(listBooking: [any], userId: string): Promise<any>
   checkAllSlotsAvailability(listBooking: [any]): Promise<boolean>
@@ -19,6 +20,7 @@ interface IbookingService {
   UpdateBookingbyDayDecreasePrice(data: any, userId: string): Promise<any>
   getBookingByInvoiceId(invoiceId: string): Promise<any>
   completedBooking(bookingId: string, userId: string): Promise<any>
+  getBookingByDay(dateFrom: string, dateTo: string): Promise<any>
 }
 class bookingService implements IbookingService {
   async createBookingbyDay(listBooking: any, userId: string) {
@@ -679,6 +681,45 @@ class bookingService implements IbookingService {
       })
     )
     return bookingRepository.updateBooking({ _id: booking._id }, { status: booking.status })
+  }
+
+  async getBookingByDay(dateFrom: string, dateTo: string) {
+    const listBooking = []
+    console.log('dateFrom', dateFrom)
+    const startDate = new Date(`${dateFrom}`)
+    const endDate = new Date(`${dateTo}`)
+
+    console.log('startDate', startDate)
+    if (startDate.getTime() === endDate.getTime()) {
+      // Nếu dateFrom và dateTo giống nhau, chỉ gọi getListBooking một lần
+      const formattedDate = startDate.toISOString().split('T')[0]
+      console.log('formattedDate', formattedDate)
+      const bookings = await bookingRepository.getListBooking({ date: formattedDate, status: 'confirmed' })
+      listBooking.push(...bookings)
+    } else {
+      const daysBetween = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+      const promises = []
+
+      for (let i = 0; i <= daysBetween; i++) {
+        const currentDate = new Date(startDate)
+        currentDate.setDate(startDate.getDate() + i)
+
+        const formattedDate = currentDate.toISOString().split('T')[0]
+
+        console.log('formattedDate', formattedDate)
+
+        // Tạo promise cho mỗi ngày và đẩy vào mảng promises
+        promises.push(bookingRepository.getListBooking({ date: formattedDate, status: 'confirmed' }))
+      }
+
+      // Chờ tất cả các promise hoàn thành
+      const bookingsArray = await Promise.all(promises)
+
+      // Gộp tất cả các kết quả vào listBooking
+      bookingsArray.forEach((bookings) => listBooking.push(...bookings))
+    }
+
+    return listBooking
   }
 }
 export default bookingService

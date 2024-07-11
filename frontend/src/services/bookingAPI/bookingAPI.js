@@ -106,3 +106,16 @@ export const cancelBookingAPI = async (bookingId) => {
     return response;
   }
 };
+
+export const getBookingByDayAPI = async (dateFrom, dateTo) => {
+  const response = await fetchData(
+    `${apiBaseUrl}/booking/get-booking-by-day?dateFrom=${dateFrom}&dateTo=${dateTo}`
+  );
+  console.log("Response:", response);
+  if (response.status === "fail") {
+    return response.data;
+  }
+  if (response.status === "success") {
+    return response.data;
+  }
+};

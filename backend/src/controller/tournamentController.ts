@@ -54,5 +54,26 @@ class tournamentController {
       }
     })
   })
+  static approveTournament = catchAsync(async (req: any, res: any, next: any) => {
+    const tournamentServiceInstance = new tournamentService()
+    const pricePerDay = req.body.pricePerDay
+    const tournament = await tournamentServiceInstance.approveTournament(req.params.tournamentId, pricePerDay)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tournament
+      }
+    })
+  })
+  static denyTournament = catchAsync(async (req: any, res: any, next: any) => {
+    const tournamentServiceInstance = new tournamentService()
+    const tournament = await tournamentServiceInstance.denyTournament(req.params.tournamentId)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tournament
+      }
+    })
+  })
 }
 export default tournamentController
