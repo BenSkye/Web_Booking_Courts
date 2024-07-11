@@ -96,12 +96,12 @@ class centerService implements ICenterService {
     const prices = await priceRepositoryInstance.getPrices({ centerId: center._id })
     return { center, prices }
   }
-  
+
   async momoPayPackage(centerId: string, packageId: string, userId: string) {
     if (!mongoose.Types.ObjectId.isValid(centerId) || !mongoose.Types.ObjectId.isValid(packageId) || !mongoose.Types.ObjectId.isValid(userId)) {
       throw new AppError('Invalid ID format', 400);
     }
-  
+
     const centerRepositoryInstance = new centerRepository();
     const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId });
     if (!center) {
@@ -110,20 +110,20 @@ class centerService implements ICenterService {
     if (center.status.includes('pending')) {
       throw new AppError('Cannot set Package now', 409);
     }
-  
+
     const centerPackageRepositoryInstance = new centerPackageRepository();
     const centerPackage = await centerPackageRepositoryInstance.getCenterPackage({ _id: packageId });
     if (!centerPackage) {
       throw new AppError('Cannot find centerPackage', 404);
     }
-  
+
     const totalprice = centerPackage.price;
     const orderId = 'BD' + Math.floor(Math.random() * 1000000).toString();
     const redirect = '/courtManage';
     const orderInfo = 'Thanh toán gói sân ' + center.centerName;
     const callbackUrl = '/api/v1/center/callback-package-pay';
     const extraData = JSON.stringify({ centerId, packageId, userId });
-  
+
     try {
       console.log('Creating payment with MoMo');
       const paymentResult = await momoService.createPayment(
@@ -136,7 +136,7 @@ class centerService implements ICenterService {
         redirect
       );
       console.log('Payment result:', paymentResult);
-  
+
       if (paymentResult && paymentResult.payUrl) {
         return { payUrl: paymentResult.payUrl };
       } else {
@@ -147,9 +147,9 @@ class centerService implements ICenterService {
       throw new AppError('Failed to create payment', 500);
     }
   }
-  
 
-  
+
+
   async selectPackage(centerId: string, packageId: string, userId: string) {
     const centerRepositoryInstance = new centerRepository();
     const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId });
@@ -159,24 +159,24 @@ class centerService implements ICenterService {
     if (center.status.includes('pending')) {
       throw new AppError('Cannot set Package now', 409);
     }
-  
+
     const centerPackageRepositoryInstance = new centerPackageRepository();
     const centerPackage = await centerPackageRepositoryInstance.getCenterPackage({ _id: packageId });
     if (!centerPackage) {
       throw new AppError('Cannot find centerPackage', 404);
     }
-  //momo
+    //momo
 
 
     const centerServiceInstance = new centerService();
-  
+
     let latestSubscription;
     if (center.subscriptions.length > 0) {
       latestSubscription = center.subscriptions.reduce((latest, subscription) => {
         return latest.expiryDate > subscription.expiryDate ? latest : subscription;
       });
     }
-  
+
     let activationDate = new Date();
     activationDate.setUTCHours(0, 0, 0, 0);
     if (latestSubscription && latestSubscription.expiryDate > activationDate) {
@@ -184,32 +184,32 @@ class centerService implements ICenterService {
       newDate.setDate(newDate.getDate() + 1);
       activationDate = newDate;
     }
-  
+
     const expiryDate = new Date(activationDate);
     expiryDate.setMonth(activationDate.getMonth() + centerPackage.durationMonths);
-  
+
     const subscription = {
       packageId: packageId,
       activationDate: activationDate,
       expiryDate: expiryDate,
     };
     center.subscriptions.push(subscription);
-  
+
     if (center.status.includes('accepted') || center.status.includes('expired')) {
       center.status = 'active';
     }
-  
+
     const modifiedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center);
-  
+
     const courtRepositoryInstance = new courtRepository();
     const listCourt = await courtRepositoryInstance.getListCourt({ centerId });
-  
+
     const slotsArray: { start: string; end: string }[] = [];
     const slot = {
       start: center.openTime,
       end: center.openTime,
     };
-  
+
     while (new Date(`1970-01-01T${slot.end}:00`) < new Date(`1970-01-01T${center.closeTime}:00`)) {
       const [hour, minute] = slot.start.split(':');
       if (minute === '00') {
@@ -220,7 +220,7 @@ class centerService implements ICenterService {
       slotsArray.push({ ...slot });
       slot.start = slot.end;
     }
-  
+
     const ListTimeslot: { courtId: string; date: Date; slot: { start: string; end: string }[] }[] = [];
     listCourt.forEach((court: any) => {
       const startDay = new Date(activationDate.getTime());
@@ -234,40 +234,40 @@ class centerService implements ICenterService {
         startDay.setDate(startDay.getDate() + 1);
       }
     });
-  
+
     const timeSlotRepositoryInstance = new timeSlotRepository();
     await timeSlotRepositoryInstance.addManyTimeSlots(ListTimeslot);
-  
+
     return modifiedCenter;
   }
-  
+
 
 
   async callbackPayForPackage(reqBody: any) {
     console.log('vao dc callback pay for package', reqBody);
-  
+
     if (reqBody.resultCode !== 0) {
       console.log('Payment failed');
       return { status: 'fail', message: 'Payment failed' };
     }
-  
+
     const extraData = JSON.parse(reqBody.extraData);
     const { centerId, packageId, userId } = extraData;
-  
+
     try {
       const centerServiceInstance = new centerService();
       const center = await centerServiceInstance.selectPackage(centerId, packageId, userId);
-  
+
       return { status: 'success', center };
     } catch (error) {
       console.error('Error selecting package:', error);
       return { status: 'fail', message: 'Failed to select package' };
     }
   }
-  
 
 
-  
+
+
 
   async changeCenterStatusAccept(centerId: string) {
     const centerRepositoryInstance = new centerRepository()

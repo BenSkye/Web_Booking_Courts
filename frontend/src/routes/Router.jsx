@@ -260,11 +260,11 @@ function Routing() {
         <Route path='*' element={<Navigate to='/not-found' />} />
       </Route>
 
-      <Route path='/login' element={<Login />} />
-      <Route path='/signup' element={<SignUp />} />
-      <Route path='/signupPartner' element={<SignupPartner />} />
-      <Route path='/no-access' element={<NoAccess />} />
-      <Route path='/not-found' element={<NotFound404 />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/signupPartner" element={<SignupPartner />} />
+      <Route path="/no-access" element={<NoAccess />} />
+      <Route path="/not-found" element={<NotFound404 />} />
     </Routes>
   );
 }

@@ -12,7 +12,7 @@ const UpdatePassword = () => {
 
   // Giả sử dữ liệu tài khoản cứng
   const fixedAccountData = {
-    Password: "password_from_fixed_data",
+    Password: "",
   };
 
   useEffect(() => {

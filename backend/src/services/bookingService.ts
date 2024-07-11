@@ -10,6 +10,8 @@ import courtRepository from '~/repository/courtRepository'
 import userRepository from '~/repository/userRepository'
 import centerRepository from '~/repository/centerRepository'
 import timeSlotService from './timeslotService'
+import PlayHour from '../models/playHoursModel'
+
 import bcryptjs from 'bcryptjs'
 
 import { stat } from 'fs'
@@ -27,12 +29,16 @@ interface IbookingService {
   bookingDirectly(data: any): Promise<any>
 }
 class bookingService implements IbookingService {
+
+
+
   async createBookingbyDay(listBooking: any, userId: string) {
     const allSlotsAvailable = await this.checkAllSlotsAvailability(listBooking)
     if (!allSlotsAvailable) {
       throw new AppError('Xin lỗi slot đã được đặt hoặc đang được đặt, kiểm tra lại booking', 400)
     }
     //chuyển hướng tới payment nhận response từ payment
+    const userHour = await PlayHour.find
     const orderId = 'RR' + new Date().getTime()
     const InvoiceServiceInstance = new InvoiceService()
     let totalprice = 0
@@ -59,7 +65,7 @@ class bookingService implements IbookingService {
     const bookingDetail = listBooking.map((booking: { date: any; start: any; end: any }) => {
       return `${booking.date} (${booking.start} - ${booking.end})`
     })
-    
+
     const centerId = listBooking[0].centerId
     const centerServiceInstance = new centerService()
     const center = await centerServiceInstance.getCenterById(centerId)
@@ -77,6 +83,61 @@ class bookingService implements IbookingService {
     )
     return paymentResult
   }
+
+  async createBookingByDayWithHour(listBooking: any, userId: string) {
+
+
+    const allSlotsAvailable = await this.checkAllSlotsAvailability(listBooking)
+    if (!allSlotsAvailable) {
+      throw new AppError('Xin lỗi slot đã được đặt hoặc đang được đặt, kiểm tra lại booking', 400)
+    }
+    //chuyển hướng tới payment nhận response từ payment
+
+    const orderId = 'RR' + new Date().getTime()
+    const InvoiceServiceInstance = new InvoiceService()
+    let totalprice = 0
+    const newInvoice = await InvoiceServiceInstance.addInvoiceBookingbyDay(totalprice, userId, orderId)
+    const timeSlotServiceInstance = new timeSlotService()
+    const listnewbooking = await Promise.all(
+      listBooking.map(async (booking: any) => {
+        booking.invoiceId = newInvoice._id
+        const PricePerBooking = await timeSlotServiceInstance.getPriceFormStartoEnd(
+          booking.centerId,
+          booking.start,
+          booking.end
+        )
+        if (PricePerBooking) {
+          booking.price = PricePerBooking
+          totalprice += PricePerBooking
+        }
+        const newbooking = await this.createBooking(booking, userId)
+        return newbooking
+      })
+    )
+    const InvoiceRepositoryInstance = new InvoiceRepository()
+    const updateInvoice = await InvoiceRepositoryInstance.updateInvoice({ _id: newInvoice._id }, { price: totalprice })
+    const bookingDetail = listBooking.map((booking: { date: any; start: any; end: any }) => {
+      return `${booking.date} (${booking.start} - ${booking.end})`
+    })
+    const centerId = listBooking[0].centerId
+    const centerServiceInstance = new centerService()
+    const center = await centerServiceInstance.getCenterById(centerId)
+    const orderInfo = 'Thanh toán đặt sân' + center.centerName + bookingDetail.join(',')
+    const callbackUrl = '/api/v1/booking/callback-pay-booking-by-day'
+    const redirect = '/user/bill'
+    const paymentResult = await momoService.createPayment(
+      orderInfo,
+      totalprice,
+      orderId,
+      centerId,
+      callbackUrl,
+      '',
+      redirect
+    )
+    return paymentResult
+  }
+
+
 
   async createBooking(data: any, userId: string) {
     const slot = {
@@ -138,6 +199,68 @@ class bookingService implements IbookingService {
     }
     return true
   }
+
+  async createBookingWithAvailabilityCheck(data: any, userId: string) {
+    const slot = {
+      courtId: data.courtId,
+      date: data.date,
+      start: data.start,
+      end: data.start
+    }
+
+    const slotAvailable = []
+    const timeSlotRepositoryInstance = new timeSlotRepository()
+
+    // Check all slots availability
+    const listBooking = [data]
+    for (const booking of listBooking) {
+      const checkSlot = {
+        courtId: booking.courtId,
+        date: booking.date,
+        start: booking.start,
+        end: booking.start
+      }
+      while (new Date(`1970-01-01T${checkSlot.end}:00`) < new Date(`1970-01-01T${booking.end}:00`)) {
+        const [hour, minute] = checkSlot.start.split(':')
+        if (minute === '00') {
+          checkSlot.end = `${hour}:30`
+        }
+        if (minute === '30') {
+          checkSlot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
+        }
+        const available = await timeSlotRepositoryInstance.checkTimeSlotAvailable(checkSlot)
+        if (!available) {
+          throw new AppError('Slot not available', 400)
+        }
+        checkSlot.start = checkSlot.end
+      }
+    }
+
+    // Proceed with creating the booking
+    while (new Date(`1970-01-01T${slot.end}:00`) < new Date(`1970-01-01T${data.end}:00`)) {
+      const [hour, minute] = slot.start.split(':')
+      if (minute === '00') {
+        slot.end = `${hour}:30`
+      } else {
+        slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
+      }
+      slotAvailable.push({ ...slot })
+      slot.start = slot.end
+    }
+
+    const booking = { ...data, userId: userId, status: 'pending' }
+    const newBooking = await bookingRepository.createBooking(booking)
+
+    // Update slot status to "booking"
+    await Promise.all(
+      slotAvailable.map(async (slot) => {
+        await timeSlotRepositoryInstance.updateSlotStatus(slot, 'booking')
+      })
+    )
+
+    return newBooking
+  }
+
 
   async changeBookingStatusAfterPaySuccess(bookingId: string) {
     const booking = await bookingRepository.getBookingbyId(bookingId)

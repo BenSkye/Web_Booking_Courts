@@ -26,7 +26,7 @@ const LayoutMain = () => {
           width: "100%",
           display: "flex",
           alignItems: "center",
-          background: "#003b95",
+          background: "rgb(30 136 229)",
         }}
       >
         <HeaderLayout />
