@@ -15,7 +15,6 @@ import ServicesAndAmenities from "./ServicesAndAmenities";
 import MyLocationMap2 from "../../../../utils/map/MapForAddCourt";
 import Location from "./Location";
 
-
 const CenterDetailsForm = ({
   form,
   handleUploadCourt,
@@ -63,7 +62,6 @@ const CenterDetailsForm = ({
   };
 
   return (
-
     <Form form={form} layout="vertical">
       <div className="mbsc-grid mbsc-grid-fixed">
         <div className="mbsc-form-group">
@@ -75,7 +73,9 @@ const CenterDetailsForm = ({
                   <Form.Item
                     label="Tên trung tâm"
                     name="centerName"
-                    rules={[{ required: true, message: "Hãy nhập tên trung tâm" }]}
+                    rules={[
+                      { required: true, message: "Hãy nhập tên trung tâm" },
+                    ]}
                   >
                     <Input placeholder="Tên trung tâm" />
                   </Form.Item>
@@ -106,10 +106,10 @@ const CenterDetailsForm = ({
                       format={"HH:mm"}
                       onChange={(time) => setOpenTime(time)}
                       disabledMinutes={() => [
-                        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-                        20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37,
-                        38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
-                        55, 56, 57, 58, 59,
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                        17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31,
+                        32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+                        46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
                       ]}
                       disabledHours={() => [0, 1, 2, 3, 4]}
                     />
@@ -119,16 +119,18 @@ const CenterDetailsForm = ({
                   <Form.Item
                     label="Giờ đóng cửa"
                     name="closeTime"
-                    rules={[{ required: true, message: "Hãy chọn giờ đóng cửa" }]}
+                    rules={[
+                      { required: true, message: "Hãy chọn giờ đóng cửa" },
+                    ]}
                   >
                     <TimePicker
                       format={"HH:mm"}
-                      disabledHours={disabledHours}
+                      disabledHours={disabledHoursForClose}
                       disabledMinutes={() => [
-                        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-                        20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37,
-                        38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
-                        55, 56, 57, 58, 59,
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                        17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31,
+                        32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+                        46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
                       ]}
                     />
                   </Form.Item>
@@ -144,11 +146,16 @@ const CenterDetailsForm = ({
                     rules={[
                       {
                         required: true,
-                        message: "Hãy nhập số lượng sân, số lượng sân phải lớn hơn 0",
+                        message:
+                          "Hãy nhập số lượng sân, số lượng sân phải lớn hơn 0",
                       },
                     ]}
                   >
-                    <InputNumber min={1} placeholder="Số lượng sân" style={{ width: "100%" }} />
+                    <InputNumber
+                      min={1}
+                      placeholder="Số lượng sân"
+                      style={{ width: "100%" }}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -242,14 +249,18 @@ const CenterDetailsForm = ({
               <Form.Item
                 label="Dịch vụ và tiện ích"
                 name="services"
-                rules={[{ required: true, message: "Hãy chọn các dịch vụ của bạn" }]}
+                rules={[
+                  { required: true, message: "Hãy chọn các dịch vụ của bạn" },
+                ]}
               >
                 <ServicesAndAmenities />
               </Form.Item>
               <Form.Item
                 label="Quy định sử dụng sân"
                 name="rule"
-                rules={[{ required: true, message: "Hãy nhập quy định sử dụng sân" }]}
+                rules={[
+                  { required: true, message: "Hãy nhập quy định sử dụng sân" },
+                ]}
               >
                 <Input.TextArea placeholder="Ví dụ: Phải có giày thể thao thì mới được chơi" />
               </Form.Item>
@@ -259,7 +270,6 @@ const CenterDetailsForm = ({
       </div>
     </Form>
   );
-
 };
 
 export default CenterDetailsForm;
