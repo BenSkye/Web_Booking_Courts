@@ -28,6 +28,11 @@ bookingRoute
 bookingRoute
   .route('/cancelled-booking/:bookingId')
   .get(authController.protect, authController.restricTO('customer'), bookingController.cancelledBooking)
-
+bookingRoute
+  .route('/get-booking-by-day')
+  .get(authController.protect, authController.restricTO('manager'), bookingController.getBookingByDay)
+bookingRoute
+  .route('/booking-directly')
+  .post(authController.protect, authController.restricTO('manager'), bookingController.bookingDirectly)
 // bookingRoute.route('/check-booking-available').post(authController.protect, bookingController.checkBookingAvailable)
 export default bookingRoute

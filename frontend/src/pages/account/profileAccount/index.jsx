@@ -1,10 +1,12 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect, useContext } from "react";
+
 import { Link, useLocation } from "react-router-dom";
 import AccountSettingsForm from "../accountInformation/index";
 import UpdatePassword from "../updatePassword/index";
 import OrderDetails from "../bill/index";
 import BookingCourt from "../bookingCourt/index";
+
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -15,9 +17,8 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
-import AuthContext from "../../../services/authAPI/authProvideAPI";
 // import AuthContext from "../../../services/authAPI/authProvideAPI";
-
+import AuthContext from "../../../services/authAPI/authProvideAPI";
 const { Sider, Content } = Layout;
 
 const ProfileAccount = () => {
@@ -32,7 +33,9 @@ const ProfileAccount = () => {
 
   useEffect(() => {
     // Simulate determining user role (replace with your actual logic)
-    const userRole = "admin, manager"; // Change this to 'customer', 'admin', 'manager' based on your logic
+    const role = "admin"; // Change this to 'customer', 'admin', 'manager' for testing
+
+    console.log("User Role:", role); // Log user role
 
     // Set isCustomer based on userRole
     if (user.role === "customer") {
@@ -41,7 +44,7 @@ const ProfileAccount = () => {
 
     // Determine the selected key based on the current pathname
     setSelectedKey(getSelectedKey(location.pathname));
-  }, [location.pathname]);
+  }, [isCustomer, location.pathname]);
 
   const getSelectedKey = (pathname) => {
     switch (pathname) {
@@ -102,6 +105,16 @@ const ProfileAccount = () => {
             </Menu.Item>
           </>
 
+          {/* {isCustomer && (
+            <> */}
+          <Menu.Item key="3" icon={<BookOutlined />}>
+            <Link to="/user/booking-court">Đặt sân</Link>
+          </Menu.Item>
+          <Menu.Item key="4" icon={<PlayCircleOutlined />}>
+            <Link to="/user/game-time">Số giờ chơi</Link>
+          </Menu.Item>
+          {/* </>
+          )} */}
           <Menu.Item key="5" icon={<FileTextOutlined />}>
             <Link to="/user/bill">Hóa đơn</Link>
           </Menu.Item>

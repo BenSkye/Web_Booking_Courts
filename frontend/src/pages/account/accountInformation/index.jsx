@@ -22,7 +22,7 @@ const UpdatePassword = () => {
   const [loading, setLoading] = useState(true);
 
   const fixedAccountData = {
-    Password: "password_from_fixed_data",
+    Password: "",
   };
 
   useEffect(() => {

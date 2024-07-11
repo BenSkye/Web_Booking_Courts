@@ -15,6 +15,7 @@ class momoService {
     const secretKey = process.env.MOMO_SECRET_KEY
     const partnerCode = 'MOMO'
     const redirectUrl = process.env.MOMO_REDIRECT_URL + redirect
+    console.log('redirectUrl', redirectUrl)
     const ipnUrl = process.env.MOMO_IPN_URL_HOSTING + callbackUrl
     console.log('ipnUrl', ipnUrl)
     const requestType = 'captureWallet'
@@ -61,6 +62,7 @@ class momoService {
     try {
       // Gửi yêu cầu HTTP bằng Axios
       const result = await axios(options) // Nhật ký thêm để gỡ lỗi chi tiết
+      console.log('MoMo API Result:', result.data)
       return result.data
     } catch (error: any) {
       console.error('MoMo API Error:', error) // Nhật ký thêm để gỡ lỗi chi tiết

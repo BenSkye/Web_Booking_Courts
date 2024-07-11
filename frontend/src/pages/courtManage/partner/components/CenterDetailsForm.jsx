@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -28,16 +28,33 @@ const CenterDetailsForm = ({
   uploadProgressLicense,
 }) => {
   const [openTime, setOpenTime] = useState(null);
+  const [closeTime, setCloseTime] = useState(null);
   const [address, setAddress] = useState(form.getFieldValue("location") || "");
-  const disabledHours = () => {
-    if (!openTime) return [];
-    const hours = [];
-    for (let i = 0; i <= 24; i++) {
+
+  useEffect(() => {
+    form.setFieldsValue({ openTime, closeTime });
+  }, [openTime, closeTime, form]);
+
+  const disabledHoursForClose = () => {
+    const disabledHours = [0, 1, 2, 3, 4];
+    if (!openTime) return disabledHours;
+    for (let i = 0; i < 24; i++) {
       if (i <= openTime.hour() || i < openTime.hour() + 8) {
-        hours.push(i);
+        disabledHours.push(i);
       }
     }
-    return hours;
+    return Array.from(new Set(disabledHours));
+  };
+
+  const disabledHoursForOpen = () => {
+    const disabledHours = [0, 1, 2, 3, 4];
+    if (!closeTime) return disabledHours;
+    for (let i = 0; i < 24; i++) {
+      if (i >= closeTime.hour() || i > closeTime.hour() - 8) {
+        disabledHours.push(i);
+      }
+    }
+    return Array.from(new Set(disabledHours));
   };
 
   const handleLocationChange = (value) => {

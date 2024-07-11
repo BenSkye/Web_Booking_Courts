@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Typography, Spin } from "antd";
-import { useParams } from "react-router-dom";
+import { Card, Button, Typography, Spin, Modal } from "antd";
+import { useParams, Navigate } from "react-router-dom";
 import "antd/dist/reset.css";
-import getAllCenterPackage from "../../../services/packageAPI/packageAPI";
+import {
+  getAllCenterPackage,
+  selectCenterPackage,
+} from "../../../services/packageAPI/packageAPI";
 import { getFormDataAPI } from "../../../services/partnerAPI/index";
 import Cookies from "js-cookie";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -16,6 +19,10 @@ const RegisterPackageCourt = () => {
   const [error, setError] = useState(null);
   const [courtExists, setCourtExists] = useState(true);
   const [courtStatusValid, setCourtStatusValid] = useState(true);
+  const [purchasing, setPurchasing] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourtAndPackages = async () => {
@@ -27,7 +34,11 @@ const RegisterPackageCourt = () => {
           setCourtExists(false);
           return;
         }
-        if (court.status !== "accepted" && court.status !== "active" && court.status !== "expired") {
+        if (
+          court.status !== "accepted" &&
+          court.status !== "active" &&
+          court.status !== "expired"
+        ) {
           setCourtStatusValid(false);
           return;
         }
@@ -51,6 +62,32 @@ const RegisterPackageCourt = () => {
 
     fetchCourtAndPackages();
   }, [id]);
+
+  const handlePurchaseClick = (pkg) => {
+    setSelectedPackage(pkg);
+    setIsModalVisible(true);
+  };
+
+  const handlePurchaseConfirm = async () => {
+    const token = Cookies.get("jwtToken");
+    setPurchasing(true);
+    try {
+      const paymentResult = await selectCenterPackage(
+        id,
+        selectedPackage._id,
+        token
+      );
+
+      alert("Tạo hoá đơn thành công!");
+      window.location.href = paymentResult.result.payUrl;
+    } catch (error) {
+      console.error("Error purchasing package:", error);
+      alert("Có lỗi xảy ra, vui lòng thử lại.");
+    } finally {
+      setPurchasing(false);
+      setIsModalVisible(false);
+    }
+  };
 
   if (!courtExists) {
     return <h1>Sân không tồn tại</h1>;
@@ -92,12 +129,36 @@ const RegisterPackageCourt = () => {
               {pkg.price.toLocaleString()} <span>đ</span>
             </Text>
             <p>Thuê trong {pkg.durationMonths} tháng</p>
-            <Button type="primary" block>
+            <Button
+              type="primary"
+              block
+              onClick={() => handlePurchaseClick(pkg)}
+              loading={purchasing}
+            >
               Mua Ngay
             </Button>
           </Card>
         ))}
       </div>
+      <Modal
+        title="Xác nhận mua gói"
+        visible={isModalVisible}
+        onOk={handlePurchaseConfirm}
+        onCancel={() => setIsModalVisible(false)}
+        confirmLoading={purchasing}
+        okButtonProps={{
+          style: {
+            backgroundColor: "green",
+            borderColor: "green",
+            color: "white",
+          },
+        }}
+        cancelButtonProps={{
+          style: { backgroundColor: "red", borderColor: "red", color: "white" },
+        }}
+      >
+        <p>Bạn có chắc chắn muốn mua gói {selectedPackage?.name} không?</p>
+      </Modal>
     </div>
   );
 };

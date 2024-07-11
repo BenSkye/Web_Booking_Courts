@@ -4,7 +4,11 @@ import courtRepository from '~/repository/courtRepository'
 import priceRepository from '~/repository/priceRepository'
 import timeSlotRepository from '~/repository/timeslotRepository'
 import AppError from '~/utils/appError'
-
+import sendEmailSerVice from './sendEmailService'
+import userRepository from '~/repository/userRepository' // Thêm dòng này để import userRepository
+import momoService from './momoService'
+import centerController from '~/controller/centerController'
+import mongoose from 'mongoose';
 interface ICenterService {
   addCenter(data: any): Promise<any>
   getAllCenters(): Promise<any>
@@ -16,37 +20,36 @@ interface ICenterService {
   getPersonalActiveCenters(userId: string): Promise<any>
   updateCenterInforById(id: string, data: any, userId: string): Promise<any>
   getAllSubscriptions(): Promise<any>
-  changeCenterStatus(centerId: string, status: string): Promise<any>
-
+  changeCenterStatus(centerId: string, status: string, deniedReason?: string): Promise<any>
 }
 
 class centerService implements ICenterService {
   async addCenter(data: any) {
     const center = { ...data.center, managerId: data.user }
     const centerRepositoryInstance = new centerRepository()
-    const newcenter = await centerRepositoryInstance.addCenter(center)
+    const newCenter = await centerRepositoryInstance.addCenter(center)
     const priceArray = data.price
     const priceRepositoryInstance = new priceRepository()
     const promises = priceArray.map(async (price: any) => {
-      price.centerId = newcenter._id
+      price.centerId = newCenter._id
       return priceRepositoryInstance.addPrice(price)
     })
     const newPrices = await Promise.all(promises)
     const priceIds = newPrices.map((price) => price._id)
-    newcenter.price = priceIds
-    await centerRepositoryInstance.updateCenter(newcenter._id, newcenter)
+    newCenter.price = priceIds
+    await centerRepositoryInstance.updateCenter(newCenter._id, newCenter)
     //Tạo court ngay khi tạo Center
     const newCourts = []
-    for (let i = 0; i < newcenter.courtCount; i++) {
+    for (let i = 0; i < newCenter.courtCount; i++) {
       const court = {
         courtNumber: i + 1,
-        centerId: newcenter._id
+        centerId: newCenter._id
       }
       const courtRepositoryInstance = new courtRepository()
       const newCourt = await courtRepositoryInstance.addCourt(court)
       newCourts.push(newCourt)
     }
-    return { newcenter, newPrices, newCourts }
+    return { newCenter, newPrices, newCourts }
   }
 
   async getAllCenters() {
@@ -94,80 +97,177 @@ class centerService implements ICenterService {
     return { center, prices }
   }
 
-  async selectPackage(centerId: string, packageid: string, userId: string) {
-    const centerRepositoryInstance = new centerRepository()
-    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId })
+  async momoPayPackage(centerId: string, packageId: string, userId: string) {
+    if (!mongoose.Types.ObjectId.isValid(centerId) || !mongoose.Types.ObjectId.isValid(packageId) || !mongoose.Types.ObjectId.isValid(userId)) {
+      throw new AppError('Invalid ID format', 400);
+    }
+
+    const centerRepositoryInstance = new centerRepository();
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId });
     if (!center) {
-      throw new AppError('Can not found center', 404)
+      throw new AppError('Cannot find center', 404);
     }
     if (center.status.includes('pending')) {
-      throw new AppError('Can not set Package now', 409)
+      throw new AppError('Cannot set Package now', 409);
     }
-    const centerPackageRepositoryInstance = new centerPackageRepository()
-    const centerPackage = await centerPackageRepositoryInstance.getCenterPackage({ _id: packageid })
+
+    const centerPackageRepositoryInstance = new centerPackageRepository();
+    const centerPackage = await centerPackageRepositoryInstance.getCenterPackage({ _id: packageId });
     if (!centerPackage) {
-      throw new AppError('Can not found centerPackage', 404)
+      throw new AppError('Cannot find centerPackage', 404);
     }
-    let latestSubscription
+
+    const totalprice = centerPackage.price;
+    const orderId = 'BD' + Math.floor(Math.random() * 1000000).toString();
+    const redirect = '/courtManage';
+    const orderInfo = 'Thanh toán gói sân ' + center.centerName;
+    const callbackUrl = '/api/v1/center/callback-package-pay';
+    const extraData = JSON.stringify({ centerId, packageId, userId });
+
+    try {
+      console.log('Creating payment with MoMo');
+      const paymentResult = await momoService.createPayment(
+        orderInfo,
+        totalprice,
+        orderId,
+        centerId,
+        callbackUrl,
+        extraData,
+        redirect
+      );
+      console.log('Payment result:', paymentResult);
+
+      if (paymentResult && paymentResult.payUrl) {
+        return { payUrl: paymentResult.payUrl };
+      } else {
+        throw new AppError('Failed to get payment URL', 500);
+      }
+    } catch (error) {
+      console.error('Error creating payment:', error);
+      throw new AppError('Failed to create payment', 500);
+    }
+  }
+
+
+
+  async selectPackage(centerId: string, packageId: string, userId: string) {
+    const centerRepositoryInstance = new centerRepository();
+    const center = await centerRepositoryInstance.getCenter({ _id: centerId, managerId: userId });
+    if (!center) {
+      throw new AppError('Cannot find center', 404);
+    }
+    if (center.status.includes('pending')) {
+      throw new AppError('Cannot set Package now', 409);
+    }
+
+    const centerPackageRepositoryInstance = new centerPackageRepository();
+    const centerPackage = await centerPackageRepositoryInstance.getCenterPackage({ _id: packageId });
+    if (!centerPackage) {
+      throw new AppError('Cannot find centerPackage', 404);
+    }
+    //momo
+
+
+    const centerServiceInstance = new centerService();
+
+    let latestSubscription;
     if (center.subscriptions.length > 0) {
       latestSubscription = center.subscriptions.reduce((latest, subscription) => {
-        return latest.expiryDate > subscription.expiryDate ? latest : subscription
-      })
+        return latest.expiryDate > subscription.expiryDate ? latest : subscription;
+      });
     }
-    let activationDate = new Date()
-    activationDate.setUTCHours(0, 0, 0, 0)
+
+    let activationDate = new Date();
+    activationDate.setUTCHours(0, 0, 0, 0);
     if (latestSubscription && latestSubscription.expiryDate > activationDate) {
-      const newDate = new Date(latestSubscription.expiryDate.getTime()) //lấy ngày kết thúc gần nhất
-      newDate.setDate(newDate.getDate() + 1) //cộng thêm 1 ngày
-      activationDate = newDate
+      const newDate = new Date(latestSubscription.expiryDate.getTime());
+      newDate.setDate(newDate.getDate() + 1);
+      activationDate = newDate;
     }
-    const expiryDate = new Date(activationDate)
-    expiryDate.setMonth(activationDate.getMonth() + centerPackage.durationMonths)
+
+    const expiryDate = new Date(activationDate);
+    expiryDate.setMonth(activationDate.getMonth() + centerPackage.durationMonths);
+
     const subscription = {
-      packageId: packageid,
+      packageId: packageId,
       activationDate: activationDate,
-      expiryDate: expiryDate
-    }
-    center.subscriptions.push(subscription)
+      expiryDate: expiryDate,
+    };
+    center.subscriptions.push(subscription);
+
     if (center.status.includes('accepted') || center.status.includes('expired')) {
-      center.status = 'active'
+      center.status = 'active';
     }
-    const modifeCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
-    const courtRepositoryInstance = new courtRepository()
-    const listCourt = await courtRepositoryInstance.getListCourt({ centerId })
-    const slotsAray: { start: string; end: string }[] = []
+
+    const modifiedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center);
+
+    const courtRepositoryInstance = new courtRepository();
+    const listCourt = await courtRepositoryInstance.getListCourt({ centerId });
+
+    const slotsArray: { start: string; end: string }[] = [];
     const slot = {
       start: center.openTime,
-      end: center.openTime
-    }
+      end: center.openTime,
+    };
+
     while (new Date(`1970-01-01T${slot.end}:00`) < new Date(`1970-01-01T${center.closeTime}:00`)) {
-      const [hour, minute] = slot.start.split(':')
+      const [hour, minute] = slot.start.split(':');
       if (minute === '00') {
-        slot.end = `${hour}:30`
+        slot.end = `${hour}:30`;
+      } else {
+        slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`;
       }
-      if (minute === '30') {
-        slot.end = `${(parseInt(hour) + 1).toString().padStart(2, '0')}:00`
-      }
-      slotsAray.push({ ...slot })
-      slot.start = slot.end
+      slotsArray.push({ ...slot });
+      slot.start = slot.end;
     }
-    const ListTimeslot: { courtId: string; date: Date; slot: { start: string; end: string }[] }[] = []
-    listCourt.forEach(async (court: any) => {
-      const startDay = new Date(activationDate.getTime())
+
+    const ListTimeslot: { courtId: string; date: Date; slot: { start: string; end: string }[] }[] = [];
+    listCourt.forEach((court: any) => {
+      const startDay = new Date(activationDate.getTime());
       while (startDay <= expiryDate) {
         const newTimeSlot = {
           courtId: court._id,
           date: new Date(startDay.getTime()),
-          slot: slotsAray
-        }
-        ListTimeslot.push(newTimeSlot)
-        startDay.setDate(startDay.getDate() + 1)
+          slot: slotsArray,
+        };
+        ListTimeslot.push(newTimeSlot);
+        startDay.setDate(startDay.getDate() + 1);
       }
-    })
-    const timeSlotRepositoryInstance = new timeSlotRepository()
-    await timeSlotRepositoryInstance.addManyTimeSlots(ListTimeslot)
-    return modifeCenter
+    });
+
+    const timeSlotRepositoryInstance = new timeSlotRepository();
+    await timeSlotRepositoryInstance.addManyTimeSlots(ListTimeslot);
+
+    return modifiedCenter;
   }
+
+
+
+  async callbackPayForPackage(reqBody: any) {
+    console.log('vao dc callback pay for package', reqBody);
+
+    if (reqBody.resultCode !== 0) {
+      console.log('Payment failed');
+      return { status: 'fail', message: 'Payment failed' };
+    }
+
+    const extraData = JSON.parse(reqBody.extraData);
+    const { centerId, packageId, userId } = extraData;
+
+    try {
+      const centerServiceInstance = new centerService();
+      const center = await centerServiceInstance.selectPackage(centerId, packageId, userId);
+
+      return { status: 'success', center };
+    } catch (error) {
+      console.error('Error selecting package:', error);
+      return { status: 'fail', message: 'Failed to select package' };
+    }
+  }
+
+
+
+
 
   async changeCenterStatusAccept(centerId: string) {
     const centerRepositoryInstance = new centerRepository()
@@ -275,16 +375,49 @@ class centerService implements ICenterService {
     }
   }
 
-  async changeCenterStatus(centerId: string, status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected') {
+  async changeCenterStatus(
+    centerId: string,
+    status: 'pending' | 'accepted' | 'active' | 'expired' | 'rejected',
+    deniedReason?: string
+  ) {
     const centerRepositoryInstance = new centerRepository()
+    const userRepositoryInstance = new userRepository()
+
     const center = await centerRepositoryInstance.getCenter({ _id: centerId })
 
     if (!center) {
       throw new AppError('Center not found', 404)
     }
 
-    center.status = status
-    const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, center)
+    console.log('Center found:', center)
+
+    const updateData: any = { status }
+
+    if (status !== 'rejected') {
+      updateData.$unset = { denied: '' } // Thêm đúng cách để xóa trường 'denied'
+    } else if (deniedReason) {
+      updateData.denied = deniedReason
+    }
+
+    console.log('Updating center with new status and denied reason:', updateData)
+
+    const updatedCenter = await centerRepositoryInstance.updateCenter({ _id: centerId }, updateData)
+    console.log('Center updated successfully:', updatedCenter)
+
+    // Get manager's email from User model
+    const manager = await userRepositoryInstance.findUser({ _id: center.managerId })
+    if (!manager) {
+      throw new AppError('Manager not found', 404)
+    }
+
+    const mailOption = {
+      subject: 'Center Status Update',
+      text: `Hello, the status of your center has been updated to ${status}${status === 'rejected' ? ` with the following reason: ${deniedReason}` : ''}.`,
+      html: `<html><p><b>Hello,</b></p><p>The status of your center has been updated to <b>${status}</b>${status === 'rejected' ? ` with the following reason: <b>${deniedReason}</b>` : ''}.</p></html>`
+    }
+
+    await sendEmailSerVice.sendEmail(manager.userEmail, mailOption)
+
     return updatedCenter
   }
 }

@@ -24,6 +24,7 @@ import fixedPackageScheduleRoute from './routes/fixedPackageScheduleRoute'
 import timeSlotService from './services/timeslotService'
 import bookingService from './services/bookingService'
 import tournamenRoute from './routes/tournamentRoute'
+import tournamentService from './services/tournamentService'
 
 dotenv.config()
 
@@ -59,6 +60,11 @@ cron.schedule('0,30 * * * *', async () => {
   await timeSlotServiceInstance.checkAndUpdateTimeSlots() //cập nhật hếthạn cho những slot đã qua giờ hiện tại
   const bookingServiceInstance = new bookingService()
   await bookingServiceInstance.checkAndUpdateBooking() // câp nhật hết hạn cho những booking chưa checkin  sau 30 phút
+})
+cron.schedule('0 0 * * *', async () => {
+  console.log('Daily cron job for completedTournament started at', new Date().toISOString())
+  const tournamentServiceInstance = new tournamentService()
+  await tournamentServiceInstance.completedTournament()
 })
 
 app.use(errorController)
