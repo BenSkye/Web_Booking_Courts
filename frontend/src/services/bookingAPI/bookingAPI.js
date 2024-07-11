@@ -72,15 +72,13 @@ export const getPersonalBookingAPI = async () => {
 
 export const addPlayPackage = async (playPackageData) => {
   try {
-    const response = await postData(
-      `${apiBaseUrl}/playPackage`,
-      playPackageData
-    );
+    const response = await postData(`${apiBaseUrl}/playPackage`, playPackageData);
     return response.data;
   } catch (error) {
     throw error.response.data;
   }
 };
+
 export const completeBookingAPI = async (bookingId) => {
   const response = await fetchData(
     `${apiBaseUrl}/booking/completed-booking/${bookingId}`

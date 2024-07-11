@@ -14,8 +14,9 @@ import bookingRoute from './routes/bookingRoute'
 import timeslotRoute from './routes/timeslotRoute'
 import priceRoute from './routes/priceRoute'
 // import momoRoute from './routes/momoRoute'
+import messageRouter from './routes/messageRoute'
 import courtRoute from './routes/courtRoute'
-
+import chatRouter from './routes/chatRoute'
 import playPackageRoute from './routes/playPackageRoute'
 import invoiceRoute from './routes/invoiceRoutes'
 import userRoute from './routes/userRoute'
@@ -46,6 +47,9 @@ app.use('/api/v1/court', courtRoute)
 app.use('/api/v1/playPackage', playPackageRoute)
 app.use('/api/v1/tournament', tournamenRoute)
 app.use('/api/v1/fixed-package-schedule', fixedPackageScheduleRoute)
+app.use('/api/v1/chats', chatRouter)
+app.use('/api/v1/messages', messageRouter)
+
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })

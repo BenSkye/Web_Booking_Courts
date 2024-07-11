@@ -1,4 +1,4 @@
-import { Button, Modal, Space } from "antd";
+import { Button, Modal } from "antd";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import PersonalTournament from "../components/PersonalTournament";
@@ -19,46 +19,30 @@ export default function ButtonRouter() {
   };
 
   return (
-    <div
-      style={{
-        width: "80%",
-        height: "90%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Link
-        to="/tournament/personal"
+    <div style={{ marginTop: 20, textAlign: "center" }}>
+      <Button
         style={{
-          flex: 1,
           marginBottom: "10px",
+          background:
+            "linear-gradient(90deg, rgba(252,148,69,1) 0%, rgba(131,58,180,1) 100%)",
+          color: "black",
+          width: "100%",
+          maxWidth: "400px",
+          margin: "0 auto",
         }}
       >
+        Xem các Giải đấu mà bạn đã tạo
+      </Button>
+      <Link to="/tournament/create">
         <Button
           style={{
-            height: "100%",
-            width: "100%",
-            background:
-              "linear-gradient(90deg, rgba(252,148,69,1) 0%, rgba(131,58,180,1) 100%)",
-            color: "black",
-          }}
-        >
-          Xem các Giải đấu mà bạn đã tạo
-        </Button>
-      </Link>
-      <Link
-        to="/tournament/create"
-        style={{
-          flex: 1,
-        }}
-      >
-        <Button
-          style={{
-            height: "100%",
-            width: "100%",
+            marginTop: "10px",
             background:
               "linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(69,252,136,1) 100%)",
             color: "black",
+            width: "100%",
+            maxWidth: "400px",
+            margin: "0 auto",
           }}
         >
           Tiến hành đăng ký tạo giải đấu
@@ -67,9 +51,9 @@ export default function ButtonRouter() {
 
       {/* <Modal
         title="Giải đấu bạn đã tạo"
-        open={isModalOpen}
+        visible={isModalOpen}
         footer={null}
-        onCancel={handleOk}
+        onCancel={handleCancel}
       >
         <PersonalTournament />
       </Modal> */}
