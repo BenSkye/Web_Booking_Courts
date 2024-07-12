@@ -19,9 +19,9 @@ class UserController {
   })
   static updateUser = catchAsync(async (req: any, res: any, next: any) => {
     const userId = req.user.id
-    const { userName, avatar, userPhone } = req.body
+    const { userName, avatar, userPhone, userAddress } = req.body
 
-    const { newuser } = await UserService.updateUser(userId, { userName, avatar, userPhone })
+    const { newuser } = await UserService.updateUser(userId, { userName, avatar, userPhone, userAddress })
 
     res.status(201).json({
       status: 'success',
