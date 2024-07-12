@@ -92,9 +92,19 @@ const ProfileAccount = () => {
           <Menu.Item key="1" icon={<UserOutlined />}>
             <Link to="/user/my-account">Tài khoản của tôi</Link>
           </Menu.Item>
-          <Menu.Item key="2" icon={<LockOutlined />}>
+          {/* <Menu.Item key="2" icon={<LockOutlined />}>
             <Link to="/user/update-password">Cập nhật mật khẩu</Link>
-          </Menu.Item>
+          </Menu.Item> */}
+
+          <>
+            <Menu.Item key="3" icon={<BookOutlined />}>
+              <Link to="/user/booking-court">Đặt sân</Link>
+            </Menu.Item>
+            <Menu.Item key="4" icon={<PlayCircleOutlined />}>
+              <Link to="/user/game-time">Số giờ chơi</Link>
+            </Menu.Item>
+          </>
+
           {/* {isCustomer && (
             <> */}
           <Menu.Item key="3" icon={<BookOutlined />}>
@@ -108,6 +118,7 @@ const ProfileAccount = () => {
           <Menu.Item key="5" icon={<FileTextOutlined />}>
             <Link to="/user/bill">Hóa đơn</Link>
           </Menu.Item>
+
         </Menu>
       </Sider>
       <Layout>

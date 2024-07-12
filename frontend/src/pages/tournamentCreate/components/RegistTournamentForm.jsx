@@ -29,7 +29,7 @@ export default function RegistTournamentForm() {
     const data = await createTournamentAPI(newTournament);
     console.log("Received values from form: ", { data });
     setIsModalOpen(false);
-    navigate(`/tournament/detail/${data._id}`);
+    navigate(`/tournament/detail/${data.tournament._id}`);
   };
 
   const handleCancel = () => {

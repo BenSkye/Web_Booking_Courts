@@ -32,7 +32,7 @@ class priceRepository implements IPriceRepository {
     return await Price.findOne({ centerId, scheduleType })
   }
   async updatePrice(query: object, data: object) {
-    const updatePrice= await Price.findOneAndUpdate(query, data, { new: true })
+    const updatePrice = await Price.findOneAndUpdate(query, data, { new: true })
     return updatePrice
   }
 }

@@ -18,7 +18,7 @@ class bookingController {
     })
   })
   static callbackPayBookingByDay = catchAsync(async (req: any, res: any, next: any) => {
-    console.log('MoMo Callback:', req.body) // Nhật ký thêm để gỡ lỗi chi tiết
+    console.log('MoMo Callback:', req.body) 
     const bookingServiceInstance = new bookingService()
     if (req.body) {
       const result = bookingServiceInstance.callbackPayBookingByDay(req.body)
@@ -123,6 +123,16 @@ class bookingController {
       status: 'success',
       data: {
         bookings
+      }
+    })
+  })
+  static bookingDirectly = catchAsync(async (req: any, res: any, next: any) => {
+    const bookingServiceInstance = new bookingService()
+    const listnewbooking = await bookingServiceInstance.bookingDirectly(req.body)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        listnewbooking
       }
     })
   })
