@@ -767,7 +767,7 @@ class bookingService implements IbookingService {
     }
     const currentTime = new Date()
     const hours = currentTime.getHours()
-    let minutes = currentTime.getMinutes()
+    const minutes = currentTime.getMinutes()
     const formattedHours = hours < 10 ? '0' + hours : hours
     const formattedMinutes = minutes < 10 ? '0' + minutes : minutes
     console.log(formattedMinutes, 'formattedMinutes')
