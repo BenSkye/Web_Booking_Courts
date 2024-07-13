@@ -7,6 +7,8 @@ import momoService from './momoService'
 import bookingRepository from '~/repository/bookingRepository'
 import InvoiceRepository from '~/repository/invoiceReposotory'
 import bookingService from './bookingService'
+import sendEmailSerVice from './sendEmailService'
+import userRepository from '~/repository/userRepository'
 
 interface ItournamentService {
   addTournament(data: any, userId: string): Promise<any>
@@ -33,7 +35,12 @@ interface ItournamentService {
 class tournamentService implements ItournamentService {
   async addTournament(data: any, userId: string) {
     console.log('data', data)
-    const tournament = { ...data, userId: userId, status: 'pending' }
+    const userRepositoryInstance = new userRepository()
+    const user = await userRepositoryInstance.findUser({ _id: userId })
+    if (!user) {
+      throw new AppError('User not found', 404)
+    }
+    const tournament = { ...data, email: user.userEmail, phone: user.userPhone, userId: userId, status: 'pending' }
     const tournamentRepositoryInstance = new tournamentRepository()
     const newTournament = await tournamentRepositoryInstance.addTournament(tournament)
     return newTournament
@@ -98,7 +105,6 @@ class tournamentService implements ItournamentService {
         }
       })
     )
-
     const courtRepositoryInstance = new courtRepository()
     const listcourtId = await courtRepositoryInstance.getListCourtId({ centerId: tournament.centerId })
     console.log('listcourtId', listcourtId)
@@ -147,7 +153,26 @@ class tournamentService implements ItournamentService {
         return Promise.all(datePromises)
       })
     )
+    const previousDayTimestamp = startDate.setDate(startDate.getDate() - 1)
+    const previousDay = new Date(previousDayTimestamp)
 
+    // Format the date as DD-MM-YYYY
+    const formattedDate =
+      previousDay.getDate().toString().padStart(2, '0') +
+      '-' +
+      (previousDay.getMonth() + 1).toString().padStart(2, '0') +
+      '-' +
+      previousDay.getFullYear()
+
+    await sendEmailSerVice.sendEmail(tournament.email, {
+      subject: 'Giải đấu được duyệt',
+      text: `Giải đáu ${tournament.tournamentName} đã được duyệt, Thanh toán trước ngày ${formattedDate} để hoàn tất việc đăng ký`,
+      html: `
+        <p>Giải đáu ${tournament.tournamentName} đã được duyệt</p>
+        </br>
+        <p>Vui Lòng thanh toán trước ngày ${formattedDate} để hoàn tất việc đăng ký</p>
+      `
+    })
     return updatedTournament
   }
 
@@ -425,6 +450,19 @@ class tournamentService implements ItournamentService {
     for (const tournament of tournaments) {
       if (new Date(tournament.endDate) < currentDate) {
         await tournamentRepositoryInstance.updateTournament({ _id: tournament._id, status: 'completed' })
+      }
+    }
+  }
+  async expiredTournament() {
+    const tournamentRepositoryInstance = new tournamentRepository()
+    const currentDate = new Date()
+    const tournaments = await tournamentRepositoryInstance.getTournaments({ status: 'approved' })
+
+    for (const tournament of tournaments) {
+      const startDate = new Date(tournament.startDate)
+      startDate.setDate(startDate.getDate() - 1)
+      if (startDate < currentDate) {
+        await tournamentRepositoryInstance.updateTournament({ _id: tournament._id, status: 'expired' })
       }
     }
   }

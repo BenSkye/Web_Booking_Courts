@@ -65,6 +65,7 @@ cron.schedule('0 0 * * *', async () => {
   console.log('Daily cron job for completedTournament started at', new Date().toISOString())
   const tournamentServiceInstance = new tournamentService()
   await tournamentServiceInstance.completedTournament()
+  await tournamentServiceInstance.expiredTournament()
 })
 
 app.use(errorController)

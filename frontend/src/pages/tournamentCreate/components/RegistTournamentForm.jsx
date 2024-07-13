@@ -4,17 +4,23 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Skeleton,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   createTournamentAPI,
   getTournamentInCenterAPI,
 } from "../../../services/tournamentAPI/tournamentAPI";
+import AuthContext from "../../../services/authAPI/authProvideAPI";
+import {
+  checkUserHavePhone,
+  updatePhone,
+} from "../../../services/accountAPI/userAPi";
 
 export default function RegistTournamentForm() {
   const centerId = useParams().centerID;
@@ -31,6 +37,20 @@ export default function RegistTournamentForm() {
     setNewTournament(values);
     showModal();
   };
+  const [phoneExist, setPhoneExist] = useState(false);
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+  const [phone, setPhone] = useState("");
+  useEffect(() => {
+    const checkPhoneExist = async () => {
+      const data = await checkUserHavePhone();
+      console.log("Data:", data);
+      setPhoneExist(data.result);
+      if (!data.result) {
+        setIsPhoneModalOpen(true);
+      }
+    };
+    checkPhoneExist();
+  }, []);
   useEffect(() => {
     const getListTournament = async () => {
       const data = await getTournamentInCenterAPI(centerId);
@@ -113,6 +133,21 @@ export default function RegistTournamentForm() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  const handlePhoneModalOk = async () => {
+    const data = await updatePhone(phone);
+    console.log("Data:", data);
+    if (data.status === "success") {
+      message.success("Cập nhật số điện thoại thành công!");
+      setIsPhoneModalOpen(false);
+    } else {
+      message.error("Cập nhật số điện thoại thất bại!");
+    }
+  };
+
+  const handlePhoneModalCancel = () => {
+    navigate(-1);
+    setIsPhoneModalOpen(false);
+  };
   if (loading) {
     return <Skeleton active />;
   }
@@ -133,38 +168,6 @@ export default function RegistTournamentForm() {
         >
           <Input />
         </Form.Item>
-
-        <p>Số điện thoại</p>
-        <Form.Item
-          name="phone"
-          rules={[
-            { required: true, message: "Vui lòng nhập số điện thoại!" },
-            {
-              pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/,
-              message: "Số điện thoại không hợp lệ!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        <p>Địa chỉ email</p>
-        <Form.Item
-          name="email"
-          rules={[
-            {
-              type: "email",
-              message: "Email không hợp lệ!",
-            },
-            {
-              required: true,
-              message: "Vui lòng nhập Email!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
         <p>Tên giải đấu</p>
         <Form.Item
           name="tournamentName"
@@ -313,6 +316,36 @@ export default function RegistTournamentForm() {
         <p>
           Yêu cầu đặt sân sẽ được gửi đi và chờ chủ sân duyệt từ 1 tới 2 ngày
         </p>
+      </Modal>
+      <Modal
+        title="Nhập số điện thoại để tiếp tục"
+        open={isPhoneModalOpen}
+        footer={
+          <Button type="primary" onClick={handlePhoneModalCancel}>
+            Quay lại
+          </Button>
+        }
+      >
+        <Form onFinish={handlePhoneModalOk}>
+          <Form.Item
+            label="Số điện thoại"
+            name="phone"
+            rules={[
+              { required: true, message: "Vui lòng nhập số điện thoại!" },
+              {
+                pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/,
+                message: "Số điện thoại không hợp lệ!",
+              },
+            ]}
+          >
+            <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Xác nhận{" "}
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );
