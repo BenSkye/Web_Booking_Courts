@@ -30,6 +30,7 @@ export default function HistoryTournament() {
   }, []);
 
   const showModal = (tournamentId) => {
+    console.log("tournamentId", tournamentId);
     setTournamentId(tournamentId);
     setIsModalOpen(true);
   };
@@ -48,9 +49,9 @@ export default function HistoryTournament() {
       dataIndex: "tournamentName",
       key: "tournamentName",
       render: (text, record) => (
-        <Button type="link" onClick={() => showModal(record.id)}>
-          {text}
-        </Button>
+        <Link to={`/tournament/detail/${record._id}`}>
+          <Button type="link">{text}</Button>
+        </Link>
       ),
     },
     {
@@ -58,14 +59,15 @@ export default function HistoryTournament() {
       dataIndex: "timeRange",
       key: "timeRange",
       render: (text, record) => (
-        <span>{`${record.startDate} - ${record.endDate}`}</span>
+        <span>{`${new Date(record.startDate).toLocaleDateString()} - ${new Date(
+          record.endDate
+        ).toLocaleDateString()}`}</span>
       ),
     },
   ];
 
   return (
     <div>
-      <h1>Các giải đấu đã được tổ chức</h1>
       {loading ? (
         <Skeleton active />
       ) : (
@@ -76,7 +78,7 @@ export default function HistoryTournament() {
           )}
           columns={columns}
           pagination={false}
-          rowKey="id"
+          rowKey="_id"
           style={{ marginBottom: "20px" }}
         />
       )}
@@ -87,14 +89,14 @@ export default function HistoryTournament() {
         total={ListTournament.length}
         style={{ display: "flex", justifyContent: "center", marginTop: "5px" }}
       />
-      <Modal
+      {/* <Modal
         title="Chi tiết giải đấu"
         visible={isModalOpen}
         footer={null}
         onCancel={handleOk}
       >
         <TournamentDetail tournamentId={tournamentId} />
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

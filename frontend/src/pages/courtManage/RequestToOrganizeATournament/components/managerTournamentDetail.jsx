@@ -78,7 +78,8 @@ export default function ManagerTournamentDetail() {
     try {
       const data = await getBookingByDayAPI(
         tournament.startDate,
-        tournament.endDate
+        tournament.endDate,
+        tournament.centerId
       );
       console.log("Data:", data);
       setListBooking(data.bookings);
@@ -113,6 +114,7 @@ export default function ManagerTournamentDetail() {
   };
   const handleOk = () => {
     setIsApproveModalOpen(false);
+    setIsModalOpen(false);
     form
       .validateFields()
       .then((values) => {
@@ -138,16 +140,8 @@ export default function ManagerTournamentDetail() {
         const pricePerDay = Number(
           values.fee.replace(/\./g, "").replace("₫", "").trim()
         );
-
         console.log("Tournament Fee:", pricePerDay);
-        const listBookingId = ListBooking.map((booking) => booking._id);
-        console.log("List Booking ID:", listBookingId);
-        console.log("totalAmount", totalAmount);
-        cancelBookingAndApproveTournament(
-          pricePerDay,
-          totalAmount,
-          listBookingId
-        );
+        approvedTournament(pricePerDay);
         // approvedTournament(pricePerDay);
       })
       .catch((info) => {
@@ -249,7 +243,7 @@ export default function ManagerTournamentDetail() {
                     textAlign: "left",
                   }}
                 >
-                  Chưa thể duyệt giải đấu khi còn đặt sân.
+                  Có đặt sân trong thời gian tổ chức giải đấu
                 </p>
                 {ListBooking.map((booking) => (
                   <Card key={booking._id} style={{ marginBottom: "10px" }}>
@@ -286,10 +280,10 @@ export default function ManagerTournamentDetail() {
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <Button type="primary" danger onClick={showModal}>
-                    Hủy tất cả đặt sân và duyệt giải đấu
+                  <Button type="primary" onClick={showModal}>
+                    Định giá duyệt giải đấu
                   </Button>
-                  <Button type="primary" onClick={showDeniedModal}>
+                  <Button type="primary" danger onClick={showDeniedModal}>
                     Từ Chối
                   </Button>
                 </div>
@@ -302,9 +296,9 @@ export default function ManagerTournamentDetail() {
               </p>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Button type="primary" onClick={showAppovedModal}>
-                  Duyệt giải đấu
+                  Định giá duyệt giải đấu
                 </Button>
-                <Button type="primary" onClick={showDeniedModal}>
+                <Button type="primary" danger onClick={showDeniedModal}>
                   Từ Chối
                 </Button>
               </div>
@@ -313,19 +307,13 @@ export default function ManagerTournamentDetail() {
         </>
       )}
       <Modal
-        title="Xác nhận hủy đặt sân và duyệt giải đấu?"
+        title="Xác nhận duyệt giải đấu?"
         open={isModalOpen}
         footer={[]}
         onCancel={handleCancel}
       >
         <p style={{ fontWeight: "bold" }}>
-          Tổng tiền phải hoàn cho các đặt sân:{" "}
-          <strong>
-            {totalAmount.toLocaleString("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            })}
-          </strong>
+          Khi giải đấu được thanh toán các đặt sân sẽ bị hủy.
         </p>
         <Form form={form}>
           <Form.Item
@@ -341,7 +329,7 @@ export default function ManagerTournamentDetail() {
             <Input onChange={(e) => handleFeeChange(e.target.value)} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" onClick={handelCancelBookingAndApprove}>
+            <Button type="primary" onClick={handleOk}>
               Xác nhận
             </Button>
           </Form.Item>

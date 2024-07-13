@@ -26,13 +26,10 @@ interface IbookingService {
   UpdateBookingbyDayDecreasePrice(data: any, userId: string): Promise<any>
   getBookingByInvoiceId(invoiceId: string): Promise<any>
   completedBooking(bookingId: string, userId: string): Promise<any>
-  getBookingByDay(dateFrom: string, dateTo: string): Promise<any>
+  getConfirmedBookingByDay(dateFrom: string, dateTo: string, centerId: string): Promise<any>
   bookingDirectly(data: any): Promise<any>
 }
 class bookingService implements IbookingService {
-
-
-
   async createBookingbyDay(listBooking: any, userId: string) {
     const allSlotsAvailable = await this.checkAllSlotsAvailability(listBooking)
     if (!allSlotsAvailable) {
@@ -86,8 +83,6 @@ class bookingService implements IbookingService {
   }
 
   async createBookingByDayWithHour(listBooking: any, userId: string) {
-
-
     const allSlotsAvailable = await this.checkAllSlotsAvailability(listBooking)
     if (!allSlotsAvailable) {
       throw new AppError('Xin lỗi slot đã được đặt hoặc đang được đặt, kiểm tra lại booking', 400)
@@ -137,8 +132,6 @@ class bookingService implements IbookingService {
     )
     return paymentResult
   }
-
-
 
   async createBooking(data: any, userId: string) {
     const slot = {
@@ -261,7 +254,6 @@ class bookingService implements IbookingService {
 
     return newBooking
   }
-
 
   async changeBookingStatusAfterPaySuccess(bookingId: string) {
     const booking = await bookingRepository.getBookingbyId(bookingId)
@@ -776,15 +768,11 @@ class bookingService implements IbookingService {
     const currentTime = new Date()
     const hours = currentTime.getHours()
     let minutes = currentTime.getMinutes()
-
-    // Round down to the nearest half hour
-    minutes = Math.floor(minutes / 30) * 30
-
-    // Format hours and minutes as 2 digits
     const formattedHours = hours < 10 ? '0' + hours : hours
     const formattedMinutes = minutes < 10 ? '0' + minutes : minutes
-
+    console.log(formattedMinutes, 'formattedMinutes')
     const formattedTime = `${formattedHours}:${formattedMinutes}`
+    console.log('formattedTime', formattedTime)
     if (booking.start >= formattedTime || booking.end <= formattedTime) {
       throw new AppError('Không thể xác nhận booking trước giờ chơi', 400)
     }
@@ -843,7 +831,7 @@ class bookingService implements IbookingService {
     return bookingRepository.updateBooking({ _id: booking._id }, { status: booking.status })
   }
 
-  async getBookingByDay(dateFrom: string, dateTo: string) {
+  async getConfirmedBookingByDay(dateFrom: string, dateTo: string, centerId: string) {
     const listBooking = []
     console.log('dateFrom', dateFrom)
     const startDate = new Date(`${dateFrom}`)
@@ -854,7 +842,11 @@ class bookingService implements IbookingService {
       // Nếu dateFrom và dateTo giống nhau, chỉ gọi getListBooking một lần
       const formattedDate = startDate.toISOString().split('T')[0]
       console.log('formattedDate', formattedDate)
-      const bookings = await bookingRepository.getListBooking({ date: formattedDate, status: 'confirmed' })
+      const bookings = await bookingRepository.getListBooking({
+        centerId: centerId,
+        date: formattedDate,
+        status: 'confirmed'
+      })
       listBooking.push(...bookings)
     } else {
       const daysBetween = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
@@ -878,7 +870,6 @@ class bookingService implements IbookingService {
       // Gộp tất cả các kết quả vào listBooking
       bookingsArray.forEach((bookings) => listBooking.push(...bookings))
     }
-
     return listBooking
   }
 

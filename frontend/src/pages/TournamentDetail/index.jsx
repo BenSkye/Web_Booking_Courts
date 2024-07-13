@@ -152,6 +152,9 @@ export default function TournamentDetail() {
             <Button type="primary" onClick={showModalConfirrm}>
               Thanh toán
             </Button>
+            <Button danger onClick={showModal}>
+              Hủy giải đấu
+            </Button>
           </div>
         )}
       </Card>
