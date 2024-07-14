@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, Col, Row, Button, Spin, Space, Typography } from "antd";
+import { Card, Col, Row, Button, Spin, Space, Typography, Pagination } from "antd";
 import { getFormDataAPI } from "../../services/partnerAPI/index.js";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -9,9 +9,10 @@ const { Meta } = Card;
 const { Title, Text } = Typography;
 
 export default function CourtManage() {
-  
   const [formData, setFormData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +40,15 @@ export default function CourtManage() {
     fetchData();
   }, []);
 
+  const handlePageChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
+  };
+
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentData = formData.slice(startIndex, endIndex);
+
   if (loading) {
     return (
       <div
@@ -61,6 +71,7 @@ export default function CourtManage() {
       </div>
     );
   }
+
   const statusMapping = {
     pending: { text: "đang chờ duyệt", color: "gray" },
     accepted: { text: "được chấp nhận, vui lòng mua gói để sân hoạt động", color: "blue" },
@@ -75,7 +86,7 @@ export default function CourtManage() {
         Quản lý sân đấu của bạn
       </Title>
       <Row gutter={[16, 16]}>
-        {formData.map((data) => (
+        {currentData.map((data) => (
           <Col key={data._id} xs={24} sm={12} lg={8}>
             <Card
               hoverable
@@ -169,6 +180,16 @@ export default function CourtManage() {
           </Col>
         ))}
       </Row>
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={formData.length}
+          onChange={handlePageChange}
+          showSizeChanger
+          pageSizeOptions={['5', '10', '15']}
+        />
+      </div>
     </div>
   );
 }
