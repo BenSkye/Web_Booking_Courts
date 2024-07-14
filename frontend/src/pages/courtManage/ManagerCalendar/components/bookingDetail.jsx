@@ -57,11 +57,11 @@ export default function BookingDetail({ Booking, onComplete }) {
               Xác nhận
             </Button>
           )}
-          {showCancelButton && (
+          {/* {showCancelButton && (
             <Button type="primary" danger ghost>
               Hủy
             </Button>
-          )}
+          )} */}
         </div>
       )}
     </>

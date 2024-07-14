@@ -46,6 +46,27 @@ class timeSlotRepository implements ITimeSlotRepository {
     const result = await TimeSlot.findOneAndUpdate(query, data, { new: true })
     return result
   }
+  async updateSlotStatusWithPreStatus(
+    param: {
+      courtId: string
+      date: Date
+      start: string
+      end: string
+      status: string
+    },
+    status: string
+  ) {
+    const query = {
+      courtId: param.courtId,
+      date: param.date,
+      'slot.start': param.start,
+      'slot.end': param.end,
+      'slot.status': param.status
+    }
+    const data = { $set: { 'slot.$.status': status } }
+    const result = await TimeSlot.findOneAndUpdate(query, data, { new: true })
+    return result
+  }
   async checkTimeSlotAvailable(param: { courtId: string; date: Date; start: string; end: string }) {
     const query = {
       courtId: param.courtId,

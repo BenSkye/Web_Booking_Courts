@@ -1,12 +1,33 @@
-import { Button, DatePicker, Form, Input, InputNumber, Modal } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Skeleton,
+} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { createTournamentAPI } from "../../../services/tournamentAPI/tournamentAPI";
+import {
+  createTournamentAPI,
+  getTournamentInCenterAPI,
+} from "../../../services/tournamentAPI/tournamentAPI";
+import AuthContext from "../../../services/authAPI/authProvideAPI";
+import {
+  checkUserHavePhone,
+  updatePhone,
+} from "../../../services/accountAPI/userAPi";
 
 export default function RegistTournamentForm() {
   const centerId = useParams().centerID;
+  const [listTournament, setListTournament] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [disableDay, setDisableDay] = useState([]);
+
   const [newTournament, setNewTournament] = useState({});
   const onFinish = (values) => {
     values.startDate = dayjs(values.startDate).format("YYYY-MM-DD");
@@ -16,25 +37,120 @@ export default function RegistTournamentForm() {
     setNewTournament(values);
     showModal();
   };
+  const [phoneExist, setPhoneExist] = useState(false);
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+  const [phone, setPhone] = useState("");
+  useEffect(() => {
+    const checkPhoneExist = async () => {
+      const data = await checkUserHavePhone();
+      console.log("Data:", data);
+      setPhoneExist(data.result);
+      if (!data.result) {
+        setIsPhoneModalOpen(true);
+      }
+    };
+    checkPhoneExist();
+  }, []);
+  useEffect(() => {
+    const getListTournament = async () => {
+      const data = await getTournamentInCenterAPI(centerId);
+      setListTournament(data.tournaments);
+      setLoading(false);
+    };
+    getListTournament();
+  }, [centerId]);
+  useEffect(() => {
+    listTournament.forEach((tournament) => {
+      if (tournament.status === "approved" || tournament.status === "confirm") {
+        const startDate = dayjs(tournament.startDate);
+        const endDate = dayjs(tournament.endDate);
+        for (let i = startDate; i <= endDate; i = i.add(1, "day")) {
+          setDisableDay((prev) => [...prev, i.format("YYYY-MM-DD")]);
+        }
+      }
+    });
+  }, [listTournament]);
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [disableforend, setDisableforend] = useState(null);
+  const [disableforstart, setDisableforStart] = useState(null);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  useEffect(() => {
+    setDisableforend(null);
+    setDisableforStart(null);
+    if (startDate) {
+      console.log("startDate", startDate);
+      const startDateformat = dayjs(startDate).format("YYYY-MM-DD");
+      console.log("startDatformat", startDateformat);
+      if (disableDay.length > 0) {
+        const sortedDisableDay = [...disableDay].sort();
+        for (const day of sortedDisableDay) {
+          console.log("day", day);
+          if (startDateformat < day) {
+            console.log("daySelect", day);
+            setDisableforend(day);
+            break; // This will exit the loop when the condition is met
+          }
+        }
+      }
+    }
+    if (endDate) {
+      const endDateformat = dayjs(endDate).format("YYYY-MM-DD");
+      console.log("startDatformat", endDateformat);
+      if (disableDay.length > 0) {
+        console.log("disableDay", disableDay);
+        const sortedDisableDay = [...disableDay].sort((a, b) =>
+          dayjs(b).isAfter(dayjs(a)) ? 1 : -1
+        );
+        console.log("sortedDisableDay", sortedDisableDay);
+        for (const day of sortedDisableDay) {
+          console.log("day", day);
+          if (endDateformat > day) {
+            console.log("daySelect", day);
+            setDisableforStart(day);
+            break; // This will exit the loop when the condition is met
+          }
+        }
+      }
+    }
+  }, [startDate, endDate]);
+  useEffect(() => {
+    console.log("disableforstart", disableforstart);
+  }, [disableforstart]);
   const showModal = () => {
     setIsModalOpen(true);
   };
   const navigate = useNavigate();
   const handleOk = async () => {
     const data = await createTournamentAPI(newTournament);
-    console.log("Received values from form: ", { data });
+    console.log("Received values from form: ", data);
     setIsModalOpen(false);
-    navigate(`/tournament/detail/${data.tournament._id}`);
+    navigate(`/tournament/detail/${data.data.tournament._id}`);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  const handlePhoneModalOk = async () => {
+    const data = await updatePhone(phone);
+    console.log("Data:", data);
+    if (data.status === "success") {
+      message.success("Cập nhật số điện thoại thành công!");
+      setIsPhoneModalOpen(false);
+    } else {
+      message.error("Cập nhật số điện thoại thất bại!");
+    }
+  };
+
+  const handlePhoneModalCancel = () => {
+    navigate(-1);
+    setIsPhoneModalOpen(false);
+  };
+  if (loading) {
+    return <Skeleton active />;
+  }
   return (
     <>
       <h1>Điền thông tin về giải đấu</h1>
@@ -52,38 +168,6 @@ export default function RegistTournamentForm() {
         >
           <Input />
         </Form.Item>
-
-        <p>Số điện thoại</p>
-        <Form.Item
-          name="phone"
-          rules={[
-            { required: true, message: "Vui lòng nhập số điện thoại!" },
-            {
-              pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/,
-              message: "Số điện thoại không hợp lệ!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        <p>Địa chỉ email</p>
-        <Form.Item
-          name="email"
-          rules={[
-            {
-              type: "email",
-              message: "Email không hợp lệ!",
-            },
-            {
-              required: true,
-              message: "Vui lòng nhập Email!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
         <p>Tên giải đấu</p>
         <Form.Item
           name="tournamentName"
@@ -163,11 +247,24 @@ export default function RegistTournamentForm() {
         >
           <DatePicker
             defaultPickerValue={dayjs().add(7, "day")}
-            disabledDate={(current) =>
-              current &&
-              (current < dayjs().add(7, "day").endOf("day") ||
-                (endDate && current > endDate))
-            }
+            disabledDate={(current) => {
+              const currentDate = current.format("YYYY-MM-DD");
+              const isBeforeAllowedDate =
+                currentDate < dayjs().add(8, "day").format("YYYY-MM-DD") ||
+                (endDate && current > dayjs(endDate).format("YYYY-MM-DD"));
+              const isInDisabledDays = disableDay.includes(currentDate);
+              const isAfterEndDate = endDate && current > dayjs(endDate);
+
+              const isBeforeDisableStart =
+                disableforstart &&
+                currentDate < dayjs(disableforstart).format("YYYY-MM-DD");
+              return (
+                isBeforeAllowedDate ||
+                isInDisabledDays ||
+                isBeforeDisableStart ||
+                isAfterEndDate
+              );
+            }}
             onChange={(date) => setStartDate(date)}
           />
         </Form.Item>
@@ -179,11 +276,22 @@ export default function RegistTournamentForm() {
         >
           <DatePicker
             defaultPickerValue={dayjs().add(7, "day")}
-            disabledDate={(current) =>
-              current &&
-              (current < dayjs().add(7, "day").endOf("day") ||
-                (startDate && current < startDate))
-            }
+            disabledDate={(current) => {
+              const currentDate = current.format("YYYY-MM-DD");
+              const isBeforeAllowedDate =
+                currentDate < dayjs().add(8, "day").format("YYYY-MM-DD") ||
+                (startDate &&
+                  currentDate < dayjs(startDate).format("YYYY-MM-DD"));
+              const isInDisabledDays = disableDay.includes(currentDate);
+              const isAfterDisableEnd =
+                disableforend &&
+                currentDate > dayjs(disableforend).format("YYYY-MM-DD");
+
+              // Disable date if any condition is true
+              return (
+                isBeforeAllowedDate || isInDisabledDays || isAfterDisableEnd
+              );
+            }}
             onChange={(date) => setEndDate(date)}
           />
         </Form.Item>
@@ -208,6 +316,36 @@ export default function RegistTournamentForm() {
         <p>
           Yêu cầu đặt sân sẽ được gửi đi và chờ chủ sân duyệt từ 1 tới 2 ngày
         </p>
+      </Modal>
+      <Modal
+        title="Nhập số điện thoại để tiếp tục"
+        open={isPhoneModalOpen}
+        footer={
+          <Button type="primary" onClick={handlePhoneModalCancel}>
+            Quay lại
+          </Button>
+        }
+      >
+        <Form onFinish={handlePhoneModalOk}>
+          <Form.Item
+            label="Số điện thoại"
+            name="phone"
+            rules={[
+              { required: true, message: "Vui lòng nhập số điện thoại!" },
+              {
+                pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/,
+                message: "Số điện thoại không hợp lệ!",
+              },
+            ]}
+          >
+            <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Xác nhận{" "}
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

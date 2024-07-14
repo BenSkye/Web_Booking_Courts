@@ -6,6 +6,9 @@ import AppError from '~/utils/appError'
 import momoService from './momoService'
 import bookingRepository from '~/repository/bookingRepository'
 import InvoiceRepository from '~/repository/invoiceReposotory'
+import bookingService from './bookingService'
+import sendEmailSerVice from './sendEmailService'
+import userRepository from '~/repository/userRepository'
 
 interface ItournamentService {
   addTournament(data: any, userId: string): Promise<any>
@@ -32,7 +35,12 @@ interface ItournamentService {
 class tournamentService implements ItournamentService {
   async addTournament(data: any, userId: string) {
     console.log('data', data)
-    const tournament = { ...data, userId: userId, status: 'pending' }
+    const userRepositoryInstance = new userRepository()
+    const user = await userRepositoryInstance.findUser({ _id: userId })
+    if (!user) {
+      throw new AppError('User not found', 404)
+    }
+    const tournament = { ...data, email: user.userEmail, phone: user.userPhone, userId: userId, status: 'pending' }
     const tournamentRepositoryInstance = new tournamentRepository()
     const newTournament = await tournamentRepositoryInstance.addTournament(tournament)
     return newTournament
@@ -53,11 +61,13 @@ class tournamentService implements ItournamentService {
     const tournaments = await tournamentRepositoryInstance.getTournaments({})
     return tournaments
   }
+
   async getTournamentByCenterId(centerId: string) {
     const tournamentRepositoryInstance = new tournamentRepository()
     const tournaments = await tournamentRepositoryInstance.getTournaments({ centerId: centerId })
     return tournaments
   }
+
   async approveTournament(tournamentId: string, pricePerDay: number) {
     const tournamentRepositoryInstance = new tournamentRepository()
     const tournament = await tournamentRepositoryInstance.getTournamentById(tournamentId)
@@ -76,7 +86,25 @@ class tournamentService implements ItournamentService {
       status: 'approved',
       price: price
     })
-
+    const listTournament = await tournamentRepositoryInstance.getTournaments({
+      centerId: tournament.centerId,
+      status: 'pending'
+    })
+    await Promise.all(
+      listTournament.map(async (thisTournament) => {
+        if (thisTournament._id.toString() !== tournamentId.toString()) {
+          if (
+            (thisTournament.startDate >= tournament.startDate && thisTournament.startDate <= tournament.endDate) ||
+            (thisTournament.endDate >= tournament.startDate && thisTournament.endDate <= tournament.endDate)
+          ) {
+            await tournamentRepositoryInstance.updateTournament({
+              _id: thisTournament._id,
+              status: 'denied'
+            })
+          }
+        }
+      })
+    )
     const courtRepositoryInstance = new courtRepository()
     const listcourtId = await courtRepositoryInstance.getListCourtId({ centerId: tournament.centerId })
     console.log('listcourtId', listcourtId)
@@ -85,30 +113,69 @@ class tournamentService implements ItournamentService {
     const startDate = new Date(tournament.startDate)
     const endDate = new Date(tournament.endDate)
     const centerRepositoryInstance = new CenterRepository()
-    for (const court of listcourtId) {
-      console.log('courtId', court._id)
-      const currentDate = new Date(startDate)
-      while (currentDate <= endDate) {
-        const timeSlot = await timeSlotRepositoryInstance.getTimeslot({
-          courtId: court._id,
-          date: currentDate
-        })
-        const courtId = court._id.toString()
-        const date = currentDate
-        console.log('date', date)
-        const slots = timeSlot?.slot || []
+    await Promise.all(
+      listcourtId.map(async (court) => {
+        console.log('courtId', court._id)
+        const currentDate = new Date(startDate)
 
-        for (const slot of slots) {
-          await timeSlotRepositoryInstance.updateSlotStatus(
-            { courtId, date, start: slot.start, end: slot.end },
-            'booking'
-          )
+        // Collect promises for each date within the court's processing
+        const datePromises = []
+
+        while (currentDate <= endDate) {
+          const datePromise = (async (currentDate) => {
+            const timeSlot = await timeSlotRepositoryInstance.getTimeslot({
+              courtId: court._id,
+              date: currentDate
+            })
+            console.log('timeSlot', timeSlot)
+            const courtId = court._id.toString()
+            const date = currentDate
+            console.log('date', date)
+            const slots = timeSlot?.slot || []
+
+            // Update all slots for the current date concurrently
+            await Promise.all(
+              slots.map((slot) => {
+                console.log('slot123', slot)
+                timeSlotRepositoryInstance.updateSlotStatusWithPreStatus(
+                  { courtId, date, start: slot.start, end: slot.end, status: 'available' },
+                  'booking'
+                )
+              })
+            )
+          })(new Date(currentDate))
+
+          datePromises.push(datePromise)
+
+          currentDate.setDate(currentDate.getDate() + 1)
         }
-        currentDate.setDate(currentDate.getDate() + 1)
-      }
-    }
+
+        return Promise.all(datePromises)
+      })
+    )
+    const previousDayTimestamp = startDate.setDate(startDate.getDate() - 1)
+    const previousDay = new Date(previousDayTimestamp)
+
+    // Format the date as DD-MM-YYYY
+    const formattedDate =
+      previousDay.getDate().toString().padStart(2, '0') +
+      '-' +
+      (previousDay.getMonth() + 1).toString().padStart(2, '0') +
+      '-' +
+      previousDay.getFullYear()
+
+    await sendEmailSerVice.sendEmail(tournament.email, {
+      subject: 'Giải đấu được duyệt',
+      text: `Giải đáu ${tournament.tournamentName} đã được duyệt, Thanh toán trước ngày ${formattedDate} để hoàn tất việc đăng ký`,
+      html: `
+        <p>Giải đáu ${tournament.tournamentName} đã được duyệt</p>
+        </br>
+        <p>Vui Lòng thanh toán trước ngày ${formattedDate} để hoàn tất việc đăng ký</p>
+      `
+    })
     return updatedTournament
   }
+
   async denyTournament(tournamentId: string) {
     const tournamentRepositoryInstance = new tournamentRepository()
     const tournament = await tournamentRepositoryInstance.getTournamentById(tournamentId)
@@ -183,14 +250,64 @@ class tournamentService implements ItournamentService {
     if (tournament.userId.toString() !== userId.toString()) {
       throw new AppError('You are not authorized to cancel this tournament', 403)
     }
+    if (tournament.status === 'approved') {
+      const courtRepositoryInstance = new courtRepository()
+      const listcourtId = await courtRepositoryInstance.getListCourtId({ centerId: tournament.centerId })
+      console.log('listcourtId', listcourtId)
+      const timeSlotRepositoryInstance = new timeSlotRepository()
+
+      const startDate = new Date(tournament.startDate)
+      const endDate = new Date(tournament.endDate)
+      const centerRepositoryInstance = new CenterRepository()
+      await Promise.all(
+        listcourtId.map(async (court) => {
+          console.log('courtId', court._id)
+          const currentDate = new Date(startDate)
+
+          // Collect promises for each date within the court's processing
+          const datePromises = []
+
+          while (currentDate <= endDate) {
+            const datePromise = (async (currentDate) => {
+              const timeSlot = await timeSlotRepositoryInstance.getTimeslot({
+                courtId: court._id,
+                date: currentDate
+              })
+              console.log('timeSlot', timeSlot)
+              const courtId = court._id.toString()
+              const date = currentDate
+              console.log('date', date)
+              const slots = timeSlot?.slot || []
+              const bookingServiceInstance = new bookingService()
+              // Update all slots for the current date concurrently
+              await Promise.all(
+                slots.map((slot) => {
+                  console.log('slot123', slot)
+                  timeSlotRepositoryInstance.updateSlotStatusWithPreStatus(
+                    { courtId, date, start: slot.start, end: slot.end, status: 'booking' },
+                    'available'
+                  )
+                })
+              )
+            })(new Date(currentDate))
+
+            datePromises.push(datePromise)
+
+            currentDate.setDate(currentDate.getDate() + 1)
+          }
+
+          return Promise.all(datePromises)
+        })
+      )
+    }
 
     const updatedTournament = await tournamentRepositoryInstance.updateTournament({
       _id: tournamentId,
       status: 'cancelled'
     })
-
     return updatedTournament
   }
+
   async confirmTournament(tournamentId: string) {
     const tournamentRepositoryInstance = new tournamentRepository()
     const tournament = await tournamentRepositoryInstance.getTournamentById(tournamentId)
@@ -235,42 +352,70 @@ class tournamentService implements ItournamentService {
 
         const startDate = new Date(tournament.startDate)
         const endDate = new Date(tournament.endDate)
-        for (const court of listcourtId) {
-          console.log('courtId', court._id)
-          const currentDate = new Date(startDate)
-          while (currentDate <= endDate) {
-            const timeSlot = await timeSlotRepositoryInstance.getTimeslot({
-              courtId: court._id,
-              date: currentDate
-            })
-            const courtId = court._id.toString()
-            const date = currentDate
-            console.log('date', date)
-            const slots = timeSlot?.slot || []
-
-            for (const slot of slots) {
-              await timeSlotRepositoryInstance.updateSlotStatus(
-                { courtId, date, start: slot.start, end: slot.end },
-                'booked'
-              )
-            }
-            const booking = {
-              // Define booking details here, without relying on `data`
-              userId: tournament.userId,
-              centerId: tournament.centerId,
-              courtId: court._id,
-              date: currentDate,
-              start: center.openTime,
-              end: center.closeTime,
-              bookingType: 'tournament',
-              status: 'confirmed',
-              tournamentId: tournament._id
-            }
-            const newBooking = await bookingRepository.createBooking(booking)
-            console.log('newBooking', newBooking)
-            currentDate.setDate(currentDate.getDate() + 1)
-          }
+        const bookingServiceInstance = new bookingService()
+        const bookingsHaveBooked = await bookingServiceInstance.getConfirmedBookingByDay(
+          tournament.startDate.toISOString().slice(0, 10),
+          tournament.endDate.toISOString().slice(0, 10),
+          tournament.centerId.toString()
+        )
+        for (const booking of bookingsHaveBooked) {
+          await bookingRepository.updateBooking({ _id: booking._id }, { status: 'cancelled' })
         }
+
+        await Promise.all(
+          listcourtId.map(async (court) => {
+            console.log('courtId', court._id)
+            const currentDate = new Date(startDate)
+
+            // Collect promises for each date within the court's processing
+            const datePromises = []
+
+            while (currentDate <= endDate) {
+              const datePromise = (async (currentDate) => {
+                const timeSlot = await timeSlotRepositoryInstance.getTimeslot({
+                  courtId: court._id,
+                  date: currentDate
+                })
+                console.log('timeSlot', timeSlot)
+                const courtId = court._id.toString()
+                const date = currentDate
+                console.log('date', date)
+                const slots = timeSlot?.slot || []
+
+                // Update all slots for the current date concurrently
+                await Promise.all(
+                  slots.map((slot) => {
+                    console.log('slot123', slot)
+                    timeSlotRepositoryInstance.updateSlotStatus(
+                      { courtId, date, start: slot.start, end: slot.end },
+                      'booked'
+                    )
+                  })
+                )
+                const booking = {
+                  // Define booking details here, without relying on `data`
+                  userId: tournament.userId,
+                  centerId: tournament.centerId,
+                  courtId: court._id,
+                  date: currentDate,
+                  start: center.openTime,
+                  end: center.closeTime,
+                  bookingType: 'tournament',
+                  status: 'confirmed',
+                  tournamentId: tournament._id
+                }
+                const newBooking = await bookingRepository.createBooking(booking)
+                console.log('newBooking', newBooking)
+              })(new Date(currentDate))
+
+              datePromises.push(datePromise)
+
+              currentDate.setDate(currentDate.getDate() + 1)
+            }
+
+            return Promise.all(datePromises)
+          })
+        )
 
         const InvoiceRepositoryInstance = new InvoiceRepository()
         const newInvoice = {
@@ -305,6 +450,19 @@ class tournamentService implements ItournamentService {
     for (const tournament of tournaments) {
       if (new Date(tournament.endDate) < currentDate) {
         await tournamentRepositoryInstance.updateTournament({ _id: tournament._id, status: 'completed' })
+      }
+    }
+  }
+  async expiredTournament() {
+    const tournamentRepositoryInstance = new tournamentRepository()
+    const currentDate = new Date()
+    const tournaments = await tournamentRepositoryInstance.getTournaments({ status: 'approved' })
+
+    for (const tournament of tournaments) {
+      const startDate = new Date(tournament.startDate)
+      startDate.setDate(startDate.getDate() - 1)
+      if (startDate < currentDate) {
+        await tournamentRepositoryInstance.updateTournament({ _id: tournament._id, status: 'expired' })
       }
     }
   }

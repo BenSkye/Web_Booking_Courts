@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Card,
   Col,
@@ -9,12 +9,12 @@ import {
   Carousel,
   Pagination,
   Input,
-} from 'antd';
-import SearchBar from '@/pages/home/components/searchBar';
-import CardLoader from '@/utils/loader/skeletonLoader/loaderCard';
-import NoImg from '@/assets/noImg.jpg';
-import { getAllCenterAPI } from '@/services/centersAPI/getCenters';
-import GetAllLocationCenter from '../../utils/getAllCenterMap';
+} from "antd";
+import SearchBar from "@/pages/home/components/searchBar";
+import CardLoader from "@/utils/loader/skeletonLoader/loaderCard";
+import NoImg from "@/assets/noImg.jpg";
+import { getAllCenterAPI } from "@/services/centersAPI/getCenters";
+import GetAllLocationCenter from "../../utils/getAllCenterMap";
 
 const { Meta } = Card;
 
@@ -32,8 +32,8 @@ export default function Home() {
   const [pageSize] = useState(6);
 
   const formatPrice = (price) => {
-    if (!price) return 'N/A';
-    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} VND/h`;
+    if (!price) return "N/A";
+    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND/h`;
   };
 
   useEffect(() => {
@@ -44,15 +44,15 @@ export default function Home() {
         data = data.map((center) => ({
           ...center,
           pricePerHour: center.price.find(
-            (price) => price.scheduleType === 'NP'
+            (price) => price.scheduleType === "NP"
           )?.price,
         }));
         // Filter centers with status 'active'
-        data = data.filter((center) => center.status === 'active');
+        data = data.filter((center) => center.status === "active");
         setCenters(data);
-        console.log('datas', data);
+        console.log("datas", data);
       } catch (error) {
-        console.error('Failed to fetch centers:', error);
+        console.error("Failed to fetch centers:", error);
       } finally {
         setLoading(false);
       }
@@ -74,8 +74,8 @@ export default function Home() {
   );
 
   return (
-    <div style={{ margin: '0 auto', padding: '20px' }}>
-      <Row gutter={[32, 32]} style={{ background: '#fff' }}>
+    <div style={{ margin: "0 auto", padding: "20px" }}>
+      <Row gutter={[32, 32]} style={{ background: "#fff" }}>
         {/* <Col span={24}>
           <Carousel autoplay style={{ width: "100%" }}>
             {introImages.map((img, index) => (
@@ -99,14 +99,14 @@ export default function Home() {
           <GetAllLocationCenter locations={centers} />
         </Col>
 
-        <Col span={24} style={{ marginTop: '20px' }}>
-          <Input.Group compact style={{ marginBottom: '10px' }}>
-            <div style={{ width: '100%', textAlign: 'left' }}>
+        <Col span={24} style={{ marginTop: "20px" }}>
+          <Input.Group compact style={{ marginBottom: "10px" }}>
+            <div style={{ width: "100%", textAlign: "left" }}>
               <span
                 style={{
-                  marginRight: '10px',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
+                  marginRight: "10px",
+                  fontSize: "16px",
+                  fontWeight: "bold",
                 }}
               >
                 Tìm kiếm sân:
@@ -128,26 +128,26 @@ export default function Home() {
                 xs={24}
                 sm={12}
                 lg={8}
-                style={{ marginBottom: '20px' }}
+                style={{ marginBottom: "20px" }}
               >
                 <Card
                   hoverable
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    border: '1px solid #f0f0f0',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                    width: "100%",
+                    height: "100%",
+                    border: "1px solid #f0f0f0",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                   }}
                   cover={
                     <Carousel
                       autoplay
-                      dotPosition='bottom'
+                      dotPosition="bottom"
                       style={{
-                        width: '100%',
-                        height: '300px',
-                        borderRadius: '8px 8px 0 0',
-                        overflow: 'hidden',
+                        width: "100%",
+                        height: "300px",
+                        borderRadius: "8px 8px 0 0",
+                        overflow: "hidden",
                       }}
                     >
                       {center.images.map((img, index) => (
@@ -157,10 +157,10 @@ export default function Home() {
                             alt={center.centerName}
                             onError={handleImageError}
                             style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover',
-                              borderRadius: '8px 8px 0 0',
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              borderRadius: "8px 8px 0 0",
                             }}
                           />
                         </div>
@@ -170,16 +170,16 @@ export default function Home() {
                 >
                   <Meta
                     avatar={
-                      <Avatar src='https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg' />
+                      <Avatar src="https://sieuthicaulong.vn/images/badminton-yard/1693408873_gallery_2022-04-07.jpg" />
                     }
                     title={center.centerName}
                     description={center.location}
                   />
                   <div
                     style={{
-                      marginTop: '16px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
+                      marginTop: "16px",
+                      display: "flex",
+                      justifyContent: "space-between",
                     }}
                   >
                     <Link
@@ -193,9 +193,9 @@ export default function Home() {
                     >
                       <Button
                         style={{
-                          height: '50px',
-                          width: '100%',
-                          fontSize: '16px',
+                          height: "50px",
+                          width: "100%",
+                          fontSize: "16px",
                         }}
                       >
                         Xem chi tiết
@@ -204,12 +204,12 @@ export default function Home() {
                     <Link to={`/bookingdetail/${center._id}`}>
                       <Button
                         style={{
-                          height: '50px',
-                          width: '100%',
-                          fontSize: '16px',
-                          color: '#fff',
+                          height: "50px",
+                          width: "100%",
+                          fontSize: "16px",
+                          color: "#fff",
                         }}
-                        type='primary'
+                        type="primary"
                       >
                         Đặt sân ngay
                       </Button>
@@ -219,13 +219,13 @@ export default function Home() {
               </Col>
             ))}
 
-        <Col span={24} style={{ marginTop: '20px', textAlign: 'center' }}>
+        <Col span={24} style={{ marginTop: "20px", textAlign: "center" }}>
           <Pagination
             current={currentPage}
             pageSize={pageSize}
             total={centers.length}
             onChange={handlePageChange}
-            style={{ color: '#1890ff' }}
+            style={{ color: "#1890ff" }}
           />
         </Col>
       </Row>

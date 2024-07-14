@@ -50,7 +50,7 @@ export async function updateCenter(centerId, data, token) {
     const response = await axios.put(url, data, {
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log("Cập nhật thành công:", response.data);
@@ -61,3 +61,16 @@ export async function updateCenter(centerId, data, token) {
     );
   }
 }
+
+export const getCenterPackageByInvoiceIdAPI = async (invoiceId) => {
+  const response = await fetchData(
+    `${apiBaseUrl}/center/get-center-Package-by-invoice/${invoiceId}`
+  );
+  console.log("Response:", response);
+  if (response.status === "fail") {
+    return response.data;
+  }
+  if (response.status === "success") {
+    return response.data;
+  }
+};

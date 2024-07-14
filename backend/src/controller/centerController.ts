@@ -200,6 +200,16 @@ class centerController {
       }
     })
   })
+  static getCenterPackageByInvoice = catchAsync(async (req: any, res: any, next: any) => {
+    const centerServiceInstance = new centerService()
+    const result = await centerServiceInstance.getCenterPackageByInvoice(req.params.id)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        result
+      }
+    })
+  })
 }
 
 export default centerController
