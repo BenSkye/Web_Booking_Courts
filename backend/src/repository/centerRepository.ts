@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import Center from '~/models/centerModel'
+import apiFeature from '~/utils/apiFeature'
 
 interface ISubscription {
   packageId: Schema.Types.ObjectId
@@ -34,6 +35,7 @@ interface ICenterRepository {
   getAllSubscriptions(): Promise<any[]>
   updateCenterInforById(id: any, data: any): Promise<any | null>
   findCenterByInvoiceId(invoiceId: string): Promise<any | null>
+  getAllActiveCenters(reqQuery: any): Promise<any[]>
 }
 
 class CenterRepository implements ICenterRepository {
@@ -49,6 +51,20 @@ class CenterRepository implements ICenterRepository {
   async getAllCenters(): Promise<any[]> {
     try {
       const centers = await Center.find().populate('price').populate('subscriptions.packageId')
+      return centers
+    } catch (error) {
+      throw new Error(`Could not fetch centers: ${(error as Error).message}`)
+    }
+  }
+
+  async getAllActiveCenters(reqQuery: any): Promise<any[]> {
+    try {
+      console.log('reqQuery123', reqQuery)
+      const features = new apiFeature(
+        Center.find({ status: 'active' }).populate('price').populate('subscriptions.packageId'),
+        reqQuery
+      ).parseQuery()
+      const centers = await features.query
       return centers
     } catch (error) {
       throw new Error(`Could not fetch centers: ${(error as Error).message}`)

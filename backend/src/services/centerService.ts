@@ -23,6 +23,7 @@ interface ICenterService {
   getAllSubscriptions(): Promise<any>
   changeCenterStatus(centerId: string, status: string, deniedReason?: string): Promise<any>
   getCenterPackageByInvoice(id: string): Promise<any>
+  getAllActiveCenters(reqQuery: any): Promise<any>
 }
 
 class centerService implements ICenterService {
@@ -58,6 +59,34 @@ class centerService implements ICenterService {
     try {
       const centerRepositoryInstance = new centerRepository()
       const centers = await centerRepositoryInstance.getAllCenters()
+      return centers
+    } catch (error) {
+      throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
+    }
+  }
+
+  async getAllActiveCenters(reqQuery: any) {
+    try {
+      console.log('reqQuery', reqQuery)
+      await Promise.resolve().then(() => {
+        if (reqQuery.District && reqQuery.District !== 'null') {
+          // Check if District is not the string 'null'
+          if (reqQuery.Ward && reqQuery.Ward !== 'null') {
+            // Check if Ward is not the string 'null'
+            reqQuery.location = `${reqQuery.Ward}, ${reqQuery.District}`
+          } else {
+            reqQuery.location = reqQuery.District
+          }
+        }
+        if (reqQuery.centerName === 'null') {
+          reqQuery.centerName = undefined
+        }
+        reqQuery.District = undefined
+        reqQuery.Ward = undefined
+      })
+
+      const centerRepositoryInstance = new centerRepository()
+      const centers = await centerRepositoryInstance.getAllActiveCenters(reqQuery)
       return centers
     } catch (error) {
       throw new Error(`Could not fetch all centers: ${(error as Error).message}`)
@@ -244,6 +273,27 @@ class centerService implements ICenterService {
 
     const timeSlotRepositoryInstance = new timeSlotRepository()
     await timeSlotRepositoryInstance.addManyTimeSlots(ListTimeslot)
+    const userRepositoryInstance = new userRepository()
+    const user = await userRepositoryInstance.findUser({ _id: userId })
+    if (!user) {
+      throw new AppError('User not found', 404)
+    }
+    const formattedExpiryDate = new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }).format(expiryDate)
+
+    await sendEmailSerVice.sendEmail(user.userEmail, {
+      subject: 'Thanh toán gói hoạt động thành công',
+      text: `Bạn đã Thanh toán thành công ${centerPackage.name}`,
+      html: `
+        <p>Bạn đã Thanh toán thành công ${centerPackage.name}</p>
+        </br>
+        <p>Sân sẽ hết hạn vào ${formattedExpiryDate}</p>
+        </br>
+      `
+    })
 
     return modifiedCenter
   }

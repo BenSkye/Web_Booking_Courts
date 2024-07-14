@@ -1,18 +1,20 @@
-import { useState, useEffect } from 'react';
-import moment from 'moment';
-import { Space, Select, DatePicker, Button, Tooltip } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { useState, useEffect } from "react";
+import { Space, Select, Button, Tooltip, Input } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import {
   fetchDistricts,
   fetchWards,
-} from '@/services/District_ward-API/districtWardAPI';
-import { HCM_ID } from '@/utils/constants';
+} from "@/services/District_ward-API/districtWardAPI";
+import { HCM_ID } from "@/utils/constants";
 
 const { Option } = Select;
 
-export default function SearchBar() {
+export default function SearchBar({ getQuery }) {
   const [districtOptions, setDistrictOptions] = useState([]);
   const [wardOptions, setWardOptions] = useState([]);
+  const [District, setDistrict] = useState(null);
+  const [Ward, setWard] = useState(null);
+  const [centerName, setCenterName] = useState(null);
 
   useEffect(() => {
     const getDistricts = async () => {
@@ -23,9 +25,27 @@ export default function SearchBar() {
     getDistricts();
   }, []);
 
-  const handleDistrictChange = async (value) => {
+  const handleDistrictChange = async (value, option) => {
+    setDistrict({ id: value, name: option.children });
     const data = await fetchWards(value);
     setWardOptions(data);
+    setWard(null); // Reset ward selection when district changes
+  };
+
+  const handleWardChange = (value, option) => {
+    setWard({ id: value, name: option.children });
+  };
+
+  const handleCenterNameChange = (event) => {
+    console.log("event", event.target.value);
+    setCenterName(event.target.value.toString());
+  };
+  const handleSearch = () => {
+    getQuery({
+      District: District ? District.name : null,
+      Ward: Ward ? Ward.name : null,
+      centerName,
+    });
   };
 
   const renderOptions = (options) =>
@@ -39,9 +59,9 @@ export default function SearchBar() {
     <Space.Compact block>
       <Select
         showSearch
-        placeholder='Quận/huyện'
-        style={{ width: '150px', height: '50px' }}
-        optionFilterProp='children'
+        placeholder="Quận/huyện"
+        style={{ width: "200px", height: "50px" }}
+        optionFilterProp="children"
         onChange={handleDistrictChange}
         filterOption={(input, option) =>
           option.children.toLowerCase().includes(input.toLowerCase())
@@ -51,55 +71,29 @@ export default function SearchBar() {
       </Select>
       <Select
         showSearch
-        placeholder='Phường/xã'
-        style={{ width: '150px', height: '50px' }}
-        optionFilterProp='children'
+        placeholder="Phường/xã"
+        style={{ width: "200px", height: "50px" }}
+        optionFilterProp="children"
+        onChange={handleWardChange}
+        value={Ward ? Ward.id : null}
         filterOption={(input, option) =>
           option.children.toLowerCase().includes(input.toLowerCase())
         }
       >
         {renderOptions(wardOptions)}
       </Select>
-      <Select
-        showSearch
-        style={{ width: '150px', height: '50px' }}
-        placeholder='Tên sân'
+      <Input
+        style={{ width: "200px", height: "50px" }}
+        placeholder="Tên sân"
+        onChange={handleCenterNameChange}
       />
-      <DatePicker
-        placeholder='Ngày'
-        disabledDate={(current) =>
-          current &&
-          (current.isBefore(moment().startOf('day')) ||
-            current.isAfter(moment().add(7, 'days').startOf('day')))
-        }
-      />
-      <Select
-        defaultValue='Khung giờ'
-        style={{ width: '150px', height: '50px' }}
-      >
-        <Option value='6'>6:00</Option>
-        <Option value='7'>7:00</Option>
-        <Option value='7'>9:00</Option>
-        <Option value='17'>13:00</Option>
-        <Option value='17'>15:00</Option>
-        <Option value='17'>17:00</Option>
-      </Select>
-      <Select
-        defaultValue='Số giờ chơi'
-        style={{ width: '150px', height: '50px' }}
-      >
-        <Option value='1'>1 giờ</Option>
-        <Option value='1.5'>1.5 giờ</Option>
-        <Option value='2'>2 giờ</Option>
-        <Option value='2.5'>2.5 giờ</Option>
-        <Option value='3'>3 giờ</Option>
-      </Select>
-      <Tooltip title='search'>
+      <Tooltip title="search">
         <Button
-          type='primary'
-          shape='circle'
+          type="primary"
+          shape="circle"
           icon={<SearchOutlined />}
-          style={{ width: '50px', height: '50px' }}
+          style={{ width: "50px", height: "50px" }}
+          onClick={handleSearch}
         />
       </Tooltip>
     </Space.Compact>
