@@ -62,23 +62,6 @@ export default function HeaderLayout() {
     },
     {
       label: (
-        <Link to='/courtManage/accept_court_from_customer'>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'start',
-            }}
-          >
-            <MdCheckCircle size='20px' />
-            <>Quản lý lịch đặt sân</>
-          </div>
-        </Link>
-      ),
-      key: '1',
-    },
-    {
-      label: (
         <div
           style={{
             display: 'flex',
@@ -91,7 +74,7 @@ export default function HeaderLayout() {
           <>Đăng xuất</>
         </div>
       ),
-      key: '2',
+      key: '1',
     },
   ];
 
@@ -127,7 +110,7 @@ export default function HeaderLayout() {
           <>Đăng xuất</>
         </div>
       ),
-      key: '2',
+      key: '1',
     },
   ];
 
@@ -148,40 +131,6 @@ export default function HeaderLayout() {
         </Link>
       ),
       key: '0',
-    },
-    {
-      label: (
-        <Link to='/user/booking-court'>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'start',
-            }}
-          >
-            <BsCalendarWeek size='20px' />
-            <>Đặt sân của tôi</>
-          </div>
-        </Link>
-      ),
-      key: '1',
-    },
-    {
-      label: (
-        <Link to='/'>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'start',
-            }}
-          >
-            <TiClipboard size='20px' />
-            <>Danh sách giao dịch</>
-          </div>
-        </Link>
-      ),
-      key: '2',
     },
     {
       label: (
@@ -295,7 +244,7 @@ export default function HeaderLayout() {
               {user?.avatar ? (
                 <Avatar
                   size='large'
-                  src={user.avatar}
+                  src={user?.avatar}
                   style={{ background: 'white', height: '50px', width: '50px' }}
                 />
               ) : (
