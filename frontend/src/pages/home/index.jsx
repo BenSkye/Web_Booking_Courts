@@ -29,6 +29,7 @@ export default function Home() {
   const [centers, setCenters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [query, setQuery] = useState({});
   const [pageSize] = useState(6);
 
   const formatPrice = (price) => {
@@ -36,11 +37,18 @@ export default function Home() {
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND/h`;
   };
 
+  const getQuery = (query) => {
+    console.log("Received query:", query);
+    setQuery(query);
+    // Sử dụng query để thực hiện các thao tác tìm kiếm cần thiết
+    // Ví dụ: gọi API tìm kiếm với các tham số District, Ward, centerName từ query
+  };
+
   useEffect(() => {
     const getCenters = async () => {
       try {
         setLoading(true);
-        let data = await getAllCenterAPI();
+        let data = await getAllCenterAPI(query);
         data = data.map((center) => ({
           ...center,
           pricePerHour: center.price.find(
@@ -58,7 +66,7 @@ export default function Home() {
       }
     };
     getCenters();
-  }, []);
+  }, [query]);
 
   const handleImageError = (e) => {
     e.target.src = NoImg;
@@ -111,7 +119,7 @@ export default function Home() {
               >
                 Tìm kiếm sân:
               </span>
-              <SearchBar />
+              <SearchBar getQuery={getQuery} />
             </div>
           </Input.Group>
         </Col>

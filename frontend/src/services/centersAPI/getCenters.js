@@ -2,9 +2,11 @@ import { fetchData } from "@/services/fetchAPI";
 import axios from "axios";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-export const getAllCenterAPI = async () => {
+export const getAllCenterAPI = async (query) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/center`);
+    const response = await fetch(
+      `${apiBaseUrl}/center/center-active?${new URLSearchParams(query)}`
+    );
     const responseData = await response.json();
     console.log("Data from API:", responseData);
     if (responseData.status === "success") {
