@@ -317,15 +317,11 @@ const BookingFixedByMonth = ({ id }) => {
                       >
                         <TimePicker
                           format='HH:mm'
-                          defaultValue={moment('08:00', 'HH:mm')}
                           minuteStep={30} // Đặt bước nhảy cho phép là 30 phút
                           disabledHours={() => {
                             const disabledHours = [];
                             for (let i = 0; i < 8; i++) {
-                              disabledHours.push(i);
-                            }
-                            for (let i = 12; i < 24; i++) {
-                              disabledHours.push(i);
+                              disabledHours.push(i); // Disable hours before 6 AM
                             }
                             return disabledHours;
                           }}
