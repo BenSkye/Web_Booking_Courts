@@ -6,25 +6,23 @@ import { addPlayPackage } from '@/services/bookingAPI/bookingAPI'; // Adjust the
 const BookingFlexibleByPackage = ({ id, onSelectPackage, pricePerHour }) => {
   const [hours, setHours] = useState(10); // Initial state for number of hours, starting with 1 hour
   const params = useParams();
-  const centerId = params.id
+  const centerId = params.id;
 
-  console.log("centerId:", centerId);
+  console.log('centerId:', centerId);
 
   const handleSelectPackage = async () => {
     try {
       const response = await addPlayPackage({ centerId, hour: hours });
-      console.log("addPlayPackage Response:", response);
+      console.log('addPlayPackage Response:', response);
 
       if (response.status === 'success') {
         message.success('Tạo gói chơi thành công');
-
       } else {
         message.error('Tạo gói chơi thất bại. Vui lòng thử lại.');
       }
     } catch (error) {
-      console.error("Error adding play package:", error);
+      console.error('Error adding play package:', error);
       message.error('Đã xảy ra lỗi. Vui lòng thử lại sau.');
-
     }
   };
 
@@ -36,14 +34,17 @@ const BookingFlexibleByPackage = ({ id, onSelectPackage, pricePerHour }) => {
           min={1}
           defaultValue={1}
           value={hours}
-          onChange={value => setHours(value)}
+          onChange={(value) => setHours(value)}
           step={1}
         />
 
-        <Button type='primary' onClick={handleSelectPackage} style={{ marginLeft: '0.5rem' }}>
+        <Button
+          type='primary'
+          onClick={handleSelectPackage}
+          style={{ marginLeft: '0.5rem' }}
+        >
           <Link to=''>Chọn gói</Link>
         </Button>
-
       </Card>
     </div>
   );
