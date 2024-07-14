@@ -4,6 +4,7 @@ import { Button, Space, Card, Row, Col, Typography, Divider } from 'antd';
 import moment from 'moment';
 import { getFixedPackageScheduleByIdAPI } from '../../../../../../services/fixedPackagesScheduleAPI/getFixedPackageScheuleAPI';
 import { formatPrice } from '../../../../../../utils/priceFormatter';
+import MomoLogo from '../../../../../../assets/MoMo_Logo.png';
 
 const { Title, Text } = Typography;
 
@@ -73,8 +74,15 @@ export default function PaymentBookingFixed() {
             block
             size='large'
             style={{ marginTop: '20px' }}
+            icon={
+              <img
+                src={MomoLogo}
+                style={{ width: 20, height: 20 }}
+                alt='Momo Logo'
+              />
+            }
           >
-            Thanh toán
+            Thanh toán bằng momo
           </Button>
         </Card>
       </Col>
