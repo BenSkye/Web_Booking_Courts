@@ -9,6 +9,7 @@ import tournamentRepository from '~/repository/tournamentRepository'
 interface IinvoiceService {
   addInvoiceBookingbyDay(price: any, userid: string, orderId: string): Promise<any>
   addInvoiceUpdateBookingbyDay(price: any, userid: string, orderId: string): Promise<any>
+  addInvoieSelectCenterPackage(price: any, userid: string, orderId: string): Promise<any>
   paidInvoice(invoiceId: string): Promise<any>
   getInvoicesByUserId(userid: string): Promise<any>
   getListInvoices(query: any): Promise<any>
@@ -36,6 +37,17 @@ class InvoiceService implements IinvoiceService {
       userId: userid,
       status: 'pending',
       invoiceFor: 'UBBD'
+    }
+    return InvoiceRepositoryInstance.addInvoice(newInvoice)
+  }
+  async addInvoieSelectCenterPackage(price: any, userid: string, orderId: string) {
+    const InvoiceRepositoryInstance = new InvoiceRepository()
+    const newInvoice = {
+      invoiceID: orderId,
+      price: price,
+      userId: userid,
+      status: 'paid',
+      invoiceFor: 'BCP'
     }
     return InvoiceRepositoryInstance.addInvoice(newInvoice)
   }
@@ -79,6 +91,10 @@ class InvoiceService implements IinvoiceService {
           const tournament = await tournamentRepositoryInstance.getTournament({ invoiceId: invoice._id })
           if (!tournament) return invoice
           const center = await centerRepositoryInstance.getCenterById({ _id: tournament.centerId._id })
+          return { ...invoice.toObject(), center }
+        }
+        if (invoice.invoiceFor === 'BCP') {
+          const center = await centerRepositoryInstance.findCenterByInvoiceId(invoice._id)
           return { ...invoice.toObject(), center }
         }
         return invoice

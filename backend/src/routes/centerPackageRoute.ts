@@ -17,4 +17,3 @@ centerPackageRoute
   )
 
 export default centerPackageRoute
-
