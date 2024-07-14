@@ -33,7 +33,7 @@ interface ICenterRepository {
   updateCenter(query: object, data: any): Promise<any | null>
   getAllSubscriptions(): Promise<any[]>
   updateCenterInforById(id: any, data: any): Promise<any | null>
-  findCenterByInvoiceId(invoiceId: String): Promise<any | null>
+  findCenterByInvoiceId(invoiceId: string): Promise<any | null>
 }
 
 class CenterRepository implements ICenterRepository {
