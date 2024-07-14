@@ -6,7 +6,6 @@ const centerSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true
-
     },
     centerName: {
       type: String,
@@ -53,6 +52,10 @@ const centerSchema = new Schema(
             ref: 'CenterPackage',
             required: true
           },
+          invoiceId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Invoice'
+          },
           activationDate: {
             type: Date,
             required: true
@@ -79,8 +82,8 @@ const centerSchema = new Schema(
       enum: ['pending', 'accepted', 'active', 'expired', 'rejected'],
       default: 'pending'
     },
-    denied:{
-      type: String,
+    denied: {
+      type: String
     }
   },
   { timestamps: true }

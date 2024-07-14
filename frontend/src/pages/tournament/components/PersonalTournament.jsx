@@ -1,4 +1,4 @@
-import { Button, Card, Modal, Pagination, Skeleton } from "antd";
+import { Button, Card, Modal, Pagination, Skeleton, Empty } from "antd";
 import { useEffect, useState } from "react";
 import {
   getAllTournamentAPI,
@@ -45,83 +45,79 @@ export default function PersonalTournament() {
   };
   return (
     <div>
-      {loading
-        ? [1, 2, 3].map((key) => (
-            <Card
-              key={key}
-              title={
-                <Skeleton.Input style={{ width: 200 }} active size="small" />
-              }
-              bodyStyle={{ padding: "10px" }}
-              headStyle={{ backgroundColor: "#f0f0f0", padding: "10px" }}
-              style={{
-                width: "100%",
-                boxShadow: "0px 4px 18px rgba(0, 0, 0, 0.1)",
-                borderRadius: "10px",
-                margin: 0,
-              }}
-            >
-              <p style={{ margin: 0, padding: 0 }}>
-                <Skeleton.Input style={{ width: 100 }} active size="small" />
-              </p>
-            </Card>
-          ))
-        : ListTournament.slice(
-            (currentPage - 1) * pageSize,
-            currentPage * pageSize
-          ).map((tournament, index) => (
-            <Card
-              key={index}
-              title={
-                <span>
-                  {tournament.tournamentName + " "}
-                  <span
-                    style={{
-                      color:
-                        statusStyles[tournament.status.toLowerCase()]?.color ||
-                        "black",
-                    }}
-                  >
-                    {statusStyles[tournament.status.toLowerCase()]?.message ||
-                      "Trạng thái giải đấu không xác định."}
-                  </span>
+      {loading ? (
+        [1, 2, 3].map((key) => (
+          <Card
+            key={key}
+            title={
+              <Skeleton.Input style={{ width: 200 }} active size="small" />
+            }
+            bodyStyle={{ padding: "10px" }}
+            headStyle={{ backgroundColor: "#f0f0f0", padding: "10px" }}
+            style={{
+              width: "100%",
+              boxShadow: "0px 4px 18px rgba(0, 0, 0, 0.1)",
+              borderRadius: "10px",
+              margin: 0,
+            }}
+          >
+            <p style={{ margin: 0, padding: 0 }}>
+              <Skeleton.Input style={{ width: 100 }} active size="small" />
+            </p>
+          </Card>
+        ))
+      ) : ListTournament.length > 0 ? (
+        ListTournament.slice(
+          (currentPage - 1) * pageSize,
+          currentPage * pageSize
+        ).map((tournament, index) => (
+          <Card
+            key={index}
+            title={
+              <span>
+                {tournament.tournamentName + " "}
+                <span
+                  style={{
+                    color:
+                      statusStyles[tournament.status.toLowerCase()]?.color ||
+                      "black",
+                  }}
+                >
+                  {statusStyles[tournament.status.toLowerCase()]?.message ||
+                    "Trạng thái giải đấu không xác định."}
                 </span>
-              }
-              extra={
-                <Link to={`/tournament/detail/${tournament._id}`}>
-                  <Button type="link">Chi tiết</Button>
-                </Link>
-              }
-              bodyStyle={{ padding: "10px" }}
-              headStyle={{ backgroundColor: "#f0f0f0", padding: "10px" }}
-              style={{
-                width: "100%",
-                boxShadow: "0px 4px 18px rgba(0, 0, 0, 0.1)",
-                borderRadius: "10px",
-                margin: 0,
-              }}
-            >
-              <p style={{ margin: 0, padding: 0 }}>
-                {new Date(tournament.startDate).toLocaleDateString()} -{" "}
-                {new Date(tournament.endDate).toLocaleDateString()}
-              </p>
-            </Card>
-          ))}
-      <Pagination
+              </span>
+            }
+            extra={
+              <Link to={`/tournament/detail/${tournament._id}`}>
+                <Button type="link">Chi tiết</Button>
+              </Link>
+            }
+            bodyStyle={{ padding: "10px" }}
+            headStyle={{ backgroundColor: "#f0f0f0", padding: "10px" }}
+            style={{
+              width: "100%",
+              boxShadow: "0px 4px 18px rgba(0, 0, 0, 0.1)",
+              borderRadius: "10px",
+              margin: 0,
+            }}
+          >
+            <p style={{ margin: 0, padding: 0 }}>
+              {new Date(tournament.startDate).toLocaleDateString()} -{" "}
+              {new Date(tournament.endDate).toLocaleDateString()}
+            </p>
+          </Card>
+        ))
+      ) : (
+        <Empty description="Bạn chưa tạo giải đấu nào." />
+      )}
+      {/* <Pagination
         current={currentPage}
         onChange={handleChange}
         pageSize={pageSize}
         total={ListTournament.length}
         style={{ display: "flex", justifyContent: "center", marginTop: "5px" }}
-      />
-      {/* <Modal
-        title="Chi tiết giải đấu"
-        open={isModalOpen}
-        footer={null}
-        onCancel={handleOk}
-      >
-        <TournamentDetail tournamentId={tournamentId} />
-      </Modal> */}
+      /> */}
     </div>
   );
 }

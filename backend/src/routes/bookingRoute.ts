@@ -29,7 +29,7 @@ bookingRoute
   .route('/cancelled-booking/:bookingId')
   .get(authController.protect, authController.restricTO('customer'), bookingController.cancelledBooking)
 bookingRoute
-  .route('/get-booking-by-day')
+  .route('/get-booking-by-day/:centerId')
   .get(authController.protect, authController.restricTO('manager'), bookingController.getBookingByDay)
 bookingRoute
   .route('/booking-directly')

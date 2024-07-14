@@ -18,6 +18,19 @@ class UserService {
     const { password: userPassword, ...newuser } = updatedUser.toObject()
     return { newuser }
   }
+  static async updatePhone(userId: string, phone: string) {
+    const userRepositoryInstance = new userRepository()
+    const user = await userRepositoryInstance.findUser({ _id: userId })
+    if (!user) {
+      throw new AppError('Người dùng không tồn tại', 401)
+    }
+    const updatedUser = await userRepositoryInstance.updateUser(userId, { userPhone: parseInt(phone) })
+    if (!updatedUser) {
+      throw new AppError('Lỗi khi cập nhật thông tin người dùng', 401)
+    }
+    const { password: userPassword, ...newuser } = updatedUser.toObject()
+    return { newuser }
+  }
   static async getUserById(userId: string) {
     const userRepositoryInstance = new userRepository()
     const foundUser = await userRepositoryInstance.findUser({ _id: userId })
@@ -39,6 +52,17 @@ class UserService {
     }
     user.password = ''
     return user
+  }
+  static async checkPhoneExist(userId: string) {
+    const userRepositoryInstance = new userRepository()
+    const user = await userRepositoryInstance.findUser({ _id: userId })
+    if (!user) {
+      throw new AppError('Người dùng không tồn tại', 401)
+    }
+    if (user.userPhone === null) {
+      return false
+    }
+    return true
   }
 }
 

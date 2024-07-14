@@ -31,6 +31,17 @@ class UserController {
       }
     })
   })
+  static updatePhone = catchAsync(async (req: any, res: any, next: any) => {
+    const userId = req.user.id
+    const { phone } = req.body
+    const { newuser } = await UserService.updatePhone(userId, phone)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        user: newuser
+      }
+    })
+  })
   static getAllUser = catchAsync(async (req: any, res: any, next: any) => {
     try {
       const users = await UserService.getAllUser()
@@ -58,6 +69,16 @@ class UserController {
         }
       })
     }
+  })
+  static checkPhoneExist = catchAsync(async (req: any, res: any, next: any) => {
+    const userId = req.user.id
+    const result = await UserService.checkPhoneExist(userId)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        result
+      }
+    })
   })
 }
 
