@@ -29,9 +29,9 @@ import tournamentService from './services/tournamentService'
 dotenv.config()
 
 const app = express()
+app.use(cors())
 app.use(morgan('dev'))
 app.use(compression())
-app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/api/v1/auth', authRoute)

@@ -18,12 +18,12 @@ import GetAllLocationCenter from "../../utils/getAllCenterMap";
 
 const { Meta } = Card;
 
-const introImages = [
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA17C5nrpu1r9ylXj4d8YUdDZt_oH0Psz0xQ&s",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA17C5nrpu1r9ylXj4d8YUdDZt_oH0Psz0xQ&s",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA17C5nrpu1r9ylXj4d8YUdDZt_oH0Psz0xQ&s",
-  // Add more images as needed
-];
+// const introImages = [
+//   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA17C5nrpu1r9ylXj4d8YUdDZt_oH0Psz0xQ&s',
+//   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA17C5nrpu1r9ylXj4d8YUdDZt_oH0Psz0xQ&s',
+//   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA17C5nrpu1r9ylXj4d8YUdDZt_oH0Psz0xQ&s',
+//   // Add more images as needed
+// ];
 
 export default function Home() {
   const [centers, setCenters] = useState([]);
@@ -74,8 +74,8 @@ export default function Home() {
   );
 
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "10px" }}>
-      <Row gutter={[16, 16]} style={{ background: "#fff" }}>
+    <div style={{ margin: "0 auto", padding: "20px" }}>
+      <Row gutter={[32, 32]} style={{ background: "#fff" }}>
         {/* <Col span={24}>
           <Carousel autoplay style={{ width: "100%" }}>
             {introImages.map((img, index) => (
@@ -94,9 +94,11 @@ export default function Home() {
             ))}
           </Carousel>
         </Col> */}
+
         <Col span={24}>
           <GetAllLocationCenter locations={centers} />
         </Col>
+
         <Col span={24} style={{ marginTop: "20px" }}>
           <Input.Group compact style={{ marginBottom: "10px" }}>
             <div style={{ width: "100%", textAlign: "left" }}>
@@ -132,35 +134,33 @@ export default function Home() {
                   hoverable
                   style={{
                     width: "100%",
-                    minHeight: "400px",
-                    border: "0.1px solid #e0e0e0",
+                    height: "100%",
+                    border: "1px solid #f0f0f0",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                   }}
                   cover={
                     <Carousel
                       autoplay
+                      dotPosition="bottom"
                       style={{
-                        background: "#e1e8e3",
                         width: "100%",
-                        height: "100%",
+                        height: "300px",
+                        borderRadius: "8px 8px 0 0",
+                        overflow: "hidden",
                       }}
                     >
                       {center.images.map((img, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            height: "100%",
-                            width: "100%",
-                            overflow: "hidden",
-                          }}
-                        >
+                        <div key={index}>
                           <img
-                            alt={center.centerName}
                             src={img}
+                            alt={center.centerName}
                             onError={handleImageError}
                             style={{
                               width: "100%",
                               height: "100%",
                               objectFit: "cover",
+                              borderRadius: "8px 8px 0 0",
                             }}
                           />
                         </div>
@@ -177,10 +177,9 @@ export default function Home() {
                   />
                   <div
                     style={{
-                      marginTop: 16,
+                      marginTop: "16px",
                       display: "flex",
                       justifyContent: "space-between",
-                      gap: "8px",
                     }}
                   >
                     <Link
@@ -195,8 +194,8 @@ export default function Home() {
                       <Button
                         style={{
                           height: "50px",
-                          width: "150px",
-                          fontSize: "18px",
+                          width: "100%",
+                          fontSize: "16px",
                         }}
                       >
                         Xem chi tiết
@@ -206,10 +205,9 @@ export default function Home() {
                       <Button
                         style={{
                           height: "50px",
-                          width: "150px",
-                          fontSize: "18px",
-                          backgroundColor: "#1890ff",
-                          color: "white",
+                          width: "100%",
+                          fontSize: "16px",
+                          color: "#fff",
                         }}
                         type="primary"
                       >

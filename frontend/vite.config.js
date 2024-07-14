@@ -1,7 +1,7 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-import { fileURLToPath } from "url";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Lấy đường dẫn tuyệt đối đến tệp hiện tại
 const __filename = fileURLToPath(import.meta.url);
@@ -21,12 +21,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
-      "mapbox-gl": path.resolve(
+      '@': path.resolve(__dirname, 'src'),
+      'mapbox-gl': path.resolve(
         __dirname,
-        "./node_modules/mapbox-gl/dist/mapbox-gl.js"
+        './node_modules/mapbox-gl/dist/mapbox-gl.js'
       ),
     },
   },
-  envPrefix: "VITE_",
+  envPrefix: 'VITE_',
 });
