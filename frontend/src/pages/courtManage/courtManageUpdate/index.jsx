@@ -12,7 +12,7 @@ import {
   Card,
   List,
   TimePicker,
-  Select
+  Select,
 } from "antd";
 import moment from "moment";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
@@ -297,61 +297,63 @@ const CourtManageUpdate = () => {
               dataSource={priceData}
               renderItem={(item, index) => (
                 <List.Item>
-                  <Row gutter={16} style={{ width: "100%" }}>
-                    <Col span={6}>
-                      <Form.Item
-                        name={[index, "price"]}
-                        initialValue={item.price}
-                        rules={[{ validator: validatePrice }]}
-                      >
-                        <Input
-                          type="number"
-                          min={10000}
-                          addonBefore="Giá tiền:"
-                          suffix="VND"
-                        />
-                      </Form.Item>
-                    </Col>
-                    {shouldRenderTimeFields(item.scheduleType) && (
-                      <>
+                  <Card bordered={true} style={{ width: "100%" }}>
+                    <Form layout="vertical">
+                      <Row gutter={16}>
                         <Col span={6}>
                           <Form.Item
-                            name={[index, "startTime"]}
-                            initialValue={item.startTime}
-                            label="Giờ bắt đầu"
+                            name={[index, "price"]}
+                            initialValue={item.price}
+                            rules={[{ validator: validatePrice }]}
+                            label="Giá tiền"
                           >
-                            <Select addonBefore="Giờ bắt đầu:">
-                              {hours.map((hour) => (
-                                <Option key={hour} value={hour}>
-                                  {hour}
-                                </Option>
-                              ))}
-                            </Select>
+                            <Input type="number" min={10000} suffix="VND" />
                           </Form.Item>
                         </Col>
+                        {shouldRenderTimeFields(item.scheduleType) && (
+                          <>
+                            <Col span={6}>
+                              <Form.Item
+                                name={[index, "startTime"]}
+                                initialValue={item.startTime}
+                                label="Giờ bắt đầu"
+                              >
+                                <Select>
+                                  {hours.map((hour) => (
+                                    <Option key={hour} value={hour}>
+                                      {hour}
+                                    </Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                              <Form.Item
+                                name={[index, "endTime"]}
+                                initialValue={item.endTime}
+                                label="Giờ kết thúc"
+                              >
+                                <Select>
+                                  {hours.map((hour) => (
+                                    <Option key={hour} value={hour}>
+                                      {hour}
+                                    </Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+                            </Col>
+                          </>
+                        )}
                         <Col span={6}>
-                          <Form.Item
-                            name={[index, "endTime"]}
-                            initialValue={item.endTime}
-                            label="Giờ kết thúc"
-                          >
-                            <Select addonBefore="Giờ kết thúc:">
-                              {hours.map((hour) => (
-                                <Option key={hour} value={hour}>
-                                  {hour}
-                                </Option>
-                              ))}
-                            </Select>
+                          <Form.Item label="Loại giá">
+                            <span>
+                              {getScheduleTypeLabel(item.scheduleType)}
+                            </span>
                           </Form.Item>
                         </Col>
-                      </>
-                    )}
-                    <Col span={6}>
-                      <Form.Item>
-                        <span>{getScheduleTypeLabel(item.scheduleType)}</span>
-                      </Form.Item>
-                    </Col>
-                  </Row>
+                      </Row>
+                    </Form>
+                  </Card>
                 </List.Item>
               )}
             />
