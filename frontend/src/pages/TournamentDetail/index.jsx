@@ -14,6 +14,7 @@ const statusStyles = {
   confirm: { message: "Giải đấu đã được thanh toán.", color: "blue" },
   completed: { message: "Giải đấu đã hoàn thành.", color: "navy" },
   cancelled: { message: "Giải đấu đã bị hủy.", color: "orange" },
+  expired: { message: "Hết hạn thanh toán giải đấu.", color: "purple" },
 };
 export default function TournamentDetail() {
   const tournamentId = useParams().tournamentID;
@@ -151,6 +152,9 @@ export default function TournamentDetail() {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Button type="primary" onClick={showModalConfirrm}>
               Thanh toán
+            </Button>
+            <Button danger onClick={showModal}>
+              Hủy giải đấu
             </Button>
           </div>
         )}
