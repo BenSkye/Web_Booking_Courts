@@ -35,23 +35,19 @@ export default function HeaderLayout() {
     },
     {
       label: (
-        <Link to="/courtManage/accept_court_from_customer">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "start" }}>
-            <MdCheckCircle size="20px" />
-            <>Quản lý lịch đặt sân</>
-          </div>
-        </Link>
-      ),
-      key: "1",
-    },
-    {
-      label: (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "start" }} onClick={logouthander}>
-          <CiLogout size="20px" />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
+          }}
+          onClick={logouthander}
+        >
+          <CiLogout size='20px' />
           <>Đăng xuất</>
         </div>
       ),
-      key: "2",
+      key: '1',
     },
   ];
 
@@ -74,7 +70,7 @@ export default function HeaderLayout() {
           <>Đăng xuất</>
         </div>
       ),
-      key: "2",
+      key: '1',
     },
   ];
 
@@ -92,30 +88,15 @@ export default function HeaderLayout() {
     },
     {
       label: (
-        <Link to="/user/booking-court">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "start" }}>
-            <BsCalendarWeek size="20px" />
-            <>Đặt sân của tôi</>
-          </div>
-        </Link>
-      ),
-      key: "1",
-    },
-    {
-      label: (
-        <Link to="/">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "start" }}>
-            <TiClipboard size="20px" />
-            <>Danh sách giao dịch</>
-          </div>
-        </Link>
-      ),
-      key: "2",
-    },
-    {
-      label: (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "start" }} onClick={logouthander}>
-          <CiLogout size="20px" />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
+          }}
+          onClick={logouthander}
+        >
+          <CiLogout size='20px' />
           <>Đăng xuất</>
         </div>
       ),
@@ -176,7 +157,7 @@ export default function HeaderLayout() {
             flex: 1,
             minWidth: 0,
             fontSize: "24px",
-            background: "rgb(30 136 229)",
+            background: "#f58f00",
           }}
         >
           {menuItems?.map((item) => (
@@ -191,7 +172,11 @@ export default function HeaderLayout() {
           <a onClick={(e) => e.preventDefault()}>
             <Space>
               {user?.avatar ? (
-                <Avatar size="large" src={user.avatar} style={{ background: "white", height: "50px", width: "50px" }} />
+                <Avatar
+                  size='large'
+                  src={user?.avatar}
+                  style={{ background: 'white', height: '50px', width: '50px' }}
+                />
               ) : (
                 <Avatar size="large" src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" style={{ background: "white", height: "50px", width: "50px" }} />
               )}
