@@ -1,268 +1,266 @@
-import { useState, useEffect, useContext } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Avatar, Dropdown, Space, Button } from "antd";
-import { MdArrowDropDown } from "react-icons/md";
-import { CgProfile } from "react-icons/cg";
-import { GiTennisCourt } from "react-icons/gi";
-import { FaUserPlus } from "react-icons/fa";
-import { CiLogout } from "react-icons/ci";
-import { BsCalendarWeek } from "react-icons/bs";
-import { TiClipboard } from "react-icons/ti";
-import { MdCheckCircle } from "react-icons/md";
-
-import logo from "@/assets/logonew.png";
-
-import AuthContext from "../../../services/authAPI/authProvideAPI";
+import { useState, useEffect, useContext } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, Avatar, Dropdown, Space, Button } from 'antd';
+import { MdArrowDropDown, MdCheckCircle } from 'react-icons/md';
+import { CgProfile } from 'react-icons/cg';
+import { GiTennisCourt } from 'react-icons/gi';
+import { FaUserPlus } from 'react-icons/fa';
+import { CiLogout } from 'react-icons/ci';
+import { BsCalendarWeek } from 'react-icons/bs';
+import { TiClipboard } from 'react-icons/ti';
+import { getDatabase, ref as dbRef, onValue } from 'firebase/database';
+import { app } from '../../../utils/firebase/firebase';
+import logo from '@/assets/daulau.jpg';
+import AuthContext from '../../../services/authAPI/authProvideAPI';
 
 export default function HeaderLayout() {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const { logout } = useContext(AuthContext);
+  const database = getDatabase(app);
   const navigate = useNavigate();
-  // console.log("user", user);
+
   const logouthander = async () => {
     const user = await logout();
-    console.log("userlogout", user);
-    if (user == undefined) {
-      navigate("/");
+    if (user === undefined) {
+      navigate('/');
     }
   };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userRef = dbRef(database, 'users/' + user.uid);
+      onValue(userRef, (snapshot) => {
+        const userData = snapshot.val();
+        if (userData) {
+          setUser(userData);
+        }
+      });
+    };
+
+    if (user && user.uid) {
+      fetchUserData();
+    }
+  }, [user]);
+
   const itemsManager = [
-    //Items for the dropdown Profile
     {
       label: (
-        <Link to="/user">
+        <Link to='/user'>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "start",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'start',
             }}
           >
-            <GiTennisCourt size="20px" />
+            <GiTennisCourt size='20px' />
             <>Thông tin cá nhân</>
           </div>
         </Link>
       ),
-      key: "0",
+      key: '0',
     },
     {
       label: (
-        <Link to="/courtManage/accept_court_from_customer">
+        <Link to='/courtManage/accept_court_from_customer'>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "start",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'start',
             }}
           >
-            <MdCheckCircle size="20px" />
+            <MdCheckCircle size='20px' />
             <>Quản lý lịch đặt sân</>
           </div>
         </Link>
       ),
-      key: "1",
+      key: '1',
     },
     {
       label: (
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "start",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
           }}
           onClick={logouthander}
         >
-          <CiLogout size="20px" />
+          <CiLogout size='20px' />
           <>Đăng xuất</>
         </div>
       ),
-      key: "2",
+      key: '2',
     },
   ];
+
   const itemsAdmin = [
-    //Items for the dropdown Profile
     {
       label: (
-        <Link to="/user">
+        <Link to='/user'>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "start",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'start',
             }}
           >
-            <GiTennisCourt size="20px" />
+            <GiTennisCourt size='20px' />
             <>Thông tin cá nhân</>
           </div>
         </Link>
       ),
-      key: "0",
+      key: '0',
     },
-    // {
-    //   label: (
-    //     <Link to="/courtManage/accept_court_from_customer">
-    //       <div
-    //         style={{
-    //           display: "flex",
-    //           alignItems: "center",
-    //           justifyContent: "start",
-    //         }}
-    //       >
-    //         <MdCheckCircle size="20px" />
-    //         <>Quản lý lịch đặt sân</>
-    //       </div>
-    //     </Link>
-    //   ),
-    //   key: "1",
-    // },
     {
       label: (
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "start",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
           }}
           onClick={logouthander}
         >
-          <CiLogout size="20px" />
+          <CiLogout size='20px' />
           <>Đăng xuất</>
         </div>
       ),
-      key: "2",
+      key: '2',
     },
   ];
+
   const itemsCustomer = [
-    //Items for the dropdown Profile
     {
       label: (
-        <Link to="/user">
+        <Link to='/user'>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "start",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'start',
             }}
           >
-            <GiTennisCourt size="20px" />
+            <GiTennisCourt size='20px' />
             <>Thông tin cá nhân</>
           </div>
         </Link>
       ),
-      key: "0",
+      key: '0',
     },
     {
       label: (
-        <Link to="/user/booking-court">
+        <Link to='/user/booking-court'>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "start",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'start',
             }}
           >
-            <BsCalendarWeek size="20px" />
+            <BsCalendarWeek size='20px' />
             <>Đặt sân của tôi</>
           </div>
         </Link>
       ),
-      key: "1",
+      key: '1',
     },
     {
       label: (
-        <Link to="/">
+        <Link to='/'>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "start",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'start',
             }}
           >
-            <TiClipboard size="20px" />
+            <TiClipboard size='20px' />
             <>Danh sách giao dịch</>
           </div>
         </Link>
       ),
-      key: "2",
+      key: '2',
     },
     {
       label: (
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "start",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'start',
           }}
           onClick={logouthander}
         >
-          <CiLogout size="20px" />
+          <CiLogout size='20px' />
           <>Đăng xuất</>
         </div>
       ),
-      key: "3",
+      key: '3',
     },
   ];
 
   const items =
-    user?.role === "manager"
+    user?.role === 'manager'
       ? itemsManager
-      : user?.role === "customer"
-        ? itemsCustomer
-        : itemsAdmin;
+      : user?.role === 'customer'
+      ? itemsCustomer
+      : itemsAdmin;
 
   const menuItemsUser = [
-    {
-      key: "1",
-      label: "Tìm sân",
-      path: "/",
-    },
-    { key: "2", label: "Giới thiệu", path: "/aboutUs" },
-    { key: "3", label: "Đăng kí giải", path: "/tournament" },
+    { key: '1', label: 'Tìm sân', path: '/' },
+    { key: '2', label: 'Giới thiệu', path: '/aboutUs' },
+    { key: '3', label: 'Đăng kí giải', path: '/tournament' },
   ];
+
   const menuItemsManager = [
-    { key: "1", label: "Tổng quan", path: "/courtManage/Dashboard" },
-    { key: "2", label: "Lịch hoạt động", path: "/courtManage/ManagerCalendar" },
+    { key: '1', label: 'Tổng quan', path: '/courtManage/Dashboard' },
+    { key: '2', label: 'Lịch hoạt động', path: '/courtManage/ManagerCalendar' },
     {
-      key: "3",
-      label: "Yêu cầu tổ chức giải",
-      path: "/courtManage/RequestToOrganizeATournament",
+      key: '3',
+      label: 'Yêu cầu tổ chức giải',
+      path: '/courtManage/RequestToOrganizeATournament',
     },
-    { key: "4", label: "Quản lý sân", path: "/courtManage" },
+    { key: '4', label: 'Quản lý sân', path: '/courtManage' },
     {
-      key: "5",
-      label: "Đặt sân trực tiếp",
-      path: "/courtManage/BookingCourtDirectly",
+      key: '5',
+      label: 'Đặt sân trực tiếp',
+      path: '/courtManage/BookingCourtDirectly',
     },
-
-    { key: "7", label: "Đăng ký sân", path: "/courtManage/partner" },
+    { key: '7', label: 'Đăng ký sân', path: '/courtManage/partner' },
   ];
+
   const menuItemsAdmin = [
-    { key: "1", label: "Tổng quan", path: "/admin/Dashboard" },
-    { key: "2", label: "Quản lý sân", path: "/admin/manageCenter" },
-    { key: "3", label: "Quản lý người dùng", path: "/admin/UserManagement" },
-    { key: "4", label: "Quản lý người chủ sân", path: "/admin/ManagerManagement" },
-
+    { key: '1', label: 'Tổng quan', path: '/admin/Dashboard' },
+    { key: '2', label: 'Quản lý sân', path: '/admin/manageCenter' },
+    { key: '3', label: 'Quản lý người dùng', path: '/admin/UserManagement' },
+    {
+      key: '4',
+      label: 'Quản lý người chủ sân',
+      path: '/admin/ManagerManagement',
+    },
   ];
+
   const menuItems =
-    user?.role === "manager"
+    user?.role === 'manager'
       ? menuItemsManager
-      : user?.role === "admin"
-        ? menuItemsAdmin
-        : menuItemsUser;
+      : user?.role === 'admin'
+      ? menuItemsAdmin
+      : menuItemsUser;
 
-
-
-  const [selectedKey, setSelectedKey] = useState("");
+  const [selectedKey, setSelectedKey] = useState('');
   const location = useLocation();
+
   useEffect(() => {
-    // Lấy đường dẫn hiện tại từ useLocation và tìm kiếm nó trong menuItems
     const selectedItem = menuItems.find(
       (item) => item.path === location.pathname
     );
     if (selectedItem) {
-      setSelectedKey(selectedItem.key); // Nếu tìm thấy, đặt selectedKey tương ứng
+      setSelectedKey(selectedItem.key);
     }
   }, [location.pathname, menuItems]);
+
   return (
     <>
       <>
@@ -270,94 +268,86 @@ export default function HeaderLayout() {
           width={60}
           height={60}
           src={logo}
-          className="demo-logo"
-          style={{ margin: "4px 4px" }}
+          className='demo-logo'
+          style={{ margin: '4px 4px' }}
         />
         <Menu
-          mode="horizontal"
+          mode='horizontal'
           selectedKeys={[selectedKey]}
           style={{
             flex: 1,
             minWidth: 0,
-            fontSize: "24px",
-            background: "rgb(30 136 229)",
+            fontSize: '24px',
+            background: '#F58F00',
           }}
         >
           {menuItems?.map((item) => (
-            <Menu.Item key={item.key} style={{ color: "white" }}>
+            <Menu.Item key={item.key} style={{ color: 'white' }}>
               <Link to={item.path}>{item.label}</Link>
             </Menu.Item>
           ))}
         </Menu>
       </>
       {user ? (
-        <Dropdown
-          menu={{
-            items,
-          }}
-        >
+        <Dropdown menu={{ items }}>
           <a onClick={(e) => e.preventDefault()}>
             <Space>
               {user?.avatar ? (
                 <Avatar
-                  size="large"
-                  src={user.avatar} // Sử dụng URL ảnh đại diện từ currentUser nếu đã đăng nhập
-                  style={{ background: "white", height: "50px", width: "50px" }}
+                  size='large'
+                  src={user.avatar}
+                  style={{ background: 'white', height: '50px', width: '50px' }}
                 />
               ) : (
                 <Avatar
-                  size="large"
-                  src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" // Sử dụng URL ảnh mặc định nếu chưa đăng nhập
-                  style={{ background: "white", height: "50px", width: "50px" }}
+                  size='large'
+                  src='https://api.dicebear.com/7.x/miniavs/svg?seed=1'
+                  style={{ background: 'white', height: '50px', width: '50px' }}
                 />
               )}
-              {/* <div style={{ color: "white" }}>{user?.userName}</div>{" "} */}
-              {/* Hiển thị tên người dùng */}
               <MdArrowDropDown
-                style={{ display: "flex", alignItems: "center" }}
-                color="white"
-                size="30px"
+                style={{ display: 'flex', alignItems: 'center' }}
+                color='white'
+                size='30px'
               />
             </Space>
           </a>
         </Dropdown>
       ) : (
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-          <Link to="/login" style={{ paddingRight: "20px" }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Link to='/login' style={{ paddingRight: '20px' }}>
             <Button
-
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "start",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'start',
               }}
             >
-              <CgProfile size="20px" />
+              <CgProfile size='20px' />
               <>Đăng nhập</>
             </Button>
           </Link>
-          <Link to="/signup" style={{ margin: "0 20px" }}>
+          <Link to='/signup' style={{ margin: '0 20px' }}>
             <Button
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "start",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'start',
               }}
             >
-              <FaUserPlus size="20px" />
+              <FaUserPlus size='20px' />
               <>Đăng ký</>
             </Button>
           </Link>
-          <Link to="/signupPartner">
+          <Link to='/signupPartner'>
             <Button
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "start",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'start',
               }}
             >
-              <FaUserPlus size="20px" />
+              <FaUserPlus size='20px' />
               <>Đăng ký trở thành cộng tác viên</>
             </Button>
           </Link>

@@ -1,7 +1,7 @@
-import { Outlet } from "react-router-dom";
-import { Layout, theme } from "antd";
-import FooterLayout from "@/components/layouts/components/footer";
-import HeaderLayout from "@/components/layouts/components/header";
+import { Outlet } from 'react-router-dom';
+import { Layout, theme } from 'antd';
+import FooterLayout from '@/components/layouts/components/footer';
+import HeaderLayout from '@/components/layouts/components/header';
 
 const { Header, Content, Footer } = Layout;
 
@@ -13,20 +13,20 @@ const LayoutMain = () => {
   return (
     <Layout
       style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       <Header
         style={{
-          position: "sticky",
+          position: 'sticky',
           top: 0,
           zIndex: 1,
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          background: "rgb(30 136 229)",
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          background: '#F58F00',
         }}
       >
         <HeaderLayout />
@@ -34,11 +34,11 @@ const LayoutMain = () => {
       <Content
         style={{
           flexGrow: 1,
-          padding: "20px 30px", // Điều chỉnh padding ở đây
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          background: "#f5f5f5",
+          padding: '20px 30px', // Điều chỉnh padding ở đây
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          background: '#f5f5f5',
         }}
       >
         <div
@@ -54,8 +54,8 @@ const LayoutMain = () => {
       </Content>
       <Footer
         style={{
-          background: "black",
-          color: "white",
+          background: 'black',
+          color: 'white',
         }}
       >
         <FooterLayout />

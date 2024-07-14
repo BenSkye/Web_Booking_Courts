@@ -9,11 +9,11 @@ import '@/styles/main.css';
 
 const theme = {
   token: {
-    colorPrimary: 'rgb(30, 136, 229)',
-    colorBgLayout: 'linear-gradient(to left, #bcbcbc, #444444)',
-    colorTextPlaceholder: 'silver',
-    colorBgInput: 'white',
-    addonBg: 'white',
+    colorPrimary: '#4B4032', // Màu xanh lá cây
+    colorBgLayout: 'linear-gradient(to left, #bcbcbc, #444444)', // Gradient màu xám
+    colorTextPlaceholder: 'silver', // Màu văn bản placeholder xám
+    colorBgInput: 'white', // Màu nền input trắng
+    addonBg: 'white', // Màu nền các phần bổ sung trắng
   },
   components: {
     Button: {
@@ -21,8 +21,8 @@ const theme = {
       colorText: 'black',
       variants: {
         primary: {
-          backgroundColor: 'rgb(30, 136, 229)',
-          color: 'white',
+          backgroundColor: '#4B4032', // Màu button chính xanh lá cây
+          color: 'white', // Màu văn bản button chính trắng
         },
       },
     },

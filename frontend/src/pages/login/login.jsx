@@ -26,10 +26,10 @@ const Login = () => {
       const user = await login(values.email, values.password);
       if (user) {
         console.log(user);
-        if (user.role === 'manager') {
-          navigate('/courtManage');
+        if (user.role === "manager") {
+          navigate("/courtManage");
         } else {
-          navigate('/');
+          navigate(-1);
         }
       } else {
         message.error("Email hoặc mật khẩu không đúng!");

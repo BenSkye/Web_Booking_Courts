@@ -315,7 +315,21 @@ const BookingFixedByMonth = ({ id }) => {
                           },
                         ]}
                       >
-                        <TimePicker format='HH:mm' />
+                        <TimePicker
+                          format='HH:mm'
+                          defaultValue={moment('08:00', 'HH:mm')}
+                          minuteStep={30} // Đặt bước nhảy cho phép là 30 phút
+                          disabledHours={() => {
+                            const disabledHours = [];
+                            for (let i = 0; i < 8; i++) {
+                              disabledHours.push(i);
+                            }
+                            for (let i = 12; i < 24; i++) {
+                              disabledHours.push(i);
+                            }
+                            return disabledHours;
+                          }}
+                        />
                       </Form.Item>
                       <Form.Item
                         {...restField}
@@ -362,16 +376,13 @@ const BookingFixedByMonth = ({ id }) => {
       </Col>
       <Col span={14}>
         <Card>
-          <h3 style={{ marginTop: '20px' }}>Giá dự kiến</h3>
+          {/* <h3 style={{ marginTop: '20px' }}>Giá dự kiến</h3> */}
           {/* <h3 style={{ marginTop: '20px' }}>_ID:{bookingId}</h3> */}
 
           {bookingId ? (
             <>
-              <Text strong>{bookingId}đ</Text>
-              <h2>
-                Tổng giá tiền:
-                {formatPrice(totalPrice)}
-              </h2>
+              {/* <Text strong>{bookingId}</Text> */}
+              <h1>Tổng giá tiền: {formatPrice(totalPrice)}</h1>
               <Calendar cellRender={cellRender} />
               <Form.Item>
                 <Button type='primary' onClick={handlePayment} block>

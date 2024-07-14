@@ -21,7 +21,6 @@ interface IUserRepository {
   getAllUser(): Promise<any>
 }
 class userRepository implements IUserRepository {
-  
   async addUser(user: IUser) {
     const newUser = new User(user)
     const userSaved = await newUser.save()
