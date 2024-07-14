@@ -1,11 +1,10 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useContext, useEffect, useState } from "react";
-import { Table, Tag, Button, Modal, Input } from "antd";
+import { Table, Tag, Button, Modal, Input, Tooltip } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 import AuthContext from "../../../services/authAPI/authProvideAPI";
 import { getAllCenterAPI } from "../../../services/centersAPI/getCenters";
 import changeCenterStatus from "../../../services/admin/manageStatus";
-import moment from "moment"; // Import thư viện moment
+import moment from "moment";
 
 const ManageCenter = () => {
   const { user } = useContext(AuthContext);
@@ -34,12 +33,11 @@ const ManageCenter = () => {
 
   const handleView = (record) => {
     setSelectedCenter(record);
-    setRejectionReason(record.rejectionReason || ""); // Load the rejection reason if it exists
+    setRejectionReason(record.rejectionReason || ""); 
     setIsModalVisible(true);
   };
 
   const handleOk = async () => {
-    console.log("Approved");
     setConfirmLoading(true);
     try {
       const currentStatus = selectedCenter.status;
@@ -59,7 +57,6 @@ const ManageCenter = () => {
         nextStatus = statusSequence[currentIndex + 1];
       }
 
-      // When approving, ensure to preserve rejection reason if transitioning from rejected
       const updatedRejectionReason =
         nextStatus === "rejected" ? rejectionReason : "";
 
@@ -89,7 +86,6 @@ const ManageCenter = () => {
   };
 
   const handleReject = async () => {
-    console.log("Rejected");
     setConfirmLoading(true);
     try {
       const nextStatus = "rejected";
@@ -115,7 +111,6 @@ const ManageCenter = () => {
   };
 
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setIsModalVisible(false);
   };
 
@@ -157,14 +152,20 @@ const ManageCenter = () => {
       dataIndex: "images",
       key: "images",
       render: (images) => (
-        <div>
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {Array.isArray(images) &&
             images.map((image, index) => (
               <img
                 key={index}
                 src={image}
                 alt="Center"
-                style={{ width: "50px", height: "50px", marginRight: "5px" }}
+                style={{
+                  width: '60px',
+                  height: '60px',
+                  marginRight: '8px',
+                  borderRadius: '6px',
+                  objectFit: 'cover',
+                }}
               />
             ))}
         </div>
@@ -175,11 +176,13 @@ const ManageCenter = () => {
       dataIndex: "services",
       key: "services",
       render: (services) => (
-        <div>
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {services.map((service, index) => (
-            <Tag color="blue" key={index}>
-              {service}
-            </Tag>
+            <Tooltip title={service} key={index}>
+              <Tag color="blue" style={{ margin: '4px', zIndex: 1 }}>
+                {service}
+              </Tag>
+            </Tooltip>
           ))}
         </div>
       ),
@@ -197,65 +200,54 @@ const ManageCenter = () => {
           rejected: "Đã từ chối",
         };
 
-        let color = "";
-        switch (status) {
-          case "pending":
-            color = "#fa541c";
-            break;
-          case "accepted":
-            color = "#2f54eb";
-            break;
-          case "active":
-            color = "#52c41a";
-            break;
-          case "expired":
-            color = "#bfbfbf";
-            break;
-          case "rejected":
-            color = "#f5222d";
-            break;
-          default:
-            color = "#d9d9d9";
-        }
+        const colorMap = {
+          pending: "#fa541c",
+          accepted: "#2f54eb",
+          active: "#52c41a",
+          expired: "#bfbfbf",
+          rejected: "#f5222d",
+        };
 
-        return <Tag color={color}>{statusMap[status]}</Tag>;
+        return (
+          <Tag
+            color={colorMap[status] || "#d9d9d9"}
+            style={{ position: 'relative', zIndex: 2 }}
+          >
+            {statusMap[status]}
+          </Tag>
+        );
       },
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (createdAt) => moment(createdAt).format("DD/MM/YYYY HH:mm"), // Format ngày tạo
+      render: (createdAt) => moment(createdAt).format("DD/MM/YYYY HH:mm"),
     },
     {
       title: "Hành động",
       key: "action",
       render: (text, record) => (
-        <div>
-          <Button icon={<EyeOutlined />} onClick={() => handleView(record)}>
-            Xem
-          </Button>
-        </div>
+        <Button
+          icon={<EyeOutlined />}
+          onClick={() => handleView(record)}
+          style={{ margin: 0, borderRadius: '4px' }}
+        >
+          Xem
+        </Button>
       ),
     },
   ];
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <h1 style={{ flex: "0 1 auto" }}>Quản lý sân</h1>
-      <div style={{ flex: "1 1 auto", overflow: "hidden" }}>
+    <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column', padding: '20px', boxSizing: 'border-box', backgroundColor: '#f0f2f5' }}>
+      <h1 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '20px', color: '#333' }}>Quản lý sân</h1>
+      <div style={{ flex: '1 1 auto', overflow: 'hidden' }}>
         <Table
           dataSource={centers}
           columns={columns}
-          style={{ width: "100%", height: "100%" }}
-          scroll={{ y: "calc(100vh - 150px)" }}
+          style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
+          scroll={{ y: 'calc(100vh - 220px)' }}
         />
       </div>
 
@@ -270,7 +262,7 @@ const ManageCenter = () => {
             <Button
               key="cancel"
               onClick={handleCancel}
-              style={{ float: "left" }}
+              style={{ backgroundColor: '#f5222d', color: '#fff', borderRadius: '4px' }}
             >
               Hủy
             </Button>,
@@ -279,6 +271,7 @@ const ManageCenter = () => {
               type="primary"
               loading={confirmLoading}
               onClick={handleOk}
+              style={{ backgroundColor: '#1890ff', color: '#fff', borderRadius: '4px' }}
             >
               Duyệt
             </Button>,
@@ -287,16 +280,13 @@ const ManageCenter = () => {
               type="danger"
               loading={confirmLoading}
               onClick={handleReject}
+              style={{ backgroundColor: '#ff4d4f', color: '#fff', borderRadius: '4px' }}
             >
               Từ chối
             </Button>,
           ]}
         >
           <Table
-            columns={[
-              { title: "Thuộc tính", dataIndex: "property", key: "property" },
-              { title: "Giá trị", dataIndex: "value", key: "value" },
-            ]}
             dataSource={[
               {
                 key: "1",
@@ -327,7 +317,7 @@ const ManageCenter = () => {
                 key: "6",
                 property: "Hình ảnh",
                 value: (
-                  <div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                     {Array.isArray(selectedCenter.images) &&
                       selectedCenter.images.map((image, index) => (
                         <img
@@ -335,9 +325,13 @@ const ManageCenter = () => {
                           src={image}
                           alt="Center"
                           style={{
-                            width: "50px",
-                            height: "50px",
-                            marginRight: "5px",
+                            width: '60px',
+                            height: '60px',
+                            marginRight: '8px',
+                            borderRadius: '6px',
+                            objectFit: 'cover',
+                            zIndex: 1,
+                            position: 'relative',
                           }}
                         />
                       ))}
@@ -348,13 +342,25 @@ const ManageCenter = () => {
                 key: "7",
                 property: "Gói đăng ký",
                 value: (
-                  <div>
-                    {selectedCenter.subscriptions.map((subscription, index) => (
-                      <div key={index}>
-                        <p><b>Thời gian:</b> {subscription.packageId.durationMonths} tháng</p>
-                        <p><b>Giá tiền:</b> {subscription.packageId.price} VNĐ</p>
-                        <p><b>Ngày kích hoạt:</b> {new Date(subscription.activationDate).toLocaleDateString()}</p>
-                        <p><b>Ngày kết thúc:</b> {new Date(subscription.expiryDate).toLocaleDateString()}</p>
+                  <div style={{ marginBottom: '10px' }}>
+                    {Object.values(selectedCenter.subscriptions.reduce((acc, subscription) => {
+                      const key = subscription.packageId._id;
+                      if (!acc[key]) {
+                        acc[key] = {
+                          ...subscription.packageId,
+                          durationMonths: 0,
+                          price: 0,
+                        };
+                      }
+                      acc[key].durationMonths += subscription.packageId.durationMonths;
+                      acc[key].price += subscription.packageId.price;
+                      return acc;
+                    }, {})).map((item, index) => (
+                      <div key={index} style={{ marginBottom: '10px' }}>
+                        <p><b>Thời gian:</b> {item.durationMonths} tháng</p>
+                        <p><b>Giá tiền:</b> {item.price.toLocaleString('vi-VN')} VNĐ</p>
+                        <p><b>Ngày kích hoạt:</b> {new Date(selectedCenter.subscriptions.find(sub => sub.packageId._id === item._id)?.activationDate).toLocaleDateString()}</p>
+                        <p><b>Ngày kết thúc:</b> {new Date(selectedCenter.subscriptions.find(sub => sub.packageId._id === item._id)?.expiryDate).toLocaleDateString()}</p>
                       </div>
                     ))}
                   </div>
@@ -364,9 +370,9 @@ const ManageCenter = () => {
                 key: "8",
                 property: "Giá",
                 value: (
-                  <div>
+                  <div style={{ marginBottom: '10px' }}>
                     {selectedCenter.price.map((item, index) => (
-                      <div key={index}>
+                      <div key={index} style={{ marginBottom: '10px' }}>
                         <p><b>Giá tiền:</b> {item.price}</p>
                         <p><b>Giờ bắt đầu:</b> {item.startTime}</p>
                         <p><b>Giờ kết thúc:</b> {item.endTime}</p>
@@ -380,11 +386,13 @@ const ManageCenter = () => {
                 key: "9",
                 property: "Dịch vụ",
                 value: (
-                  <div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', zIndex: 1 }}>
                     {selectedCenter.services.map((service, index) => (
-                      <Tag color="blue" key={index}>
-                        {service}
-                      </Tag>
+                      <Tooltip title={service} key={index}>
+                        <Tag color="blue" style={{ margin: '4px', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', zIndex: 1 }}>
+                          {service}
+                        </Tag>
+                      </Tooltip>
                     ))}
                   </div>
                 ),
@@ -402,11 +410,13 @@ const ManageCenter = () => {
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
                     disabled={selectedCenter.status === "rejected"}
+                    style={{ marginTop: '10px', zIndex: 1 }}
                   />
                 ),
               },
             ]}
             pagination={false}
+            style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
           />
         </Modal>
       )}

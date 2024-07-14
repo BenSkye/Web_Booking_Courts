@@ -1,9 +1,9 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useContext, useEffect, useState } from 'react';
 import { Table, Tag, Button, Avatar } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import AuthContext from "../../../services/authAPI/authProvideAPI";
 import getAllUsersAPI from '../../../services/admin/manageUser';
+import moment from 'moment';
 
 const ManagerManagement = () => {
   const { user } = useContext(AuthContext);
@@ -36,25 +36,39 @@ const ManagerManagement = () => {
     {
       title: 'Hình ảnh người dùng',
       key: 'avatar',
-      render: (avatar) => {
-        const defaultAvatar = 'https://api.dicebear.com/7.x/miniavs/svg?seed=1';
-        return <Avatar src={avatar || defaultAvatar} />;
+      render: (text, record) => {
+        const defaultAvatar = 'https://api.dicebear.com/7.x/miniavs/svg?seed=1'; // Hình đại diện mặc định
+        return (
+          <Avatar
+            src={record.avatar || defaultAvatar}
+            style={{
+              borderRadius: '50%',
+              border: '2px solid #d9d9d9',
+              width: '60px',
+              height: '60px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Thêm bóng đổ
+            }}
+          />
+        );
       },
     },
     {
       title: 'Tên người dùng',
       dataIndex: 'userName',
       key: 'userName',
+      render: text => <span style={{ color: '#1890ff' }}>{text}</span>, // Thay đổi màu chữ
     },
     {
       title: 'Email',
       dataIndex: 'userEmail',
       key: 'userEmail',
+      render: text => <span style={{ color: '#ff69b4' }}>{text}</span>, // Thay đổi màu chữ thành hồng
     },
     {
       title: 'Số điện thoại',
       dataIndex: 'userPhone',
       key: 'userPhone',
+      render: text => <span style={{ color: '#1890ff' }}>{text}</span>, // Thay đổi màu chữ
     },
     {
       title: 'Vai trò',
@@ -64,16 +78,16 @@ const ManagerManagement = () => {
         let color;
         switch (role) {
           case 'manager':
-            color = 'geekblue';
+            color = '#2f54eb'; // geekblue
             break;
           case 'admin':
-            color = 'red';
+            color = '#f5222d'; // red
             break;
           default:
-            color = 'green';
+            color = '#52c41a'; // green
         }
         return (
-          <Tag color={color} key={role}>
+          <Tag color={color} style={{ margin: '0', fontWeight: 'bold' }} key={role}>
             {role.toUpperCase()}
           </Tag>
         );
@@ -84,9 +98,9 @@ const ManagerManagement = () => {
       dataIndex: 'status',
       key: 'status',
       render: (status) => {
-        let color = status === 'Hoạt động' ? 'green' : 'volcano';
+        let color = status === 'Hoạt động' ? '#52c41a' : '#fa541c'; // green or volcano
         return (
-          <Tag color={color} key={status}>
+          <Tag color={color} style={{ margin: '0', fontWeight: 'bold' }} key={status}>
             {status}
           </Tag>
         );
@@ -96,28 +110,26 @@ const ManagerManagement = () => {
       title: 'Ngày tạo tài khoản',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      render: (createdAt) => moment(createdAt).format('DD/MM/YYYY'),
     },
-    {
-      title: 'Hành động',
-      key: 'action',
-      render: (text, record) => (
-        <Button icon={<EditOutlined />} onClick={() => handleEdit(record.key)}>Chỉnh sửa</Button>
-      ),
-    },
+   
+    
   ];
 
-  // Filter the users to show only those with the role 'user'
+  // Filter the users to show only those with the role 'manager'
   const filteredUsers = users.filter(user => user.role === 'manager');
 
   return (
-    <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <h1 style={{ flex: '0 1 auto' }}>Quản lý người dùng</h1>
+    <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column', padding: '20px', backgroundColor: '#f0f2f5' }}>
+      <h1 style={{ flex: '0 1 auto', marginBottom: '20px', color: '#333', fontSize: '24px', fontWeight: 'bold' }}>Quản lý người dùng</h1>
       <div style={{ flex: '1 1 auto', overflow: 'hidden' }}>
         <Table
           dataSource={filteredUsers}
           columns={columns}
           style={{ width: '100%', height: '100%' }}
           scroll={{ y: 'calc(100vh - 150px)' }}
+          pagination={{ pageSize: 10 }} // Thêm phân trang
+          rowClassName="table-row"
         />
       </div>
     </div>
