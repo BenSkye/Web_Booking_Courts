@@ -13,8 +13,9 @@ import {
 import SearchBar from "@/pages/home/components/searchBar";
 import CardLoader from "@/utils/loader/skeletonLoader/loaderCard";
 import NoImg from "@/assets/noImg.jpg";
-import { getAllCenterAPI } from "@/services/centersAPI/getCenters";
+
 import GetAllLocationCenter from "../../utils/getAllCenterMap";
+import { getAllCenterActiveApi } from "../../services/centersAPI/getCenters";
 
 const { Meta } = Card;
 
@@ -48,7 +49,7 @@ export default function Home() {
     const getCenters = async () => {
       try {
         setLoading(true);
-        let data = await getAllCenterAPI(query);
+        let data = await getAllCenterActiveApi(query);
         data = data.map((center) => ({
           ...center,
           pricePerHour: center.price.find(
