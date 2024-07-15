@@ -14,12 +14,12 @@ export default function BookingDetail() {
       <TabPane tab='Đặt sân theo ngày' key='1'>
         <BookingByDate id={id} />
       </TabPane>
-      <TabPane tab='Đặt sân lịch cố định' key='2'>
+      <TabPane tab='Đặt sân theo gói linh hoạt' key='2'>
+        <BookingFlexibleByPackage id={id} />
+      </TabPane>
+      <TabPane tab='Đặt sân lịch cố định' key='3'>
         <BookingFixedByMonth id={id} />
       </TabPane>
-      {/* <TabPane tab='Đặt sân theo gói linh hoạt' key='3'>
-        <BookingFlexibleByPackage id={id} />
-      </TabPane> */}
     </Tabs>
   );
 }
