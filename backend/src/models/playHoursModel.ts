@@ -1,13 +1,6 @@
 
 
 import mongoose, { Schema, Document } from 'mongoose';
-export interface IPlayPackage extends Document {
-    userId: Schema.Types.ObjectId;
-    centerId: Schema.Types.ObjectId;
-    totalHours: number;
-    remainingHours: number;
-    playPackageId: Schema.Types.ObjectId;
-}
 
 const playHourSchema = new Schema(
     {

@@ -6,6 +6,7 @@ import { CiBoxList } from 'react-icons/ci';
 import PickTimeBooking from '@/components/booking/bookingDetails/bookingByDate/components/pickSlotsBooking';
 import PaymentBooking from '@/components/booking/bookingDetails/bookingByDate/components/paymentBooking';
 import ViewBooking from '@/components/booking/bookingDetails/bookingByDate/components/viewBooking';
+import PlayHourDetails from './components/bookingByHour'
 
 const { Step } = Steps;
 
@@ -34,6 +35,7 @@ export default function BookingByDate({ id }) {
       icon: <IoCheckmarkDoneCircleOutline />,
       content: <ViewBooking setCurrentStep={setCurrentStep} />,
     },
+
   ];
 
   return (

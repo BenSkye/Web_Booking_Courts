@@ -6,6 +6,7 @@ import PlayPackageRepository from '../repository/playPackagesRepository';
 import authController from './authController';
 import userRepository from '../repository/userRepository';
 
+
 import { Request, Response, NextFunction } from 'express';
 
 
@@ -21,7 +22,7 @@ class PlayPackageController {
             const playPackageService = new PlayPackageService();
             const result = await playPackageService.createOrUpdatePlayPackage(userId, playPackage);
 
-            res.status(result.status === 'success' ? 200 : 201).json(result);
+            res.status(200).json(result);
         } catch (error) {
             console.error('Error creating or updating play package:', error);
             next(error); // Pass the error to the global error handler
@@ -30,15 +31,42 @@ class PlayPackageController {
 
     static getPlayPackageByUserId = async (req: any, res: any, next: any) => {
         try {
-            const { userId } = req.body
+            const { centerId } = req.params
+            const userId = req.user._id
             const playPackageService = new PlayPackageService();
-            const getPlayPackageByUserId = await playPackageService.getPlayHourByUserId(userId);
+            const getPlayPackageByUserId = await playPackageService.getPlayHourByUserId(userId, centerId);
+            console.log('getPlayPackageByUserId', getPlayPackageByUserId)
 
             return res.status(200).json(getPlayPackageByUserId);
         } catch {
             res.status(500).json({})
         }
     }
+    static momoPayPackageController = catchAsync(async (req: any, res: any, next: any) => {
+        console.log('req.body', req.body)
+        const playpackageServiceInstance = new PlayPackageService()
+        const result = await playpackageServiceInstance.momoPayPlayHour(req.body, req.user.id)
+
+        return res.status(201).json({ result })
+    })
+
+    static handlePackagePaymentCallback = catchAsync(async (req: any, res: any, next: any) => {
+        const playpackageInstance = new PlayPackageService()
+        console.log('qqqqqqqqqqqqqq', req.body)
+        const result = await playpackageInstance.callbackPayForPackage(req.body)
+
+        if (result.status === 'success') {
+            res.status(200).json({
+                status: 'success',
+                data: result.center
+            })
+        } else {
+            res.status(400).json({
+                status: 'fail',
+                message: result.message || 'Payment failed'
+            })
+        }
+    })
 }
 
 export default PlayPackageController;

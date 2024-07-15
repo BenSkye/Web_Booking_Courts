@@ -34,6 +34,7 @@ import {
   getAvailableDurationAPI,
   getFreeTimeByDateAPI,
 } from "../../../../../../services/slotBookingAPI";
+import PlayHourDetails from '../bookingByHour/index'
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -52,6 +53,8 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
   const [startTime, setStartTime] = useState(null);
   const [duration, setDuration] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+
 
   useEffect(() => {
     console.log("availableCourts", availableCourts);
@@ -169,6 +172,8 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
     dispatch(updateTotalPrice(calculateTotalPrice()));
   }, [selectedCourts]);
 
+
+
   return (
     <div>
       <Row gutter={[16, 16]} justify="center">
@@ -240,6 +245,7 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
                         height: "50px ",
                         margin: "8px 0",
                       }}
+
                       onChange={(value) => setDuration(value)}
                     >
                       {durationOptions.map((duration) => (
@@ -317,7 +323,8 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
         <Col xs={24} md={8}>
           <Card
             title="Giỏ hàng của bạn"
-            style={{ boxShadow: "1px 1px 1px 1px rgba(0, 0, 0, 0.2)" }}
+            style={{ boxShadow: "1px 1px 1px 1px rgba(0, 0, 0, 0.2)", marginBottom: '20px' }}
+
           >
             <Row
               style={{
@@ -419,8 +426,15 @@ export default function PickTimeBooking({ checkOut, idCenter }) {
               </Button>
             </Flex>
           </Card>
+          <Col xs={24} md={18}>
+            <PlayHourDetails duration={duration} />
+
+          </Col>
+
         </Col>
       </Row>
+
+
       <Modal
         visible={showModal}
         title="Vị trí"
