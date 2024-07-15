@@ -38,7 +38,7 @@ class PlayPackageService {
 
         const totalprice = data.price;
         const orderId = 'PP' + Math.floor(Math.random() * 1000000).toString();
-        const redirect = '/courtManage';
+        const redirect = `/bookingdetail/${centerId}`;
         const orderInfo = 'Thanh toán gói sân ';
         const callbackUrl = '/api/v1/playPackage/pay-play-package';
         const extraData = JSON.stringify({ data, userID });
@@ -142,10 +142,15 @@ class PlayPackageService {
         }
 
         const extraData = JSON.parse(reqBody.extraData);
+
         console.log('Extradataaaaaaaaaaaa', extraData)
         const { centerId, price, hour } = extraData.data;
+        console.log('centerId', centerId)
+        console.log('price', price)
+        console.log('hour', hour)
         const playpackage = { centerId, price, hour };
-        const { userID } = extraData.userID
+        const userID = extraData.userID
+        console.log('userIDDDDDDDDDDDDDDDDDDDDDd', userID)
 
 
         try {
@@ -163,7 +168,7 @@ class PlayPackageService {
         try {
             const playHourInstance = new PlayHourRepository();
             const playHour = await playHourInstance.findPlayHourByUserIdAndCenterId(userId, centerId)
-            console.log('playHourrrrrr', playHour)
+
             return playHour
         } catch (error: any) {
             return error

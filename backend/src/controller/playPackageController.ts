@@ -35,7 +35,7 @@ class PlayPackageController {
             const userId = req.user._id
             const playPackageService = new PlayPackageService();
             const getPlayPackageByUserId = await playPackageService.getPlayHourByUserId(userId, centerId);
-            console.log('getPlayPackageByUserId', getPlayPackageByUserId)
+
 
             return res.status(200).json(getPlayPackageByUserId);
         } catch {
@@ -54,7 +54,7 @@ class PlayPackageController {
         const playpackageInstance = new PlayPackageService()
         console.log('qqqqqqqqqqqqqq', req.body)
         const result = await playpackageInstance.callbackPayForPackage(req.body)
-
+        console.log('resultttttttttttt', result)
         if (result.status === 'success') {
             res.status(200).json({
                 status: 'success',
