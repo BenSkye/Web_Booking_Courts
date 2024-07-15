@@ -179,7 +179,7 @@ const ManageCenter = () => {
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {services.map((service, index) => (
             <Tooltip title={service} key={index}>
-              <Tag color="blue" style={{ margin: '4px', zIndex: 1 }}>
+              <Tag color="blue" style={{ margin: '4px' }}>
                 {service}
               </Tag>
             </Tooltip>
@@ -208,14 +208,7 @@ const ManageCenter = () => {
           rejected: "#f5222d",
         };
 
-        return (
-          <Tag
-            color={colorMap[status] || "#d9d9d9"}
-            style={{ position: 'relative', zIndex: 2 }}
-          >
-            {statusMap[status]}
-          </Tag>
-        );
+        return <Tag color={colorMap[status] || "#d9d9d9"}>{statusMap[status]}</Tag>;
       },
     },
     {
@@ -280,13 +273,17 @@ const ManageCenter = () => {
               type="danger"
               loading={confirmLoading}
               onClick={handleReject}
-              style={{ backgroundColor: '#ff4d4f', color: '#fff', borderRadius: '4px' }}
+              style={{ backgroundColor: '#f5222d', color: '#fff', borderRadius: '4px' }}
             >
               Từ chối
             </Button>,
           ]}
         >
           <Table
+            columns={[
+              { title: "Thuộc tính", dataIndex: "property", key: "property" },
+              { title: "Giá trị", dataIndex: "value", key: "value" },
+            ]}
             dataSource={[
               {
                 key: "1",
@@ -330,8 +327,6 @@ const ManageCenter = () => {
                             marginRight: '8px',
                             borderRadius: '6px',
                             objectFit: 'cover',
-                            zIndex: 1,
-                            position: 'relative',
                           }}
                         />
                       ))}
@@ -386,10 +381,10 @@ const ManageCenter = () => {
                 key: "9",
                 property: "Dịch vụ",
                 value: (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', zIndex: 1 }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                     {selectedCenter.services.map((service, index) => (
                       <Tooltip title={service} key={index}>
-                        <Tag color="blue" style={{ margin: '4px', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', zIndex: 1 }}>
+                        <Tag color="blue" style={{ margin: '4px', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {service}
                         </Tag>
                       </Tooltip>
@@ -410,7 +405,7 @@ const ManageCenter = () => {
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
                     disabled={selectedCenter.status === "rejected"}
-                    style={{ marginTop: '10px', zIndex: 1 }}
+                    style={{ marginTop: '10px' }}
                   />
                 ),
               },
