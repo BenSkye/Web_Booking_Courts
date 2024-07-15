@@ -41,8 +41,10 @@ class AuthService implements IAuthService {
     const password = bcrypt.hashSync(user.password, 12)
     user.password = password
     const userRepositoryInstance = new userRepository()
-    const newUser = await userRepositoryInstance.addPartner(user)
+    console.log('user', user)
 
+    const newUser = await userRepositoryInstance.addPartner(user)
+    console.log('newUser', newUser)
     // Gửi email chào mừng với mật khẩu
     // await this.sendWelcomeEmail(newUser.userEmail, newUser.userName, user.password);
 

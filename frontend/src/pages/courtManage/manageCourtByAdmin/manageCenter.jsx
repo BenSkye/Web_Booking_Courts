@@ -33,7 +33,7 @@ const ManageCenter = () => {
 
   const handleView = (record) => {
     setSelectedCenter(record);
-    setRejectionReason(record.rejectionReason || ""); 
+    setRejectionReason(record.rejectionReason || "");
     setIsModalVisible(true);
   };
 
@@ -89,11 +89,7 @@ const ManageCenter = () => {
     setConfirmLoading(true);
     try {
       const nextStatus = "rejected";
-      await changeCenterStatus(
-        selectedCenter._id,
-        nextStatus,
-        rejectionReason
-      );
+      await changeCenterStatus(selectedCenter._id, nextStatus, rejectionReason);
 
       const updatedCenters = centers.map((center) =>
         center._id === selectedCenter._id
@@ -152,7 +148,7 @@ const ManageCenter = () => {
       dataIndex: "images",
       key: "images",
       render: (images) => (
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", flexWrap: "wrap" }}>
           {Array.isArray(images) &&
             images.map((image, index) => (
               <img
@@ -160,11 +156,11 @@ const ManageCenter = () => {
                 src={image}
                 alt="Center"
                 style={{
-                  width: '60px',
-                  height: '60px',
-                  marginRight: '8px',
-                  borderRadius: '6px',
-                  objectFit: 'cover',
+                  width: "60px",
+                  height: "60px",
+                  marginRight: "8px",
+                  borderRadius: "6px",
+                  objectFit: "cover",
                 }}
               />
             ))}
@@ -176,10 +172,10 @@ const ManageCenter = () => {
       dataIndex: "services",
       key: "services",
       render: (services) => (
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", flexWrap: "wrap" }}>
           {services.map((service, index) => (
             <Tooltip title={service} key={index}>
-              <Tag color="blue" style={{ margin: '4px', zIndex: 1 }}>
+              <Tag color="blue" style={{ margin: "4px" }}>
                 {service}
               </Tag>
             </Tooltip>
@@ -209,12 +205,7 @@ const ManageCenter = () => {
         };
 
         return (
-          <Tag
-            color={colorMap[status] || "#d9d9d9"}
-            style={{ position: 'relative', zIndex: 2 }}
-          >
-            {statusMap[status]}
-          </Tag>
+          <Tag color={colorMap[status] || "#d9d9d9"}>{statusMap[status]}</Tag>
         );
       },
     },
@@ -231,7 +222,7 @@ const ManageCenter = () => {
         <Button
           icon={<EyeOutlined />}
           onClick={() => handleView(record)}
-          style={{ margin: 0, borderRadius: '4px' }}
+          style={{ margin: 0, borderRadius: "4px" }}
         >
           Xem
         </Button>
@@ -240,14 +231,37 @@ const ManageCenter = () => {
   ];
 
   return (
-    <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column', padding: '20px', boxSizing: 'border-box', backgroundColor: '#f0f2f5' }}>
-      <h1 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '20px', color: '#333' }}>Quản lý sân</h1>
-      <div style={{ flex: '1 1 auto', overflow: 'hidden' }}>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        padding: "20px",
+        boxSizing: "border-box",
+        backgroundColor: "#f0f2f5",
+      }}
+    >
+      <h1
+        style={{
+          fontSize: "26px",
+          fontWeight: "bold",
+          marginBottom: "20px",
+          color: "#333",
+        }}
+      >
+        Quản lý sân
+      </h1>
+      <div style={{ flex: "1 1 auto", overflow: "hidden" }}>
         <Table
           dataSource={centers}
           columns={columns}
-          style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
-          scroll={{ y: 'calc(100vh - 220px)' }}
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          }}
+          scroll={{ y: "calc(100vh - 220px)" }}
         />
       </div>
 
@@ -262,7 +276,11 @@ const ManageCenter = () => {
             <Button
               key="cancel"
               onClick={handleCancel}
-              style={{ backgroundColor: '#f5222d', color: '#fff', borderRadius: '4px' }}
+              style={{
+                backgroundColor: "#f5222d",
+                color: "#fff",
+                borderRadius: "4px",
+              }}
             >
               Hủy
             </Button>,
@@ -271,7 +289,11 @@ const ManageCenter = () => {
               type="primary"
               loading={confirmLoading}
               onClick={handleOk}
-              style={{ backgroundColor: '#1890ff', color: '#fff', borderRadius: '4px' }}
+              style={{
+                backgroundColor: "#1890ff",
+                color: "#fff",
+                borderRadius: "4px",
+              }}
             >
               Duyệt
             </Button>,
@@ -280,13 +302,21 @@ const ManageCenter = () => {
               type="danger"
               loading={confirmLoading}
               onClick={handleReject}
-              style={{ backgroundColor: '#ff4d4f', color: '#fff', borderRadius: '4px' }}
+              style={{
+                backgroundColor: "#f5222d",
+                color: "#fff",
+                borderRadius: "4px",
+              }}
             >
               Từ chối
             </Button>,
           ]}
         >
           <Table
+            columns={[
+              { title: "Thuộc tính", dataIndex: "property", key: "property" },
+              { title: "Giá trị", dataIndex: "value", key: "value" },
+            ]}
             dataSource={[
               {
                 key: "1",
@@ -317,7 +347,7 @@ const ManageCenter = () => {
                 key: "6",
                 property: "Hình ảnh",
                 value: (
-                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                  <div style={{ display: "flex", flexWrap: "wrap" }}>
                     {Array.isArray(selectedCenter.images) &&
                       selectedCenter.images.map((image, index) => (
                         <img
@@ -325,13 +355,11 @@ const ManageCenter = () => {
                           src={image}
                           alt="Center"
                           style={{
-                            width: '60px',
-                            height: '60px',
-                            marginRight: '8px',
-                            borderRadius: '6px',
-                            objectFit: 'cover',
-                            zIndex: 1,
-                            position: 'relative',
+                            width: "60px",
+                            height: "60px",
+                            marginRight: "8px",
+                            borderRadius: "6px",
+                            objectFit: "cover",
                           }}
                         />
                       ))}
@@ -342,25 +370,50 @@ const ManageCenter = () => {
                 key: "7",
                 property: "Gói đăng ký",
                 value: (
-                  <div style={{ marginBottom: '10px' }}>
-                    {Object.values(selectedCenter.subscriptions.reduce((acc, subscription) => {
-                      const key = subscription.packageId._id;
-                      if (!acc[key]) {
-                        acc[key] = {
-                          ...subscription.packageId,
-                          durationMonths: 0,
-                          price: 0,
-                        };
-                      }
-                      acc[key].durationMonths += subscription.packageId.durationMonths;
-                      acc[key].price += subscription.packageId.price;
-                      return acc;
-                    }, {})).map((item, index) => (
-                      <div key={index} style={{ marginBottom: '10px' }}>
-                        <p><b>Thời gian:</b> {item.durationMonths} tháng</p>
-                        <p><b>Giá tiền:</b> {item.price.toLocaleString('vi-VN')} VNĐ</p>
-                        <p><b>Ngày kích hoạt:</b> {new Date(selectedCenter.subscriptions.find(sub => sub.packageId._id === item._id)?.activationDate).toLocaleDateString()}</p>
-                        <p><b>Ngày kết thúc:</b> {new Date(selectedCenter.subscriptions.find(sub => sub.packageId._id === item._id)?.expiryDate).toLocaleDateString()}</p>
+                  <div style={{ marginBottom: "10px" }}>
+                    {Object.values(
+                      selectedCenter.subscriptions.reduce(
+                        (acc, subscription) => {
+                          const key = subscription.packageId._id;
+                          if (!acc[key]) {
+                            acc[key] = {
+                              ...subscription.packageId,
+                              durationMonths: 0,
+                              price: 0,
+                            };
+                          }
+                          acc[key].durationMonths +=
+                            subscription.packageId.durationMonths;
+                          acc[key].price += subscription.packageId.price;
+                          return acc;
+                        },
+                        {}
+                      )
+                    ).map((item, index) => (
+                      <div key={index} style={{ marginBottom: "10px" }}>
+                        <p>
+                          <b>Thời gian:</b> {item.durationMonths} tháng
+                        </p>
+                        <p>
+                          <b>Giá tiền:</b> {item.price.toLocaleString("vi-VN")}{" "}
+                          VNĐ
+                        </p>
+                        <p>
+                          <b>Ngày kích hoạt:</b>{" "}
+                          {new Date(
+                            selectedCenter.subscriptions.find(
+                              (sub) => sub.packageId._id === item._id
+                            )?.activationDate
+                          ).toLocaleDateString()}
+                        </p>
+                        <p>
+                          <b>Ngày kết thúc:</b>{" "}
+                          {new Date(
+                            selectedCenter.subscriptions.find(
+                              (sub) => sub.packageId._id === item._id
+                            )?.expiryDate
+                          ).toLocaleDateString()}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -370,13 +423,21 @@ const ManageCenter = () => {
                 key: "8",
                 property: "Giá",
                 value: (
-                  <div style={{ marginBottom: '10px' }}>
+                  <div style={{ marginBottom: "10px" }}>
                     {selectedCenter.price.map((item, index) => (
-                      <div key={index} style={{ marginBottom: '10px' }}>
-                        <p><b>Giá tiền:</b> {item.price}</p>
-                        <p><b>Giờ bắt đầu:</b> {item.startTime}</p>
-                        <p><b>Giờ kết thúc:</b> {item.endTime}</p>
-                        <p><b>Loại giờ:</b> {scheduleTypeMap[item.scheduleType]}</p>
+                      <div key={index} style={{ marginBottom: "10px" }}>
+                        <p>
+                          <b>Giá tiền:</b> {item.price}
+                        </p>
+                        <p>
+                          <b>Giờ bắt đầu:</b> {item.startTime}
+                        </p>
+                        <p>
+                          <b>Giờ kết thúc:</b> {item.endTime}
+                        </p>
+                        <p>
+                          <b>Loại giờ:</b> {scheduleTypeMap[item.scheduleType]}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -386,10 +447,18 @@ const ManageCenter = () => {
                 key: "9",
                 property: "Dịch vụ",
                 value: (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', zIndex: 1 }}>
+                  <div style={{ display: "flex", flexWrap: "wrap" }}>
                     {selectedCenter.services.map((service, index) => (
                       <Tooltip title={service} key={index}>
-                        <Tag color="blue" style={{ margin: '4px', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', zIndex: 1 }}>
+                        <Tag
+                          color="blue"
+                          style={{
+                            margin: "4px",
+                            maxWidth: "150px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
                           {service}
                         </Tag>
                       </Tooltip>
@@ -410,13 +479,17 @@ const ManageCenter = () => {
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
                     disabled={selectedCenter.status === "rejected"}
-                    style={{ marginTop: '10px', zIndex: 1 }}
+                    style={{ marginTop: "10px" }}
                   />
                 ),
               },
             ]}
             pagination={false}
-            style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+            }}
           />
         </Modal>
       )}
