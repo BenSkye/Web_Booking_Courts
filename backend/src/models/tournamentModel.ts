@@ -10,8 +10,8 @@ const tournamentSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: true,
-      match: /^(\+\d{1,3}[- ]?)?\d{10}$/
+      required: true
+      // match: /^(\+\d{1,3}[- ]?)?\d{10}$/
     },
     email: {
       type: String,
@@ -63,7 +63,7 @@ const tournamentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'denied', 'approved', 'confirm', 'completed', 'cancelled'],
+      enum: ['pending', 'denied', 'approved', 'confirm', 'completed', 'cancelled', 'expired'],
       default: 'Pending'
     },
     userId: {

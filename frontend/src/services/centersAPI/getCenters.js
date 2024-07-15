@@ -2,9 +2,11 @@ import { fetchData } from "@/services/fetchAPI";
 import axios from "axios";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-export const getAllCenterAPI = async () => {
+export const getAllCenterAPI = async (query) => {
   try {
-    const response = await fetch(`${apiBaseUrl}/center`);
+    const response = await fetch(
+      `${apiBaseUrl}/center/center-active?${new URLSearchParams(query)}`
+    );
     const responseData = await response.json();
     console.log("Data from API:", responseData);
     if (responseData.status === "success") {
@@ -50,7 +52,7 @@ export async function updateCenter(centerId, data, token) {
     const response = await axios.put(url, data, {
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log("Cập nhật thành công:", response.data);
@@ -61,3 +63,16 @@ export async function updateCenter(centerId, data, token) {
     );
   }
 }
+
+export const getCenterPackageByInvoiceIdAPI = async (invoiceId) => {
+  const response = await fetchData(
+    `${apiBaseUrl}/center/get-center-Package-by-invoice/${invoiceId}`
+  );
+  console.log("Response:", response);
+  if (response.status === "fail") {
+    return response.data;
+  }
+  if (response.status === "success") {
+    return response.data;
+  }
+};

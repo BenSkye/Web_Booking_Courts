@@ -29,6 +29,18 @@ class centerController {
     })
   })
 
+  static getAllActiveCenters = catchAsync(async (req: any, res: any, next: any) => {
+    const centerServiceInstance = new centerService()
+    console.log('req.query', req.query)
+    const centers = await centerServiceInstance.getAllActiveCenters(req.query)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        centers
+      }
+    })
+  })
+
   static getCenterById = catchAsync(async (req: any, res: any, next: any) => {
     const centerServiceInstance = new centerService()
     const center = await centerServiceInstance.getCenterById(req.params.id)
@@ -197,6 +209,16 @@ class centerController {
       status: 'success',
       data: {
         center: updatedCenter
+      }
+    })
+  })
+  static getCenterPackageByInvoice = catchAsync(async (req: any, res: any, next: any) => {
+    const centerServiceInstance = new centerService()
+    const result = await centerServiceInstance.getCenterPackageByInvoice(req.params.id)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        result
       }
     })
   })

@@ -1,5 +1,6 @@
-import { Schema } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import Center from '~/models/centerModel'
+import apiFeature from '~/utils/apiFeature'
 
 interface ISubscription {
   packageId: Schema.Types.ObjectId
@@ -33,6 +34,8 @@ interface ICenterRepository {
   updateCenter(query: object, data: any): Promise<any | null>
   getAllSubscriptions(): Promise<any[]>
   updateCenterInforById(id: any, data: any): Promise<any | null>
+  findCenterByInvoiceId(invoiceId: string): Promise<any | null>
+  getAllActiveCenters(reqQuery: any): Promise<any[]>
 }
 
 class CenterRepository implements ICenterRepository {
@@ -48,8 +51,21 @@ class CenterRepository implements ICenterRepository {
   async getAllCenters(): Promise<any[]> {
     try {
       const centers = await Center.find().populate('price').populate('subscriptions.packageId')
-      return centers;
+      return centers
+    } catch (error) {
+      throw new Error(`Could not fetch centers: ${(error as Error).message}`)
+    }
+  }
 
+  async getAllActiveCenters(reqQuery: any): Promise<any[]> {
+    try {
+      console.log('reqQuery123', reqQuery)
+      const features = new apiFeature(
+        Center.find({ status: 'active' }).populate('price').populate('subscriptions.packageId'),
+        reqQuery
+      ).parseQuery()
+      const centers = await features.query
+      return centers
     } catch (error) {
       throw new Error(`Could not fetch centers: ${(error as Error).message}`)
     }
@@ -80,9 +96,9 @@ class CenterRepository implements ICenterRepository {
   }
 
   async updateCenter(query: object, data: any) {
-    return await Center.findOneAndUpdate(query, data, { new: true });
+    return await Center.findOneAndUpdate(query, data, { new: true })
   }
-  
+
   async getAllSubscriptions() {
     try {
       return await Center.find({ 'subscriptions.packageId': { $ne: null } })
@@ -101,6 +117,22 @@ class CenterRepository implements ICenterRepository {
       return center
     } catch (error) {
       throw new Error(`Could not update center: ${(error as Error).message}`)
+    }
+  }
+  async findCenterByInvoiceId(invoiceId: string) {
+    try {
+      const invoiceObjectId = new mongoose.Types.ObjectId(invoiceId)
+      const center = await Center.findOne({ 'subscriptions.invoiceId': invoiceObjectId })
+      if (center) {
+        console.log('Center found:', center)
+        return center
+      } else {
+        console.log('No center found with the given invoiceId')
+        return null
+      }
+    } catch (error) {
+      console.error('Error finding center by invoiceId:', error)
+      throw error
     }
   }
 }

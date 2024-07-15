@@ -14,6 +14,7 @@ import {
 import moment from "moment";
 import { getPersonalInvoiceAPI } from "../../../services/invoiceAPI/invoiceAPI";
 import { getBookingByInvoiceIdAPI } from "../../../services/bookingAPI/bookingAPI";
+import { getCenterPackageByInvoiceIdAPI } from "../../../services/centersAPI/getCenters";
 import { getTournamentByInvoiceIdAPI } from "../../../services/tournamentAPI/tournamentAPI";
 const { Paragraph } = Typography;
 const invoiceForMapping = {
@@ -21,6 +22,7 @@ const invoiceForMapping = {
   UBBD: "Sửa giờ chơi",
   BPP: "Mua gói giờ chơi",
   BT: "Đặt lịch tổ chức giải",
+  BCP: "Thanh toán gói hoạt động",
   // Thêm các ánh xạ khác nếu cần
 };
 const STATUS_MAPPING = {
@@ -39,10 +41,14 @@ const OrderDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleTournament, setIsModalVisibleTournament] =
     useState(false);
+  const [isModalVisibleCenterPackage, setIsModalVisibleCenterPackage] =
+    useState(false);
+
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [invoices, setInvoices] = useState([]);
   const [listBooking, setListBooking] = useState([]);
   const [tournament, setTournament] = useState();
+  const [centerPackage, setCenterPackage] = useState();
   const [loading, setLoading] = useState(true);
 
   const getInvoices = async () => {
@@ -70,6 +76,12 @@ const OrderDetails = () => {
     setTournament(result.tournament);
     setIsModalVisibleTournament(true);
   };
+  const getCenterPackage = async (invoiceId) => {
+    const result = await getCenterPackageByInvoiceIdAPI(invoiceId);
+    console.log("result:", result);
+    setCenterPackage(result.result);
+    setIsModalVisibleCenterPackage(true);
+  };
 
   useEffect(() => {
     if (
@@ -80,6 +92,9 @@ const OrderDetails = () => {
     }
     if (selectedInvoice?.invoiceFor === "BT") {
       getTournamentByInvoiceId(selectedInvoice._id);
+    }
+    if (selectedInvoice?.invoiceFor === "BCP") {
+      getCenterPackage(selectedInvoice._id);
     }
   }, [selectedInvoice]);
 
@@ -98,6 +113,8 @@ const OrderDetails = () => {
     setTournament(null);
     setIsModalVisibleTournament(false);
     setIsModalVisible(false);
+    setCenterPackage(null);
+    setIsModalVisibleCenterPackage(false);
   };
 
   return (
@@ -306,6 +323,53 @@ const OrderDetails = () => {
             <p>
               Ngày Kết thúc:{" "}
               {new Date(tournament.endDate).toLocaleDateString("en-US")}
+            </p>
+            <p>Mã hóa đơn: {selectedInvoice.invoiceID}</p>
+            <p>
+              Giá:{" "}
+              {Number(selectedInvoice.price).toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </p>
+            <div>
+              <p>
+                Hóa đơn :{" "}
+                {invoiceForMapping[selectedInvoice.invoiceFor] ||
+                  selectedInvoice.invoiceFor}
+              </p>
+              <p>
+                Ngày thanh toán:{" "}
+                {selectedInvoice.createdAt
+                  ? new Date(selectedInvoice.createdAt).toLocaleDateString(
+                      "vi-VN"
+                    )
+                  : "N/A"}
+              </p>
+              <p>
+                Giờ thanh toán:{" "}
+                {moment(selectedInvoice.createdAt).format("HH:mm")}
+              </p>
+            </div>
+          </div>
+        </Modal>
+      )}
+      {centerPackage && (
+        <Modal
+          title="Chi tiết hóa đơn"
+          visible={isModalVisibleCenterPackage}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          footer={null}
+        >
+          <div>
+            <h3>Thanh toán gói hoạt động</h3>
+            <h4>{centerPackage.centerPackage.name}</h4>
+            <p>
+              Hết hạn:{" "}
+              {new Date(
+                centerPackage.selectedSubcription.expiryDate
+              ).toLocaleDateString("en-US")}
             </p>
             <p>Mã hóa đơn: {selectedInvoice.invoiceID}</p>
             <p>

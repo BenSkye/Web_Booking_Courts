@@ -25,6 +25,7 @@ const BookingFlexibleByPackage = () => {
 
     fetchCenterDetails();
   }, [centerId]);
+  console.log('centerId:', centerId);
 
   const handleSelectPackage = async () => {
     try {
@@ -34,8 +35,15 @@ const BookingFlexibleByPackage = () => {
       message.success('Tạo hóa đơn chơi thành công');
       window.location.href = response.data.result.payUrl;
 
+      console.log('addPlayPackage Response:', response);
+
+      if (response.status === 'success') {
+        message.success('Tạo gói chơi thành công');
+      } else {
+        message.error('Tạo gói chơi thất bại. Vui lòng thử lại.');
+      }
     } catch (error) {
-      console.error("Error adding play package:", error);
+      console.error('Error adding play package:', error);
       message.error('Đã xảy ra lỗi. Vui lòng thử lại sau.');
     }
   };
@@ -89,6 +97,23 @@ const BookingFlexibleByPackage = () => {
       ) : (
         <p>Không tìm thấy thông tin trung tâm.</p>
       )}
+      <Card style={{ marginBottom: '1rem' }}>
+        <InputNumber
+          min={1}
+          defaultValue={1}
+          value={hours}
+          onChange={(value) => setHours(value)}
+          step={1}
+        />
+
+        <Button
+          type='primary'
+          onClick={handleSelectPackage}
+          style={{ marginLeft: '0.5rem' }}
+        >
+          <Link to=''>Chọn gói</Link>
+        </Button>
+      </Card>
     </div>
   );
 };
