@@ -6,23 +6,69 @@ import AppError from '~/utils/appError'
 import Price from '~/models/priceModel';
 import priceRepository from '~/repository/priceRepository';
 import InvoiceRepository from '~/repository/invoiceReposotory';
+import mongoose from 'mongoose';
+import centerRepository from '~/repository/centerRepository'
+import momoService from './momoService'
+import playPackageRoute from '~/routes/playPackageRoute';
 
 interface IPlayPackageInput {
     userId: string;
     centerId: string;
     hour: number;
     price: number;
-    totalHours: number;
-    remainingHours: number;
-    playPackageId: string;
     invoiceId: string;
 }
 
 class PlayPackageService {
 
-    async createOrUpdatePlayPackage(userId: any, playPackage: IPlayPackageInput) {
+    async momoPayPlayHour(data: any, userID: any) {
+        console.log('dataaaaaaaaaaaaaaa', data)
+        const { centerId, hour } = data;
+        console.log('centerId', centerId.id)
+        const priceRepositoryInstance = new priceRepository();
+        const invoiceRepositoryInstance = new InvoiceRepository();
+
+        const pricePerHour = await priceRepositoryInstance.getPriceByCenterIdAndScheduleType(centerId, 'PP');
+        console.log('pricePerHour', pricePerHour)
+        if (!pricePerHour) {
+            throw new AppError('Price per hour not found', 404);
+        }
+        data.price = pricePerHour.price * hour;
+
+
+        const totalprice = data.price;
+        const orderId = 'PP' + Math.floor(Math.random() * 1000000).toString();
+        const redirect = '/courtManage';
+        const orderInfo = 'Thanh toán gói sân ';
+        const callbackUrl = '/api/v1/playPackage/pay-play-package';
+        const extraData = JSON.stringify({ data, userID });
+
+        try {
+            console.log('Creating payment with MoMo');
+            const paymentResult = await momoService.createPayment(
+                orderInfo,
+                totalprice,
+                orderId,
+                centerId,
+                callbackUrl,
+                extraData,
+                redirect
+            );
+            console.log('Payment result:', paymentResult);
+
+            if (paymentResult && paymentResult.payUrl) {
+                return { payUrl: paymentResult.payUrl };
+            }
+        } catch (error) {
+            console.error('Error creating payment:', error);
+            throw new AppError('Failed to create payment', 500);
+        }
+    }
+
+    async createOrUpdatePlayPackage(userId: any, playPackage: any) {
         try {
             const { centerId, hour } = playPackage;
+
             const priceRepositoryInstance = new priceRepository();
             const invoiceRepositoryInstance = new InvoiceRepository();
 
@@ -31,6 +77,9 @@ class PlayPackageService {
             if (!pricePerHour) {
                 throw new AppError('Price per hour not found', 404);
             }
+
+
+
             playPackage.price = pricePerHour.price * hour;
             const invoiceID = 'BPP' + new Date().getTime()
             const newInvoice = { invoiceID, userId, price: playPackage.price, status: 'pending', invoiceFor: 'BPP' }
@@ -81,14 +130,46 @@ class PlayPackageService {
             throw error; // Throw the error to be handled by the caller
         }
     }
-    async getPlayHourByUserId(userId: string) {
+
+    async callbackPayForPackage(reqBody: any) {
+
+
+        console.log('vao dc callback pay for package', reqBody);
+
+        if (reqBody.resultCode !== 0) {
+            console.log('Payment failed');
+            return { status: 'fail', message: 'Payment failed' };
+        }
+
+        const extraData = JSON.parse(reqBody.extraData);
+        console.log('Extradataaaaaaaaaaaa', extraData)
+        const { centerId, price, hour } = extraData.data;
+        const playpackage = { centerId, price, hour };
+        const { userID } = extraData.userID
+
+
         try {
-            const playPackages = await PlayHour.find({ userId }).populate('userId').exec();
-            return playPackages
+            const playpackageInstance = new PlayPackageService();
+            const center = await playpackageInstance.createOrUpdatePlayPackage(userID, playpackage);
+
+            return { status: 'success', center };
+        } catch (error) {
+            console.error('Error selecting package:', error);
+            return { status: 'fail', message: 'Failed to select package' };
+        }
+    }
+
+    async getPlayHourByUserId(userId: any, centerId: any) {
+        try {
+            const playHourInstance = new PlayHourRepository();
+            const playHour = await playHourInstance.findPlayHourByUserIdAndCenterId(userId, centerId)
+            console.log('playHourrrrrr', playHour)
+            return playHour
         } catch (error: any) {
             return error
         }
     }
+
 }
 
 export default PlayPackageService;

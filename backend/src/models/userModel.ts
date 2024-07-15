@@ -40,6 +40,13 @@ const userSchema = new Schema(
       enum: ['active', 'inactive'],
       default: 'active'
     },
+    playHour: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'PlayHour',
+      required: true
+    },
+
+
     passwordChangeAt: Date
   },
   { timestamps: true } // Change 'timeStamp' to 'timestamps'

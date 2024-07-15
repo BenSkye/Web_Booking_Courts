@@ -29,6 +29,7 @@ export const checkBookingAvailablebyDayAPI = async (data) => {
     return response.data;
   }
 };
+
 export const UpdateBookingIncreasePrice = async (data) => {
   const response = await putData(
     `${apiBaseUrl}/booking/update-booking-byDay-increase-price`,
@@ -70,17 +71,17 @@ export const getPersonalBookingAPI = async () => {
   }
 };
 
-export const addPlayPackage = async (playPackageData) => {
+export const addPlayPackage = async (playPackageData, hour) => {
   try {
-    const response = await postData(
-      `${apiBaseUrl}/playPackage`,
-      playPackageData
-    );
-    return response.data;
+    const response = await postData(`${apiBaseUrl}/playPackage`, playPackageData);
+    console.log('response.data', response); // Using optional chaining to avoid errors if response is undefined
+    return response; // Using optional chaining to avoid errors if response is undefined
   } catch (error) {
-    throw error.response.data;
+    console.error('Error in addPlayPackage:', error);
+    throw error?.response?.data || { message: 'Unknown error occurred' }; // Adding fallback error message
   }
 };
+
 
 export const completeBookingAPI = async (bookingId) => {
   const response = await fetchData(
@@ -134,3 +135,11 @@ export const bookingDirectlyAPI = async (data) => {
     return response.data;
   }
 };
+
+export const playHourOfUserAPI = async (data) => {
+  const response = await fetchData(
+    `${apiBaseUrl}/playPackage/userPlayHour/${data}`
+  );
+  console.log("Response: cua playHour", response);
+  return response
+}

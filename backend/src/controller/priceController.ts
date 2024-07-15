@@ -51,7 +51,7 @@ class PriceController {
         price
       }
     })
-  })   
+  })
 }
 
 export default PriceController

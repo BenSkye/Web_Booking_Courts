@@ -1,12 +1,10 @@
 import PlayHour from '../models/playHoursModel';
 import { Schema } from 'mongoose';
-
+import User from '../models/playHoursModel'
 
 
 interface IPlayHourRepository {
     addPlayHour(playHour: any): Promise<any>;
-
-
     updatePlayHour(PlayHour: any): Promise<any>;
     findPlayHourByUserIdAndCenterId(userId: any, centerId: any): Promise<any>;
 
@@ -19,7 +17,10 @@ class PlayHourRepository implements IPlayHourRepository {
     }
 
     public async findPlayHourByUserIdAndCenterId(userId: any, centerId: any) {
-        return await PlayHour.findOne({ userId, centerId });
+        console.log('center,user', centerId, userId)
+        const playHour = await PlayHour.findOne({ userId, centerId }).populate('userId').populate('centerId');
+        console.log('playHour', playHour)
+        return playHour
     }
 
     public async updatePlayHour(playHour: any) {
