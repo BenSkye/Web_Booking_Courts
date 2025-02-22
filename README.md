@@ -1,5 +1,4 @@
-```markdown
-# 🗓️ Web Booking Courts 🏟️
+# 🗓️ Benskye Web Booking Courts 🏟️
 
 ![GitHub](https://img.shields.io/github/license/BenSkye/Web_Booking_Courts)
 ![GitHub last commit](https://img.shields.io/github/last-commit/BenSkye/Web_Booking_Courts)
@@ -8,37 +7,43 @@
 
 **Benskye Web Booking Courts** is an online sports court booking platform that helps users easily search, book, and manage sports courts. The project includes both Backend and Frontend, supporting multiple platforms with modern features.
 
+---
+
 ## 🚀 Main Features
 
-- **🔍 Search for sports courts**: Users can easily find and book suitable sports courts.
-- **📅 Booking management**: Users can view their booking schedules and manage reservations.
-- **💳 Online payment**: Supports online payment through popular payment gateways.
-- **📊 Revenue management**: Court managers can track revenue and other key metrics.
-- **📱 Multi-platform support**: Web, Mobile (future implementation).
+✔ **🔍 Search for sports courts** – Easily find and book suitable sports courts.  
+✔ **📅 Booking management** – View booking schedules and manage reservations.  
+✔ **💳 Online payment** – Supports secure payments through popular gateways.  
+✔ **📊 Revenue management** – Track revenue and key business metrics.  
+✔ **📱 Multi-platform support** – Web, Mobile (future implementation).  
+
+---
 
 ## 🛠 Technologies Used
 
-### Backend
-- **🌐 Node.js**: Runtime environment.
-- **📦 Express.js**: Web application framework.
-- **🗄 MongoDB**: NoSQL database.
-- **🔑 JWT**: User authentication.
-- **🔄 TypeScript**: Programming language.
+### 🔧 Backend  
+- **🌐 Node.js** – Runtime environment.  
+- **📦 Express.js** – Web application framework.  
+- **🗄 MongoDB** – NoSQL database.  
+- **🔑 JWT** – Secure user authentication.  
+- **🔄 TypeScript** – Modern JavaScript superset.  
 
-### Frontend
-- **⚛ React.js**: JavaScript library for UI development.
-- **🎨 Tailwind CSS**: CSS framework.
-- **📱 Vite**: Fast and efficient build tool.
-- **🔄 TypeScript**: Programming language.
+### 🎨 Frontend  
+- **⚛ React.js** – Component-based UI framework.  
+- **🎨 Tailwind CSS** – Utility-first CSS framework.  
+- **📱 Vite** – Fast and efficient build tool.  
+- **🔄 TypeScript** – Strongly typed JavaScript.  
+
+---
 
 ## 📂 Project Structure
 
 ```plaintext
 Web_Booking_Courts/
-├── backend/               # Backend code
-├── frontend/              # Frontend code
-└── .github/               # GitHub workflows
-```
+├── backend/        # Backend code
+├── frontend/       # Frontend code
+└── .github/        # GitHub workflows
+
 
 ## 🚀 Installation and Setup
 
